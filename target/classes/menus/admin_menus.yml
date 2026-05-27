@@ -1,0 +1,144 @@
+QUEUE:
+  GLOBAL:
+    TITLE: "&8Queue Manager"
+    SIZE: 9
+    FILLER: false
+    BUTTONS:
+      LIST:
+        SLOT: 0
+        MATERIAL: "LECTERN"
+        NAME: "&bList of Queues"
+        LORE:
+          - "&7Open the full queue list."
+      DELAY:
+        SLOT: 1
+        MATERIAL: "CLOCK"
+        NAME: "&bQueue Delay"
+        LORE:
+          - "&7Controls how fast players are sent."
+          - ""
+          - "&7Current: &f%value% seconds"
+          - "&eClick to edit"
+      MESSAGE_DELAY:
+        SLOT: 2
+        MATERIAL: "PAPER"
+        NAME: "&bQueue Message Delay"
+        LORE:
+          - "&7Controls position message frequency."
+          - ""
+          - "&7Current: &f%value% seconds"
+          - "&eClick to edit"
+  LIST:
+    TITLE: "&8Queue Manager"
+  EDITOR:
+    BUTTONS:
+      QUEUE_DELAY:
+        MATERIAL: "CLOCK"
+        NAME: "&eQueue Delay"
+        LORE:
+          - "&7Controls how fast players are sent."
+          - ""
+          - "&7Current: &f%value% seconds"
+          - "&eClick to edit"
+      MESSAGE_DELAY:
+        MATERIAL: "PAPER"
+        NAME: "&bMessage Delay"
+        LORE:
+          - "&7Controls position message frequency."
+          - ""
+          - "&7Current: &f%value% seconds"
+          - "&eClick to edit"
+  CREATE_BUTTON:
+    MATERIAL: "ANVIL"
+    NAME: "&aCreate Queue"
+    LORE:
+      - "&7Click to create a new queue"
+      - ""
+      - "&eYou will type the name in chat"
+
+TIMER:
+  LIST:
+    TITLE: "&8Timer Manager"
+    SIZE: 36
+  CREATE_BUTTON:
+    MATERIAL: "CLOCK"
+    NAME: "&aCreate Timer"
+    LORE:
+      - "&7Click to create a timer"
+      - ""
+      - "&eType: <queue-name> <seconds> <prefix>"
+
+LOTTERY:
+  GLOBAL:
+    TITLE: "&8Lottery Manager"
+    SIZE: 9
+    FILLER: true
+    BUTTONS:
+      LIST:
+        SLOT: 0
+        MATERIAL: "CHEST"
+        NAME: "&dLottery List"
+        LORE:
+          - "&7Open all lotteries"
+          - ""
+          - "&eClick to open"
+  LIST:
+    TITLE: "&8Lottery Manager"
+  CREATE_BUTTON:
+    MATERIAL: "ANVIL"
+    NAME: "&aCreate Lottery"
+    LORE:
+      - "&7Click to create a lottery"
+      - ""
+      - "&eType in chat: <name> <seconds>"
+
+OUTFIT:
+  GLOBAL:
+    TITLE: "&8Outfit Manager"
+    SIZE: 9
+    FILLER: true
+  LIST_BUTTON:
+    SLOT: 0
+    MATERIAL: "LEATHER_CHESTPLATE"
+    NAME: "&bOutfits"
+    LORE:
+      - "&7Open the full outfit list"
+      - ""
+      - "&bLeft click: &7Manage outfits"
+  LIST:
+    TITLE: "&8Outfits"
+  CREATE_BUTTON:
+    MATERIAL: "ANVIL"
+    NAME: "&aCreate Outfit"
+    LORE:
+      - "&7Click to create a new outfit"
+      - ""
+      - "&eStep 1: type the outfit name"
+      - "&eStep 2: open the colors menu"
+      - "&eStep 3: toggle enchanted if needed"
+
+TRAIL:
+  GLOBAL:
+    TITLE: "&8Trail Particles Manager"
+    SIZE: 9
+    FILLER: true
+  LIST_BUTTON:
+    SLOT: 0
+    MATERIAL: "BLAZE_POWDER"
+    NAME: "&bTrail Particles"
+    LORE:
+      - "&7Open the full trail particles list"
+      - ""
+      - "&bLeft click: &7Manage trail particles"
+  LIST:
+    TITLE: "&8Trail Particles"
+  CREATE_BUTTON:
+    MATERIAL: "ANVIL"
+    NAME: "&aCreate Trail Particle"
+    LORE:
+      - "&7Click to create a new trail particle"
+      - ""
+      - "&eStep 1: type the trail name in chat"
+      - "&eStep 2: choose the particle in the menu"
+      - "&7Icon = item in your hand"
+      - "&7Empty hand = default icon"

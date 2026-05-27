@@ -160,7 +160,7 @@ public class JoinLeaveListener implements Listener {
         if (ModuleService.getManagerModule().getJukeboxManager() != null) {
             ModuleService.getManagerModule().getJukeboxManager().stop(event.getPlayer());
         }
-        PlayerUtil.clear(profile.getPlayer(), true, true);
+        PlayerUtil.clear(profile == null ? event.getPlayer() : profile.getPlayer(), true, true);
 
     }
 }

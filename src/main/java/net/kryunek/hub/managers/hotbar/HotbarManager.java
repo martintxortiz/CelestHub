@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
+import net.kryunek.hub.support.config.ConfigSupport;
 import net.kryunek.hub.menus.gadgets.GadgetService;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.ItemBuilder;
@@ -38,13 +39,7 @@ public class HotbarManager {
             Hotbar hotbar = new Hotbar(s);
             hotbar.setEnabled(section.getBoolean(s + ".ENABLED"));
 
-            String materialName = section.getString(s + ".MATERIAL", "STONE");
-            Material material;
-            try {
-                material = Material.valueOf(materialName.toUpperCase());
-            } catch (IllegalArgumentException ex) {
-                material = Material.STONE;
-            }
+            Material material = ConfigSupport.getMaterial(section, s + ".MATERIAL", Material.STONE, Bukkit.getLogger());
 
             ItemBuilder builder = new ItemBuilder(material)
                     .data(section.getInt(s + ".DATA"))
@@ -58,7 +53,7 @@ public class HotbarManager {
                 if (headOwnerUuid != null && !headOwnerUuid.isBlank()) {
                     try {
                         builder.owner(UUID.fromString(headOwnerUuid));
-                    } catch (IllegalArgumentException ignored) {
+                    } catch (IllegalArgumentException invalidUuid) {
                         if (headOwner != null && !headOwner.isBlank()) {
                             builder.owner(headOwner);
                         }
@@ -135,14 +130,10 @@ public class HotbarManager {
             return;
         }
 
-        String soundName = hotbarConfig.getConfiguration().getString(base + ".SOUND", "UI_BUTTON_CLICK");
         float volume = (float) hotbarConfig.getConfiguration().getDouble(base + ".VOLUME", 1.0);
         float pitch = (float) hotbarConfig.getConfiguration().getDouble(base + ".PITCH", 1.0);
-        try {
-            Sound sound = Sound.valueOf(soundName.toUpperCase());
-            player.playSound(player.getLocation(), sound, volume, pitch);
-        } catch (IllegalArgumentException ignored) {
-        }
+        Sound sound = ConfigSupport.getSound(hotbarConfig.getConfiguration(), base + ".SOUND", Sound.UI_BUTTON_CLICK, Bukkit.getLogger());
+        player.playSound(player.getLocation(), sound, volume, pitch);
     }
 
     private void ensureDefaults() {

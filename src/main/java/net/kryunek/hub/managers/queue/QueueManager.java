@@ -55,6 +55,13 @@ public class QueueManager {
         }
     }
 
+    public void shutdown() {
+        detenerSendTask();
+        for (Queue queue : queues) {
+            queue.detenerTaskPosicion();
+        }
+    }
+
     public void loadQueues() {
         for (Queue queue : queues) {
             queue.detenerTaskPosicion();

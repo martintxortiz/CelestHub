@@ -12,14 +12,17 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class NetworkSyncManager {
 
     private static final String CHANNEL = "celesthub:sync";
     private final FileConfig config;
     private final String serverId;
-    private boolean enabled;
+    private volatile boolean enabled;
     private JedisPooled publisher;
+    private volatile Jedis subscriber;
+    private volatile JedisPubSub subscription;
     private Thread subscriberThread;
 
     public NetworkSyncManager() {
@@ -41,15 +44,22 @@ public class NetworkSyncManager {
         this.publisher = new JedisPooled(URI.create(redisUri));
 
         this.subscriberThread = new Thread(() -> {
-            try (Jedis subscriber = new Jedis(URI.create(redisUri))) {
-                subscriber.subscribe(new JedisPubSub() {
+            try (Jedis subscriberClient = new Jedis(URI.create(redisUri))) {
+                this.subscriber = subscriberClient;
+                this.subscription = new JedisPubSub() {
                     @Override
                     public void onMessage(String channel, String message) {
                         handleMessage(message);
                     }
-                }, CHANNEL);
+                };
+                subscriberClient.subscribe(this.subscription, CHANNEL);
             } catch (Exception ex) {
-                Bukkit.getLogger().warning("[Celest] Redis subscriber stopped: " + ex.getMessage());
+                if (enabled) {
+                    Bukkit.getLogger().warning("[Celest] Redis subscriber stopped: " + ex.getMessage());
+                }
+            } finally {
+                this.subscription = null;
+                this.subscriber = null;
             }
         }, "Celest-RedisSync");
         this.subscriberThread.setDaemon(true);
@@ -58,6 +68,23 @@ public class NetworkSyncManager {
     }
 
     public void shutdown() {
+        enabled = false;
+        if (subscription != null) {
+            try {
+                subscription.unsubscribe();
+            } catch (Exception ex) {
+                Bukkit.getLogger().log(Level.FINE, "[Celest] Failed to unsubscribe Redis listener during shutdown.", ex);
+            }
+            subscription = null;
+        }
+        if (subscriber != null) {
+            try {
+                subscriber.close();
+            } catch (Exception ex) {
+                Bukkit.getLogger().log(Level.FINE, "[Celest] Failed to close Redis subscriber during shutdown.", ex);
+            }
+            subscriber = null;
+        }
         if (publisher != null) {
             publisher.close();
             publisher = null;
@@ -108,7 +135,13 @@ public class NetworkSyncManager {
             return;
         }
         String topic = split[1];
-        String payload = split.length == 3 ? new String(Base64.getDecoder().decode(split[2]), StandardCharsets.UTF_8) : "";
+        String payload;
+        try {
+            payload = split.length == 3 ? new String(Base64.getDecoder().decode(split[2]), StandardCharsets.UTF_8) : "";
+        } catch (IllegalArgumentException ex) {
+            Bukkit.getLogger().warning("[Celest] Ignoring malformed Redis sync payload for topic " + topic + ".");
+            return;
+        }
         Bukkit.getScheduler().runTask(Celest.get(), () -> {
             if ("QUEUE_STATE".equalsIgnoreCase(topic) && ModuleService.getManagerModule().getQueueManager() != null) {
                 ModuleService.getManagerModule().getQueueManager().applyRemoteSnapshot(payload);

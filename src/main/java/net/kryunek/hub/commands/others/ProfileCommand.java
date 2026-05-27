@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.others;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileData;
 import net.kryunek.hub.utils.CC;
@@ -28,7 +27,7 @@ public class ProfileCommand extends BaseCommand {
         String query = command.getArgs(0);
         Player online = Bukkit.getPlayerExact(query);
         if (online != null) {
-            Profile profile = ModuleService.getManagerModule().getProfileManager().getProfile(online.getUniqueId());
+            Profile profile = managers().getProfileManager().getProfile(online.getUniqueId());
             if (profile == null) {
                 viewer.sendMessage(CC.translate("&cCould not load profile for that player."));
                 return;
@@ -44,7 +43,7 @@ public class ProfileCommand extends BaseCommand {
             return;
         }
 
-        Map<UUID, ProfileData> all = ModuleService.getManagerModule().getProfileManager().getStorage().loadAll();
+        Map<UUID, ProfileData> all = managers().getProfileManager().getStorage().loadAll();
         for (Map.Entry<UUID, ProfileData> entry : all.entrySet()) {
             ProfileData data = entry.getValue();
             if (data == null || data.getName() == null) {

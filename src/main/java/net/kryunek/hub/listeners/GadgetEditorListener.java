@@ -61,7 +61,7 @@ public class GadgetEditorListener implements Listener {
         int value;
         try {
             value = Integer.parseInt(text);
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
             player.sendMessage(CC.translate("&cType a valid cooldown in seconds (>= 0)."));
             return;
         }
@@ -89,7 +89,7 @@ public class GadgetEditorListener implements Listener {
         int value;
         try {
             value = Integer.parseInt(text);
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
             player.sendMessage(CC.translate("&cType a valid slot between 0 and 53."));
             return;
         }

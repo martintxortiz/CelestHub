@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.hub.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
@@ -14,15 +13,15 @@ public class CelestReloadCommand extends BaseCommand {
     public void onCommand(CommandArgs command) {
         CommandSender sender = command.getSender();
 
-        ModuleService.getFileModule().reload();
-        ModuleService.getManagerModule().getQueueManager().loadQueues();
-        ModuleService.getManagerModule().getQueueManager().iniciarSendTask();
-        ModuleService.getManagerModule().getTrailParticleManager().load();
-        ModuleService.getManagerModule().getOutfitManager().load();
-        ModuleService.getManagerModule().getJukeboxManager().load();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
-        ModuleService.getManagerModule().getChatManager().load();
+        files().reload();
+        managers().getQueueManager().loadQueues();
+        managers().getQueueManager().iniciarSendTask();
+        managers().getTrailParticleManager().load();
+        managers().getOutfitManager().load();
+        managers().getJukeboxManager().load();
+        managers().getHotbarManager().load();
+        managers().getHotbarManager().reload();
+        managers().getChatManager().load();
         sender.sendMessage(CC.translate("&7&m------------------------------------------------"));
         sender.sendMessage(CC.translate("&b* &f&lHub &c*"));
         sender.sendMessage(CC.translate(""));

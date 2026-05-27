@@ -1,0 +1,133 @@
+HUB_SELECTOR:
+  ENABLED: true
+  GLOW: false
+  NAME: "&bHub Selector &7(Right Click)"
+  LORE:
+    - "&7Switch between hubs"
+    - ""
+    - "&eClick to view"
+  MATERIAL: "PLAYER_HEAD"
+  HEAD_OWNER: "AfterTimeFlys"
+  HEAD_OWNER_UUID: "7ebae8bc-4e2b-41d7-9b8e-77fbea28f5e3"
+  DATA: 0
+  SLOT: 8
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: true
+    SOUND: "BLOCK_WOODEN_BUTTON_CLICK_ON"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+GADGETS:
+  ENABLED: true
+  GLOW: false
+  NAME: "&dGadgets &7(Right Click)"
+  LORE:
+    - "&7Open gadgets menu"
+    - ""
+    - "&eClick to open"
+  MATERIAL: "BLAZE_ROD"
+  DATA: 0
+  SLOT: 4
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: false
+    SOUND: "UI_BUTTON_CLICK"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+SERVER:
+  ENABLED: true
+  GLOW: false
+  NAME: "&bServer Selector &7(Right Click)"
+  LORE:
+    - "&7Switch games"
+    - ""
+    - "&eClick to view"
+  MATERIAL: "COMPASS"
+  DATA: 0
+  SLOT: 2
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: false
+    SOUND: "UI_BUTTON_CLICK"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+SHOW_PLAYER:
+  ENABLED: true
+  GLOW: true
+  NAME: "&aShow Players &7(Right Click)"
+  LORE:
+    - "&7Switch visibility"
+    - ""
+    - "&eClick to view"
+  MATERIAL: "WHITE_CANDLE"
+  DATA: 0
+  SLOT: 0
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: false
+    SOUND: "BLOCK_DISPENSER_DISPENSE"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+HIDE_PLAYER:
+  ENABLED: true
+  GLOW: true
+  NAME: "&cHide Players &7(Right Click)"
+  LORE:
+    - "&7Switch visibility"
+    - ""
+    - "&eClick to view"
+  MATERIAL: "LIME_CANDLE"
+  DATA: 0
+  SLOT: 0
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: false
+    SOUND: "BLOCK_DISPENSER_DISPENSE"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+SETTINGS:
+  ENABLED: true
+  GLOW: true
+  NAME: "&ePlayer Settings &7(Right Click)"
+  LORE:
+    - "&7Change your settings"
+    - ""
+    - "&eClick to view"
+  MATERIAL: "BOOK"
+  DATA: 0
+  SLOT: 6
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: true
+    SOUND: "BLOCK_WOODEN_BUTTON_CLICK_ON"
+    VOLUME: 1.0
+    PITCH: 1.0
+
+LOTTERY_JOIN:
+  ENABLED: true
+  GLOW: false
+  NAME: "&d&lLOTTERY TICKET &7(Right Click)"
+  LORE:
+    - "&7A lottery is active right now."
+    - "&eRight click to join instantly."
+  MATERIAL: "PAPER"
+  DATA: 0
+  SLOT: 7
+  AMOUNT: 1
+  COMMAND: ""
+  CLICK_SOUND:
+    ENABLED: false
+    SOUND: "UI_BUTTON_CLICK"
+    VOLUME: 1.0
+    PITCH: 1.0

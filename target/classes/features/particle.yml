@@ -1,0 +1,105 @@
+TITLE: "&8Trails Menu"
+SIZE: 36
+FILLER: false
+
+BUTTONS:
+  TRAIL:
+    ALLOWED:
+      ICON:
+        NAME: "&a&l✧ &f%trail_name% Trail &a&l✧"
+        LORE:
+          - "&7&m------------------------------"
+          - "&aClick to equip this trail."
+          - "&7&m------------------------------"
+    DENIED:
+      ICON:
+        NAME: "&4&l✘ &f%trail_name% Trail &4&l✘"
+        MATERIAL: "RED_WOOL"
+        DATA: 0
+        LORE:
+          - "&7&m------------------------------"
+          - "&cYou don't have this trail,"
+          - "&cpurchase at celest.net"
+          - "&7&m------------------------------"
+    EQUIPPED:
+      ICON:
+        NAME: "&b&l✦ &f%trail_name% Trail &b&l✦"
+        LORE:
+          - "&7&m------------------------------"
+          - "&bYou have already equipped"
+          - "&bthis trail."
+          - "&7&m------------------------------"
+    REMOVE:
+      ICON:
+        NAME: "&c&lRemove Trail"
+        LORE:
+          - "&7&m------------------------------"
+          - "&7Click to remove your "
+          - "&7currently trail."
+          - ""
+          - "&fSelected Trail: &b%trail_name%"
+          - "&7&m------------------------------"
+        MATERIAL: "BRUSH"
+        DATA: 0
+
+TRAILS:
+  Owner:
+    EFFECT: "HEART"
+    MATERIAL: "REDSTONE"
+    DATA: 0
+  Default:
+    EFFECT: "CRIT"
+    MATERIAL: "DIAMOND_AXE"
+    DATA: 0
+  Flame:
+    EFFECT: "FLAME"
+    MATERIAL: "BLAZE_POWDER"
+    DATA: 0
+  Soulfire:
+    EFFECT: "SOUL_FIRE_FLAME"
+    MATERIAL: "SOUL_TORCH"
+    DATA: 0
+  Cloud:
+    EFFECT: "CLOUD"
+    MATERIAL: "WHITE_WOOL"
+    DATA: 0
+  WaterDrop:
+    EFFECT: "DRIPPING_WATER"
+    MATERIAL: "WATER_BUCKET"
+    DATA: 0
+  LavaDrop:
+    EFFECT: "DRIPPING_LAVA"
+    MATERIAL: "LAVA_BUCKET"
+    DATA: 0
+  Happy:
+    EFFECT: "HAPPY_VILLAGER"
+    MATERIAL: "EMERALD"
+    DATA: 0
+  Enchant:
+    EFFECT: "ENCHANT"
+    MATERIAL: "ENCHANTING_TABLE"
+    DATA: 0
+  EndRod:
+    EFFECT: "END_ROD"
+    MATERIAL: "END_ROD"
+    DATA: 0
+  Totem:
+    EFFECT: "TOTEM_OF_UNDYING"
+    MATERIAL: "TOTEM_OF_UNDYING"
+    DATA: 0
+  Portal:
+    EFFECT: "PORTAL"
+    MATERIAL: "ENDER_PEARL"
+    DATA: 0
+  Witch:
+    EFFECT: "WITCH"
+    MATERIAL: "FERMENTED_SPIDER_EYE"
+    DATA: 0
+  Glow:
+    EFFECT: "GLOW"
+    MATERIAL: "GLOW_INK_SAC"
+    DATA: 0
+  Cherry:
+    EFFECT: "CHERRY_LEAVES"
+    MATERIAL: "CHERRY_LEAVES"
+    DATA: 0

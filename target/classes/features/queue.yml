@@ -1,0 +1,26 @@
+QUEUE:
+  LEGACY_TICKS_MIGRATED: true
+  DELAY: 10
+  POSITION_MESSAGE_DELAY: 5
+  PRIORITY:
+    owner: 1
+    default: 10
+  SERVERS:
+    survival:
+      paused: false
+      entries: []
+
+QUEUE_JOIN: "&bYou've joined the queue for &f%queue%&c."
+QUEUE_LEAVE: "&bYou've leave the queue for &f%queue%&c."
+QUEUE_POSITION:
+  - "&bYou're in position &f#%queue_pos% &bof &f#%queue_size% &bin the queue for &f%queue%&c."
+  - "&7Estimated wait: &f%estimated_time%"
+QUEUE_SEND: "&bSending you to &4%queue%."
+QUEUE_NOT_IN: "&cYou're not in a queue."
+QUEUE_PAUSED: "&f%queue% &bhas been paused&c."
+QUEUE_UNPAUSED: "&f%queue% &bhas been unpaused&c."
+QUEUE_NOT_FOUND: "&cQueue &4%queue% &cnot found."
+
+QUEUE_MENU:
+  TITLE: "&7Queues"
+  SIZE: 27

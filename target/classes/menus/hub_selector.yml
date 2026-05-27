@@ -1,0 +1,39 @@
+HUB_SELECTOR:
+  TITLE: "&7Hub Selector"
+  SIZE: 9
+  MAX_ITEMS_PER_PAGE: 9
+
+  # Only servers listed here are shown in the hub selector.
+  HUBS:
+    - "hub1"
+    - "hub2"
+
+  # Backwards-compatible fallback if HUBS is empty.
+  SERVER_ORDER:
+    - "hub1"
+    - "hub2"
+
+  DEFAULT:
+    NAME: "&b%server% &7(%players%)"
+    ITEM: "EMERALD_BLOCK"
+    DATA: 0
+    LORE:
+      - "&7Status: %status%"
+      - "&7Players: &f%players%"
+      - ""
+      - "&eClick to connect"
+
+  CURRENT:
+    NAME: "&e%server% &7(Current)"
+    ITEM: "GOLD_BLOCK"
+    DATA: 0
+    LORE:
+      - "&7Status: &aOnline"
+      - "&7Players: &f%players%"
+      - ""
+      - "&cYou are already here"
+
+  MESSAGES:
+    OFFLINE: "&cThis server is offline."
+    ALREADY_HERE: "&eYou are already on this server."
+    CONNECTING: "&aConnecting to &f%server%&a..."

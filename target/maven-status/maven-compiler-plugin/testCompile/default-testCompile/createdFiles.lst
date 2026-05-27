@@ -1,0 +1,6 @@
+net\kryunek\hub\support\profile\ProfileAccessTest.class
+net\kryunek\hub\support\message\MessagesTest.class
+net\kryunek\hub\support\command\CommandSupportTest.class
+net\kryunek\hub\managers\player\ProfileManagerTest.class
+net\kryunek\hub\support\config\ConfigSupportTest.class
+net\kryunek\hub\utils\FileConfigTest.class

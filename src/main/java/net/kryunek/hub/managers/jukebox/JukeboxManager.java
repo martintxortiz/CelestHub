@@ -335,6 +335,22 @@ public class JukeboxManager {
         }, 20L, 20L);
     }
 
+    public void shutdown() {
+        if (tickerTask != null) {
+            tickerTask.cancel();
+            tickerTask = null;
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            stopInternal(player, true);
+        }
+        currentTrack.clear();
+        currentTrackEnd.clear();
+        nextTrackIndex.clear();
+        pausedTrack.clear();
+        pausedRemainingMs.clear();
+        suspendedPlayback.clear();
+    }
+
     public boolean isPauseEnabled() {
         return jukeboxConfig.getConfiguration().getBoolean("JUKEBOX.CONTROLS.ENABLE_PAUSE", true);
     }

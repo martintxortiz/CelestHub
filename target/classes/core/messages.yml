@@ -1,0 +1,188 @@
+COMMAND:
+  NO_PERMISSION: "&cNo permission."
+  IN_GAME_ONLY: "&cThis command can only be executed in game."
+
+SESSION:
+  EXPIRED: "&cSession expired after 60 seconds without input."
+  ALREADY_ACTIVE: "&cYou already have an active session. Type 'cancel' in chat first."
+
+ACTIONBAR:
+  PREFIX: ""
+  QUEUE_JOIN: "&aJoined queue: &f%queue%"
+  QUEUE_LEAVE: "&cLeft queue: &f%queue%"
+  GADGET_USED: "&bGadget used: &f%gadget%"
+  GADGET_DISABLED: "&cDisabled gadget: &f%gadget%"
+  GADGET_COOLDOWN: "&cGadget cooldown: &f%time%s"
+  GADGET_NO_PERMISSION: "&cYou do not have permission for this gadget."
+  GADGET_INVALID_TARGET: "&cNo valid target."
+  GADGET_PORTAL_SET: "&dPortal point saved. Use again to jump."
+
+SPAWN:
+  SET: "&aSpawn set."
+  TELEPORT: "&aSent to spawn."
+  NOT_SET: "&cSpawn is not set."
+
+QUEUE:
+  LIST_EMPTY: "&cNo queues found."
+  LIST_AVAILABLE: "&bAvailable Queues&7: &f%queues%"
+  CREATE:
+    PROMPT:
+      - "&eType the queue name in chat"
+      - "&7Type 'cancel' to abort"
+    CANCELLED: "&cQueue creation cancelled."
+    ALREADY_EXISTS: "&cQueue already exists."
+    CREATED: "&aQueue created: &f%queue%"
+  EDITOR:
+    GLOBAL_QUEUE_DELAY_PROMPT:
+      - "&eType the new global queue delay in seconds."
+      - "&7Current unit: seconds."
+      - "&7Type 'cancel' to abort."
+    GLOBAL_MESSAGE_DELAY_PROMPT:
+      - "&eType the new global position message delay in seconds."
+      - "&7Current unit: seconds."
+      - "&7Type 'cancel' to abort."
+    QUEUE_DELAY_PROMPT:
+      - "&eType the new queue delay in seconds for &f%queue%&e."
+      - "&7Current unit: seconds."
+      - "&7Type 'cancel' to abort."
+    MESSAGE_DELAY_PROMPT:
+      - "&eType the new position message delay in seconds for &f%queue%&e."
+      - "&7Current unit: seconds."
+      - "&7Type 'cancel' to abort."
+    CANCELLED: "&cQueue editor change cancelled."
+    INVALID_NUMBER: "&cType a valid number greater than 0."
+    QUEUE_DELAY_UPDATED: "&aQueue delay updated to &f%value%&a seconds."
+    MESSAGE_DELAY_UPDATED: "&aQueue message delay updated to &f%value%&a seconds."
+
+LOTTERY:
+  NOT_FOUND: "&cLottery not found."
+  NOT_ACTIVE: "&cThis lottery is not active."
+  ALREADY_JOINED: "&eYou are already in this lottery."
+  JOINED: "&aYou joined lottery &f%lottery%&a."
+  LIST_EMPTY: "&cNo lotteries found."
+  LIST: "&dLotteries&7: &f%list%"
+  INVALID_NUMBER: "&cType a valid positive number."
+  ALREADY_EXISTS: "&cA lottery with that name already exists."
+  CREATED: "&aLottery created: &f%lottery% &7(%seconds%s)"
+  DELETED: "&cLottery deleted: &f%lottery%"
+  STARTED: "&aLottery started: &f%lottery%"
+  START_FAILED: "&cCould not start that lottery."
+  ENDED: "&eLottery ended: &f%lottery%"
+  END_FAILED: "&cCould not finish that lottery."
+  REWARD_ADDED: "&aReward added to &f%lottery%&a."
+  REWARDS_CLEARED: "&eRewards cleared for &f%lottery%"
+  CREATE:
+    PROMPT:
+      - "&eType in chat: <name> <seconds>"
+      - "&7Example: &fvip_weekend 300"
+      - "&7Type 'cancel' to abort."
+    USAGE: "&cUse: <name> <seconds>"
+    CANCELLED: "&cLottery creation cancelled."
+  REWARD:
+    PROMPT:
+      - "&eType the reward command for &f%lottery%&e."
+      - "&7Example: &fgive %player% diamond 1"
+      - "&7Type 'cancel' to abort."
+    CANCELLED: "&cReward edition cancelled."
+    INVALID: "&cType a valid command."
+  BROADCAST:
+    START_LINES:
+      - "&d&lLottery &7» &f%lottery% &ahas started by &f%by%&a!"
+      - "&7Duration: &f%seconds%s"
+    JOIN_LINES:
+      - "&e[CLICK HERE] &7Join lottery &f%lottery% &7(%seconds%s left, %count% joined)"
+    REMINDER_LINES:
+      - "&d[Lottery] &7%lottery% still open. &f%seconds%s &7left. &f%count% &7joined."
+      - "&e[CLICK HERE] &7Join now"
+    NO_PARTICIPANTS:
+      - "&d&lLottery &7» &c%lottery% finished with no participants. &7(ended by %by%)"
+    WINNER_LINES:
+      - "&d&lLottery &7» &f%winner% &awon lottery &f%lottery%&a!"
+      - "&7Ended by: &f%by%"
+
+CHAT:
+  MESSAGES:
+    MUTED: "&cChat is currently muted."
+    SLOWMODE: "&cSlow mode is enabled. Wait &f%time%s&c."
+    TOGGLED_MUTE: "&eChat is now %state%&e."
+    SET_SLOW: "&eChat slow mode set to &f%time%s&e."
+    DISABLED_SLOW: "&eChat slow mode disabled."
+    CLEARED: "&eChat was cleared by &f%player%&e."
+
+PERMISSION_AUDIT:
+  REMOVED_OUTFIT: "&eYour outfit was removed due to missing permission."
+  REMOVED_TRAIL: "&eYour trail was removed due to missing permission."
+  REMOVED_GADGET: "&eYour selected gadget was removed due to missing permission."
+  REMOVED_FLY: "&eFly-on-join was disabled due to missing permission."
+  REMOVED_BUILDMODE: "&eBuild mode was disabled due to missing permission."
+
+EDITOR:
+  INVALID_NUMBER: "&cType a valid positive number."
+  CANCELLED: "&cEditor action cancelled."
+  CHAT:
+    SLOW_PROMPT: "&eType slow mode seconds or 'off'. Type 'cancel' to abort."
+    CLEAR_LINES_PROMPT: "&eType clear lines amount. Type 'cancel' to abort."
+    PREFIX_PROMPT: "&eType the new global chat prefix. Type 'cancel' to abort."
+    CLEAR_LINES_UPDATED: "&aClear lines updated to &f%value%&a."
+    PREFIX_UPDATED: "&aChat prefix updated: %prefix%"
+  HOTBAR:
+    SLOT_PROMPT: "&eType the slot number (0-8) for &f%item%&e. Type 'cancel' to abort."
+    NAME_PROMPT:
+      - "&eType the new name for &f%item%&e."
+      - "&7Use ',' to split into lines."
+      - "&7Type 'cancel' to abort."
+    LORE_PROMPT:
+      - "&eType the new lore for &f%item%&e."
+      - "&7Use ',' to split lines."
+      - "&7Type 'clear' to clear lore."
+      - "&7Type 'cancel' to abort."
+    SLOT_UPDATED: "&aUpdated slot of &f%item% &ato &f%slot%&a."
+    NAME_UPDATED: "&aUpdated name of &f%item%&a."
+    LORE_UPDATED: "&aUpdated lore of &f%item%&a."
+    INVALID_SLOT: "&cSlot must be between 0 and 8."
+    INVALID_NAME: "&cType a valid name."
+    INVALID_LORE: "&cType lore text or 'clear'."
+    ITEM_NOT_FOUND: "&cHotbar item not found."
+    HAND_EMPTY: "&cHold an item in your hand first."
+  SELECTOR:
+    NAME_PROMPT:
+      - "&eType the new selector name for &f%item%&e."
+      - "&7Use ',' to split into lines."
+      - "&7Type 'cancel' to abort."
+    LORE_PROMPT:
+      - "&eType the new selector lore for &f%item%&e."
+      - "&7Use ',' to split lines."
+      - "&7Type 'clear' to remove lore."
+      - "&7Type 'cancel' to abort."
+TIMER:
+  SESSION:
+    PROMPT:
+      - "&eType: <queue-name> <seconds> <prefix>"
+      - "&7Example: &fKOTH 300 koth"
+      - "&7Type 'cancel' to abort"
+    CANCELLED: "&cCancelled."
+    USAGE: "&cUsage: <queue> <seconds> <prefix>"
+    INVALID_NUMBER: "&cInvalid number."
+
+OUTFIT:
+  CREATE:
+    PROMPT:
+      - "&eType the outfit name in chat."
+      - "&7Type 'cancel' to abort."
+    CANCELLED: "&cOutfit creation cancelled."
+    INVALID_NAME: "&cType only the outfit name."
+    ALREADY_EXISTS: "&cAn outfit with that name already exists."
+
+TRAIL:
+  CREATE:
+    PROMPT:
+      - "&eType the trail name in chat."
+      - "&7The icon will be the item in your hand."
+      - "&7If your hand is empty, a default icon will be used."
+      - "&7Type 'cancel' to abort."
+    CANCELLED: "&cTrail particle creation cancelled."
+    INVALID_NAME: "&cType only the trail name."
+    ALREADY_EXISTS: "&cA trail particle with that name already exists."
+    SAVED_NAME: "&aTrail name saved: &f%trail%"
+    SAVED_ICON: "&7Icon selected: &f%icon%"
+    OPEN_EFFECT_MENU: "&eNow choose the particle from the menu."

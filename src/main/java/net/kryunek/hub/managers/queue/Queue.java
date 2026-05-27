@@ -123,7 +123,8 @@ public class Queue {
                 if (!playerList.contains(uuid)) {
                     playerList.add(uuid);
                 }
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException ex) {
+                Bukkit.getLogger().warning("[Celest] Ignoring invalid queue entry UUID for " + server + ": " + raw);
             }
         }
     }

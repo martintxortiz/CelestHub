@@ -31,8 +31,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class GadgetService {
 
-    private static final FileConfig GADGETS_MENU = ModuleService.getFileModule().getFile("gadgets");
-    private static final FileConfig SETTINGS = ModuleService.getFileModule().getFile("gadgets");
     private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
     private static final String GADGET_ENTITY_TAG = "celest_gadget_entity";
     private static final Map<UUID, BukkitTask> RAINBOW_TASKS = new HashMap<>();
@@ -56,6 +54,14 @@ public final class GadgetService {
     private GadgetService() {
     }
 
+    private static FileConfig gadgetsMenu() {
+        return ModuleService.getFileModule().getFile("gadgets");
+    }
+
+    private static FileConfig settings() {
+        return ModuleService.getFileModule().getFile("gadgets");
+    }
+
     public static ItemStack getItemByType(String type) {
         String normalizedType = normalizeType(type);
         if (normalizedType == null || normalizedType.equalsIgnoreCase("NONE")) {
@@ -71,16 +77,16 @@ public final class GadgetService {
         }
 
         String path = "GADGETS_MENU.ITEMS." + key + ".";
-        String materialName = GADGETS_MENU.getString(path + "MATERIAL", "BLAZE_ROD", false);
+        String materialName = gadgetsMenu().getString(path + "MATERIAL", "BLAZE_ROD", false);
         Material material = Material.matchMaterial(materialName);
         if (material == null) {
             material = Material.BLAZE_ROD;
         }
 
         return new ItemBuilder(material)
-                .name(GADGETS_MENU.getString(path + "NAME", "&dGadget", true))
-                .lore(GADGETS_MENU.getStringList(path + "LORE"))
-                .data(GADGETS_MENU.getInt(path + "DATA"))
+                .name(gadgetsMenu().getString(path + "NAME", "&dGadget", true))
+                .lore(gadgetsMenu().getStringList(path + "LORE"))
+                .data(gadgetsMenu().getInt(path + "DATA"))
                 .build();
     }
 
@@ -94,18 +100,18 @@ public final class GadgetService {
                 String key = getKeyByType(normalizedType);
                 if (key != null) {
                     String basePath = "GADGETS_MENU.ITEMS." + key + ".";
-                    String materialName = GADGETS_MENU.getString(basePath + "PORTAL_SET_MATERIAL",
-                            GADGETS_MENU.getString(basePath + "MATERIAL", "END_PORTAL_FRAME", false), false);
+                    String materialName = gadgetsMenu().getString(basePath + "PORTAL_SET_MATERIAL",
+                            gadgetsMenu().getString(basePath + "MATERIAL", "END_PORTAL_FRAME", false), false);
                     Material material = Material.matchMaterial(materialName);
                     if (material == null) {
                         material = Material.END_PORTAL_FRAME;
                     }
 
                     return new ItemBuilder(material)
-                            .name(GADGETS_MENU.getString(basePath + "PORTAL_SET_NAME",
+                            .name(gadgetsMenu().getString(basePath + "PORTAL_SET_NAME",
                                     "&dPortal Jump &a[SET]", true))
-                            .lore(GADGETS_MENU.getStringList(basePath + "PORTAL_SET_LORE"))
-                            .data(GADGETS_MENU.getInt(basePath + "DATA"))
+                            .lore(gadgetsMenu().getStringList(basePath + "PORTAL_SET_LORE"))
+                            .data(gadgetsMenu().getInt(basePath + "DATA"))
                             .build();
                 }
             }
@@ -121,9 +127,9 @@ public final class GadgetService {
 
     public static ItemStack buildNoPermissionItem(String gadgetName) {
         String basePath = "GADGETS_MENU.NO_PERMISSION_ITEM.";
-        String materialName = GADGETS_MENU.getString(basePath + "MATERIAL", "RED_WOOL", false);
+        String materialName = gadgetsMenu().getString(basePath + "MATERIAL", "RED_WOOL", false);
         Material material = Material.matchMaterial(materialName);
-        int data = GADGETS_MENU.getInt(basePath + "DATA");
+        int data = gadgetsMenu().getInt(basePath + "DATA");
         if (material == null && "RED_WOOL".equalsIgnoreCase(materialName)) {
             material = Material.matchMaterial("WOOL");
             data = 14;
@@ -132,10 +138,10 @@ public final class GadgetService {
             material = Material.BARRIER;
         }
 
-        String name = GADGETS_MENU.getString(basePath + "NAME", "&cGadget locked", true)
+        String name = gadgetsMenu().getString(basePath + "NAME", "&cGadget locked", true)
                 .replace("%gadget%", gadgetName == null ? "&fGadget" : gadgetName)
                 .replace("%gadget_name%", gadgetName == null ? "Gadget" : CC.translate(gadgetName));
-        List<String> lore = GADGETS_MENU.getStringList(basePath + "LORE");
+        List<String> lore = gadgetsMenu().getStringList(basePath + "LORE");
         lore.replaceAll(line -> line.replace("%gadget_name%", gadgetName == null ? "Gadget" : CC.translate(gadgetName)));
 
         return new ItemBuilder(material)
@@ -250,13 +256,13 @@ public final class GadgetService {
             return null;
         }
 
-        ConfigurationSection section = GADGETS_MENU.getConfiguration().getConfigurationSection("GADGETS_MENU.ITEMS");
+        ConfigurationSection section = gadgetsMenu().getConfiguration().getConfigurationSection("GADGETS_MENU.ITEMS");
         if (section == null) {
             return null;
         }
 
         for (String key : section.getKeys(false)) {
-            String configType = GADGETS_MENU.getString("GADGETS_MENU.ITEMS." + key + ".TYPE", "", false);
+            String configType = gadgetsMenu().getString("GADGETS_MENU.ITEMS." + key + ".TYPE", "", false);
             if (type.equalsIgnoreCase(normalizeType(configType))) {
                 return key;
             }
@@ -266,8 +272,8 @@ public final class GadgetService {
 
     private static void useEnderButtVelocity(Player player) {
         String path = getSnowballVelocityPath();
-        double boostY = SETTINGS.getDouble(path + ".BOOST");
-        double multiplier = SETTINGS.getDouble(path + ".MULTIPLIER");
+        double boostY = settings().getDouble(path + ".BOOST");
+        double multiplier = settings().getDouble(path + ".MULTIPLIER");
 
         // Visual projectile so this mode does not look like a plain velocity jump.
         Snowball snowball = player.launchProjectile(Snowball.class);
@@ -294,9 +300,9 @@ public final class GadgetService {
             player.getVehicle().remove();
         }
 
-        double boostY = SETTINGS.getDouble("GADGETS.ENDERBUTT_RIDEABLE.BOOST");
-        double multiplier = SETTINGS.getDouble("GADGETS.ENDERBUTT_RIDEABLE.MULTIPLIER");
-        String projectileType = SETTINGS.getString("GADGETS.ENDERBUTT_RIDEABLE.PROJECTILE", "ENDER_PEARL", false);
+        double boostY = settings().getDouble("GADGETS.ENDERBUTT_RIDEABLE.BOOST");
+        double multiplier = settings().getDouble("GADGETS.ENDERBUTT_RIDEABLE.MULTIPLIER");
+        String projectileType = settings().getString("GADGETS.ENDERBUTT_RIDEABLE.PROJECTILE", "ENDER_PEARL", false);
         Material inHand = player.getInventory().getItemInMainHand() == null ? Material.AIR : player.getInventory().getItemInMainHand().getType();
         Projectile projectile;
         if (inHand == Material.SNOWBALL || "SNOWBALL".equalsIgnoreCase(projectileType)) {
@@ -316,9 +322,9 @@ public final class GadgetService {
     }
 
     private static void useGrapplingHook(Player player) {
-        int maxDistance = SETTINGS.getInt("GADGETS.GRAPPLING_HOOK.MAX_DISTANCE");
-        double strength = SETTINGS.getDouble("GADGETS.GRAPPLING_HOOK.STRENGTH");
-        double yBoost = SETTINGS.getDouble("GADGETS.GRAPPLING_HOOK.Y_BOOST");
+        int maxDistance = settings().getInt("GADGETS.GRAPPLING_HOOK.MAX_DISTANCE");
+        double strength = settings().getDouble("GADGETS.GRAPPLING_HOOK.STRENGTH");
+        double yBoost = settings().getDouble("GADGETS.GRAPPLING_HOOK.Y_BOOST");
 
         FishHook hook = player.launchProjectile(FishHook.class);
         hideEntityFromHiddenViewers(player, hook);
@@ -336,13 +342,13 @@ public final class GadgetService {
     }
 
     private static void useLeapBoost(Player player) {
-        double multiplier = SETTINGS.getDouble("GADGETS.LEAP_BOOST.MULTIPLIER");
-        double yBoost = SETTINGS.getDouble("GADGETS.LEAP_BOOST.Y_BOOST");
+        double multiplier = settings().getDouble("GADGETS.LEAP_BOOST.MULTIPLIER");
+        double yBoost = settings().getDouble("GADGETS.LEAP_BOOST.Y_BOOST");
         player.setVelocity(player.getLocation().getDirection().normalize().multiply(multiplier).setY(yBoost));
     }
 
     private static void useRainbowTrail(Player player) {
-        int revertSeconds = Math.max(1, SETTINGS.getInt("GADGETS.RAINBOW_TRAIL.REVERT_SECONDS"));
+        int revertSeconds = Math.max(1, settings().getInt("GADGETS.RAINBOW_TRAIL.REVERT_SECONDS"));
         UUID uuid = player.getUniqueId();
 
         if (isRainbowTrailActive(player)) {
@@ -380,28 +386,28 @@ public final class GadgetService {
     }
 
     private static void useFireworkDash(Player player) {
-        double multiplier = SETTINGS.getDouble("GADGETS.FIREWORK_DASH.MULTIPLIER");
-        double yBoost = SETTINGS.getDouble("GADGETS.FIREWORK_DASH.Y_BOOST");
+        double multiplier = settings().getDouble("GADGETS.FIREWORK_DASH.MULTIPLIER");
+        double yBoost = settings().getDouble("GADGETS.FIREWORK_DASH.Y_BOOST");
         player.setVelocity(player.getLocation().getDirection().normalize().multiply(multiplier).setY(yBoost));
 
         Firework firework = player.getWorld().spawn(player.getLocation(), Firework.class);
         hideEntityFromHiddenViewers(player, firework);
         FireworkMeta meta = firework.getFireworkMeta();
-        meta.setPower(Math.max(0, SETTINGS.getInt("GADGETS.FIREWORK_DASH.POWER")));
+        meta.setPower(Math.max(0, settings().getInt("GADGETS.FIREWORK_DASH.POWER")));
         firework.setFireworkMeta(meta);
         Bukkit.getScheduler().runTaskLater(Celest.get(), firework::detonate, 2L);
     }
 
     private static void useDashPad(Player player) {
-        double multiplier = SETTINGS.getDouble("GADGETS.DASH_PAD.MULTIPLIER");
-        double yBoost = SETTINGS.getDouble("GADGETS.DASH_PAD.Y_BOOST");
+        double multiplier = settings().getDouble("GADGETS.DASH_PAD.MULTIPLIER");
+        double yBoost = settings().getDouble("GADGETS.DASH_PAD.Y_BOOST");
         player.setVelocity(player.getLocation().getDirection().normalize().multiply(multiplier).setY(yBoost));
         spawnParticleToVisibleViewers(player, Particle.CLOUD, player.getLocation().add(0, 0.1, 0), 28, 0.5, 0.15, 0.5, 0.03);
         player.playSound(player.getLocation(), Sound.ENTITY_BREEZE_SHOOT, 1.0F, 1.35F);
     }
 
     private static boolean useBlink(Player player) {
-        int maxDistance = Math.max(2, SETTINGS.getInt("GADGETS.BLINK.MAX_DISTANCE"));
+        int maxDistance = Math.max(2, settings().getInt("GADGETS.BLINK.MAX_DISTANCE"));
         if (player.getTargetBlockExact(maxDistance) == null) {
             sendActionBar(player, "ACTIONBAR.GADGET_INVALID_TARGET", Map.of());
             return false;
@@ -424,10 +430,10 @@ public final class GadgetService {
     }
 
     private static void useBoomerang(Player player) {
-        double speed = SETTINGS.getDouble("GADGETS.BOOMERANG.SPEED");
-        double returnSpeed = SETTINGS.getDouble("GADGETS.BOOMERANG.RETURN_SPEED");
-        int returnTicks = Math.max(4, SETTINGS.getInt("GADGETS.BOOMERANG.RETURN_AFTER_TICKS"));
-        int removeTicks = Math.max(returnTicks + 2, SETTINGS.getInt("GADGETS.BOOMERANG.REMOVE_AFTER_TICKS"));
+        double speed = settings().getDouble("GADGETS.BOOMERANG.SPEED");
+        double returnSpeed = settings().getDouble("GADGETS.BOOMERANG.RETURN_SPEED");
+        int returnTicks = Math.max(4, settings().getInt("GADGETS.BOOMERANG.RETURN_AFTER_TICKS"));
+        int removeTicks = Math.max(returnTicks + 2, settings().getInt("GADGETS.BOOMERANG.REMOVE_AFTER_TICKS"));
 
         Snowball boomerang = player.launchProjectile(Snowball.class);
         hideEntityFromHiddenViewers(player, boomerang);
@@ -447,7 +453,7 @@ public final class GadgetService {
     }
 
     private static void useIceTrail(Player player) {
-        int revertSeconds = Math.max(1, SETTINGS.getInt("GADGETS.ICE_TRAIL.REVERT_SECONDS"));
+        int revertSeconds = Math.max(1, settings().getInt("GADGETS.ICE_TRAIL.REVERT_SECONDS"));
         UUID uuid = player.getUniqueId();
 
         if (isIceTrailActive(player)) {
@@ -484,8 +490,8 @@ public final class GadgetService {
     }
 
     private static void useJetpackBurst(Player player) {
-        double verticalBoost = SETTINGS.getDouble("GADGETS.JETPACK_BURST.VERTICAL_BOOST");
-        int slowFallingSeconds = Math.max(1, SETTINGS.getInt("GADGETS.JETPACK_BURST.SLOW_FALLING_SECONDS"));
+        double verticalBoost = settings().getDouble("GADGETS.JETPACK_BURST.VERTICAL_BOOST");
+        int slowFallingSeconds = Math.max(1, settings().getInt("GADGETS.JETPACK_BURST.SLOW_FALLING_SECONDS"));
         player.setVelocity(new Vector(0, verticalBoost, 0));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, slowFallingSeconds * 20, 0, false, false, true));
         spawnParticleToVisibleViewers(player, Particle.FLAME, player.getLocation().add(0, 0.2, 0), 30, 0.3, 0.1, 0.3, 0.02);
@@ -493,7 +499,7 @@ public final class GadgetService {
     }
 
     private static void useCloneDecoy(Player player) {
-        int durationSeconds = Math.max(1, SETTINGS.getInt("GADGETS.CLONE_DECOY.DURATION_SECONDS"));
+        int durationSeconds = Math.max(1, settings().getInt("GADGETS.CLONE_DECOY.DURATION_SECONDS"));
         Location spawn = player.getLocation().clone();
 
         ArmorStand decoy = player.getWorld().spawn(spawn, ArmorStand.class, stand -> {
@@ -523,8 +529,8 @@ public final class GadgetService {
     }
 
     private static void useColorBomb(Player player) {
-        int bursts = Math.max(1, SETTINGS.getInt("GADGETS.COLOR_BOMB.BURSTS"));
-        int particlesPerBurst = Math.max(12, SETTINGS.getInt("GADGETS.COLOR_BOMB.PARTICLES_PER_BURST"));
+        int bursts = Math.max(1, settings().getInt("GADGETS.COLOR_BOMB.BURSTS"));
+        int particlesPerBurst = Math.max(12, settings().getInt("GADGETS.COLOR_BOMB.PARTICLES_PER_BURST"));
         Location center = player.getLocation().add(0, 1.0, 0);
 
         for (int i = 0; i < bursts; i++) {
@@ -556,13 +562,13 @@ public final class GadgetService {
     }
 
     private static void useConfettiCannon(Player player) {
-        int tntCount = Math.max(1, SETTINGS.getInt("GADGETS.CONFETTI_CANNON.TNT_COUNT"));
-        double speed = SETTINGS.getDouble("GADGETS.CONFETTI_CANNON.SPEED");
+        int tntCount = Math.max(1, settings().getInt("GADGETS.CONFETTI_CANNON.TNT_COUNT"));
+        double speed = settings().getDouble("GADGETS.CONFETTI_CANNON.SPEED");
         Vector direction = player.getLocation().getDirection().normalize();
 
         for (int i = 0; i < tntCount; i++) {
             TNTPrimed tnt = player.getWorld().spawn(player.getEyeLocation(), TNTPrimed.class);
-            tnt.setFuseTicks(Math.max(18, SETTINGS.getInt("GADGETS.CONFETTI_CANNON.FUSE_TICKS")));
+            tnt.setFuseTicks(Math.max(18, settings().getInt("GADGETS.CONFETTI_CANNON.FUSE_TICKS")));
             tnt.setYield(0F);
             tnt.setIsIncendiary(false);
             tnt.addScoreboardTag(GADGET_ENTITY_TAG);
@@ -678,7 +684,8 @@ public final class GadgetService {
             int y = Integer.parseInt(split[2]);
             int z = Integer.parseInt(split[3]);
             sendRealBlockToVisibleViewers(player, new Location(Bukkit.getWorld(split[0]), x, y, z));
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
+            return;
         }
     }
 
@@ -728,7 +735,8 @@ public final class GadgetService {
             int y = Integer.parseInt(split[2]);
             int z = Integer.parseInt(split[3]);
             sendRealBlockToVisibleViewers(player, new Location(Bukkit.getWorld(split[0]), x, y, z));
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
+            return;
         }
     }
 
@@ -774,7 +782,7 @@ public final class GadgetService {
         if (key == null) {
             return CC.translate("&cNone");
         }
-        return GADGETS_MENU.getString("GADGETS_MENU.ITEMS." + key + ".NAME", key, true);
+        return gadgetsMenu().getString("GADGETS_MENU.ITEMS." + key + ".NAME", key, true);
     }
 
     public static boolean isSameType(String first, String second) {
@@ -792,7 +800,7 @@ public final class GadgetService {
             return true;
         }
 
-        String permission = GADGETS_MENU.getString("GADGETS_MENU.ITEMS." + key + ".PERMISSION", "", false);
+        String permission = gadgetsMenu().getString("GADGETS_MENU.ITEMS." + key + ".PERMISSION", "", false);
         return permission == null
                 || permission.isEmpty()
                 || player.hasPermission(permission)
@@ -805,7 +813,7 @@ public final class GadgetService {
             return true;
         }
         String path = "GADGETS_MENU.ITEMS." + key + ".ENABLED";
-        return !GADGETS_MENU.getConfiguration().contains(path) || GADGETS_MENU.getBoolean(path);
+        return !gadgetsMenu().getConfiguration().contains(path) || gadgetsMenu().getBoolean(path);
     }
 
     private static long getCooldownSecondsLeft(UUID uuid, String type) {
@@ -838,11 +846,11 @@ public final class GadgetService {
         }
 
         String perTypePath = "GADGETS." + normalized + ".COOLDOWN_SECONDS";
-        if (SETTINGS.getConfiguration().contains(perTypePath)) {
-            return Math.max(0L, SETTINGS.getInt(perTypePath));
+        if (settings().getConfiguration().contains(perTypePath)) {
+            return Math.max(0L, settings().getInt(perTypePath));
         }
 
-        return Math.max(0L, SETTINGS.getInt("GADGETS.COOLDOWN_SECONDS"));
+        return Math.max(0L, settings().getInt("GADGETS.COOLDOWN_SECONDS"));
     }
 
     private static String normalizeType(String type) {
@@ -856,7 +864,7 @@ public final class GadgetService {
     }
 
     private static String getSnowballVelocityPath() {
-        if (SETTINGS.getConfiguration().contains("GADGETS.SNOWBALL_VELOCITY")) {
+        if (settings().getConfiguration().contains("GADGETS.SNOWBALL_VELOCITY")) {
             return "GADGETS.SNOWBALL_VELOCITY";
         }
         return "GADGETS.ENDERBUTT_VELOCITY";

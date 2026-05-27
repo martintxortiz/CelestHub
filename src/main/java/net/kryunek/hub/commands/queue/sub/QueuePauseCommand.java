@@ -1,7 +1,6 @@
 package net.kryunek.hub.commands.queue.sub;
 
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.queue.Queue;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -23,7 +22,7 @@ public class QueuePauseCommand extends BaseCommand {
             sender.sendMessage(CC.translate("&cUsage: /queue pause <queue>"));
             return;
         }
-        Queue queue = ModuleService.getManagerModule().getQueueManager().getQueue(args[0]);
+        Queue queue = managers().getQueueManager().getQueue(args[0]);
         if (queue == null) {
             sender.sendMessage(CC.translate(queueConfig.getString("QUEUE_NOT_FOUND").replace("%queue%", args[0])));
             return;
@@ -37,6 +36,6 @@ public class QueuePauseCommand extends BaseCommand {
         queue.setPaused(!queue.isPaused());
     }
     public QueuePauseCommand() {
-        this.queueConfig = ModuleService.getFileModule().getFile("queue");
+        this.queueConfig = file("queue");
     }
 }

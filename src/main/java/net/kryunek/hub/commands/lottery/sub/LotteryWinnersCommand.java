@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.lottery.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
@@ -23,21 +22,18 @@ public class LotteryWinnersCommand extends BaseCommand {
         try {
             winners = Integer.parseInt(args[1]);
         } catch (NumberFormatException ex) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.INVALID_NUMBER", "&cType a valid positive number.", true)));
+            send(player, "LOTTERY.INVALID_NUMBER", "&cType a valid positive number.");
             return;
         }
 
         if (winners < 1) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.INVALID_NUMBER", "&cType a valid positive number.", true)));
+            send(player, "LOTTERY.INVALID_NUMBER", "&cType a valid positive number.");
             return;
         }
 
-        boolean updated = ModuleService.getManagerModule().getLotteryManager().updateWinnersCount(args[0], winners);
+        boolean updated = managers().getLotteryManager().updateWinnersCount(args[0], winners);
         if (!updated) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.NOT_FOUND", "&cLottery not found.", true)));
+            send(player, "LOTTERY.NOT_FOUND", "&cLottery not found.");
             return;
         }
 

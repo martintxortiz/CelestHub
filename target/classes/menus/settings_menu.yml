@@ -1,0 +1,132 @@
+TITLE: "&8Player Settings"
+SIZE: 36
+FILLER: false
+NAME: "%setting_name%"
+ENABLED: "&b&l  ▎ &a"
+DISABLED: "&b&l  ▎ &c"
+UNSELECTED: "&b&l  ▏ &7"
+NO_PERMISSION: "&cRequires &aVIP"
+TOGGLE: "&bClick to interact!"
+
+SETTINGS:
+  TOGGLE_SCOREBOARD:
+    ENABLED: true
+    NAME: "&bScoreboard"
+    SLOT: 10
+    ICON: PAINTING
+    LORE:
+      - "&7If enabled, you will be"
+      - "&7able to see the scoreboard."
+      - " "
+    SETTING_ENABLED: "Enabled"
+    SETTING_DISABLED: "Disabled"
+  FLY_JOIN:
+    ENABLED: true
+    NAME: "&bFly"
+    SLOT: 12
+    ICON: FEATHER
+    LORE:
+      - "&7If enabled, you will be"
+      - "&7able to fly on the hub."
+      - " "
+    SETTING_ENABLED: "Enabled"
+    SETTING_DISABLED: "Disabled"
+  TOGGLE_TABLIST:
+    ENABLED: true
+    NAME: "&bTablist"
+    SLOT: 11
+    ICON: BOOK
+    LORE:
+      - "&7If enabled, you will be"
+      - "&7able to see the custom tablist."
+      - " "
+    SETTING_ENABLED: "Enabled"
+    SETTING_DISABLED: "Disabled"
+  BUILD_MODE:
+    ENABLED: true
+    NAME: "&9Build Mode"
+    SLOT: 22
+    ICON: DIAMOND_PICKAXE
+    LORE:
+      - "&7If enabled, you will be"
+      - "&7able to build/break blocks."
+      - " "
+    SETTING_ENABLED: "Enabled"
+    SETTING_DISABLED: "Disabled"
+
+  PARTICLES:
+    ENABLED: true
+    NAME: "&eParticles"
+    SLOT: 14
+    ICON: HONEYCOMB
+    LORE:
+      - "&7Click to open Particles Menu"
+      - " "
+
+  OUTFIT:
+    ENABLED: true
+    NAME: "&eOutfit"
+    SLOT: 15
+    ICON: LEATHER_CHESTPLATE
+    LORE:
+      - "&7Click to open Outfit Menu"
+      - " "
+  GADGETS:
+    ENABLED: true
+    NAME: "&eGadgets"
+    SLOT: 13
+    ICON: ARMOR_STAND
+    LORE:
+      - "&7Click to open Gadgets Menu"
+      - " "
+  TIME_PREFERENCE:
+    ENABLED: true
+    NAME: "&bDaylight Mode"
+    SLOT: 21
+    ICON: CLOCK
+    LORE:
+      - "&7Choose your personal hub time."
+      - "&7Only affects your own view."
+      - " "
+    SETTING_DAY: "Day"
+    SETTING_SUNSET: "Sunset"
+    SETTING_NIGHT: "Night"
+    SETTING_MIDNIGHT: "Midnight"
+  JUKEBOX:
+    ENABLED: true
+    NAME: "&dJukebox"
+    SLOT: 16
+    ICON: JUKEBOX
+    LORE:
+      - "&7Right click to open music menu."
+      - "&7Left click to toggle on/off."
+      - " "
+    SETTING_ENABLED: "Enabled"
+    SETTING_DISABLED: "Disabled"
+  PVP_ARENA_KIT:
+    ENABLED: true
+    NAME: "&cPvP Kit"
+    SLOT: 23
+    ICON: DIAMOND_SWORD
+    LORE:
+      - "&7Edit your PvP arena kit."
+      - "&7Left-click to open editor."
+      - " "
+    EDITOR_TITLE: "&8PvP Kit Editor"
+
+settings:
+  fly-enabled: "&aFly mode enabled."
+  fly-disabled: "&cFly mode disabled."
+  buildmode-enabled: "&aBuildMode mode enabled."
+  buildmode-disabled: "&cBuildMode mode disabled."
+  scoreboard-enabled: "&aScoreboard enabled."
+  scoreboard-disabled: "&cScoreboard disabled."
+  tablist-enabled: "&aTablist enabled."
+  tablist-disabled: "&cTablist disabled."
+  jukebox-enabled: "&aJukebox enabled."
+  jukebox-disabled: "&cJukebox disabled."
+  time-preference-updated: "&aTime mode updated to %state%&a."
+  no-permission: "&cNo permission."
+  pvp-kit-saved: "&aPvP kit saved."
+  pvp-kit-default-loaded: "&eLoaded default PvP kit."
+  pvp-kit-cleared: "&cPvP kit cleared."

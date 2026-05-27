@@ -4,6 +4,7 @@ import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
+import net.kryunek.hub.support.config.ConfigSupport;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.PvpArenaUtil;
 import org.bukkit.*;
@@ -18,16 +19,19 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class DoubleJumpListener implements Listener {
 
     private final ProfileManager profileManager;
+    private final Logger logger;
     private FileConfig settingsConfig;
     private final Set<UUID> jumped = new HashSet<>();
 
     public DoubleJumpListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
+        this.logger = hub.getLogger();
         this.settingsConfig = ModuleService.getFileModule().getFile("settings");
     }
 
@@ -71,9 +75,8 @@ public class DoubleJumpListener implements Listener {
             );
 
             // 🎇 PARTÍCULAS MODERNAS
-            Particle particle = Particle.valueOf(
-                    settingsConfig.getString("DOUBLE_JUMP.PARTICLE")
-            );
+            Particle particle = ConfigSupport.getParticle(settingsConfig.getConfiguration(),
+                    "DOUBLE_JUMP.PARTICLE", Particle.CLOUD, logger);
 
             for (Player viewer : player.getWorld().getPlayers()) {
                 if (viewer.equals(player) || viewer.canSee(player)) {
@@ -88,9 +91,11 @@ public class DoubleJumpListener implements Listener {
             }
 
             // 🔊 SONIDO
+            Sound sound = ConfigSupport.getSound(settingsConfig.getConfiguration(),
+                    "DOUBLE_JUMP.SOUND", Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, logger);
             player.playSound(
                     player.getLocation(),
-                    Sound.valueOf(settingsConfig.getString("DOUBLE_JUMP.SOUND")),
+                    sound,
                     (float) settingsConfig.getDouble("DOUBLE_JUMP.VOLUME"),
                     (float) settingsConfig.getDouble("DOUBLE_JUMP.PITCH")
 
@@ -173,21 +178,14 @@ public class DoubleJumpListener implements Listener {
         double y = settingsConfig.getConfiguration().getDouble("DOUBLE_JUMP.SHIFT_BOOST.SET-Y", 0.35D);
         player.setVelocity(player.getLocation().getDirection().normalize().multiply(multiply).setY(y));
 
-        String particleName = settingsConfig.getConfiguration().getString("DOUBLE_JUMP.SHIFT_BOOST.PARTICLE", "CLOUD");
-        Particle particle = Particle.CLOUD;
-        try {
-            particle = Particle.valueOf(particleName.toUpperCase());
-        } catch (IllegalArgumentException ignored) {
-        }
+        Particle particle = ConfigSupport.getParticle(settingsConfig.getConfiguration(),
+                "DOUBLE_JUMP.SHIFT_BOOST.PARTICLE", Particle.CLOUD, logger);
         player.getWorld().spawnParticle(particle, player.getLocation(), 20, 0.25, 0.25, 0.25, 0.1);
 
-        String soundName = settingsConfig.getConfiguration().getString("DOUBLE_JUMP.SHIFT_BOOST.SOUND", "ENTITY_FIREWORK_ROCKET_LAUNCH");
         float volume = (float) settingsConfig.getConfiguration().getDouble("DOUBLE_JUMP.SHIFT_BOOST.VOLUME", 1.0D);
         float pitch = (float) settingsConfig.getConfiguration().getDouble("DOUBLE_JUMP.SHIFT_BOOST.PITCH", 1.2D);
-        try {
-            Sound sound = Sound.valueOf(soundName.toUpperCase());
-            player.playSound(player.getLocation(), sound, volume, pitch);
-        } catch (IllegalArgumentException ignored) {
-        }
+        Sound sound = ConfigSupport.getSound(settingsConfig.getConfiguration(),
+                "DOUBLE_JUMP.SHIFT_BOOST.SOUND", Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, logger);
+        player.playSound(player.getLocation(), sound, volume, pitch);
     }
 }

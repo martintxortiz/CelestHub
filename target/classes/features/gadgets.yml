@@ -1,0 +1,234 @@
+GADGETS:
+  COOLDOWN_SECONDS: 2
+  SNOWBALL_VELOCITY:
+    BOOST: 0.35
+    MULTIPLIER: 2.0
+  ENDERBUTT_RIDEABLE:
+    BOOST: 1.0
+    MULTIPLIER: 2.0
+    PROJECTILE: "ENDER_PEARL"
+  GRAPPLING_HOOK:
+    MAX_DISTANCE: 30
+    STRENGTH: 2.0
+    Y_BOOST: 0.8
+  LEAP_BOOST:
+    MULTIPLIER: 1.8
+    Y_BOOST: 1.0
+  RAINBOW_TRAIL:
+    REVERT_SECONDS: 3
+  FIREWORK_DASH:
+    MULTIPLIER: 2.2
+    Y_BOOST: 1.0
+    POWER: 1
+  DASH_PAD:
+    MULTIPLIER: 2.3
+    Y_BOOST: 0.95
+    COOLDOWN_SECONDS: 2
+  BLINK:
+    MAX_DISTANCE: 8
+    COOLDOWN_SECONDS: 4
+  BOOMERANG:
+    SPEED: 1.9
+    RETURN_SPEED: 2.2
+    RETURN_AFTER_TICKS: 10
+    REMOVE_AFTER_TICKS: 24
+    COOLDOWN_SECONDS: 3
+  ICE_TRAIL:
+    REVERT_SECONDS: 3
+  JETPACK_BURST:
+    VERTICAL_BOOST: 1.15
+    SLOW_FALLING_SECONDS: 4
+    COOLDOWN_SECONDS: 6
+  CLONE_DECOY:
+    DURATION_SECONDS: 8
+    COOLDOWN_SECONDS: 10
+  COLOR_BOMB:
+    BURSTS: 3
+    PARTICLES_PER_BURST: 22
+    COOLDOWN_SECONDS: 2
+  PORTAL_JUMP:
+    COOLDOWN_SECONDS: 2
+  CONFETTI_CANNON:
+    TNT_COUNT: 3
+    FUSE_TICKS: 26
+    SPEED: 1.6
+    COOLDOWN_SECONDS: 2
+
+GADGETS_MENU:
+  TITLE: "&8Gadgets"
+  SIZE: 36
+  FILLER: false
+  CLICK_TO_SELECT_LORE: "&eClick to select"
+  SELECTED_LORE: "&aSelected"
+  CLOSE:
+    SLOT: 32
+  DISABLE:
+    ENABLED: true
+    SLOT: 31
+    MATERIAL: "BRUSH"
+    DATA: 0
+    NAME: "&c&lRemove Gadget"
+    LORE:
+      - "&7&m------------------------------"
+      - "&7Click to remove your"
+      - "&7currently selected gadget."
+      - ""
+      - "&fSelected Gadget: &b%active_gadget%"
+      - "&7&m------------------------------"
+  NO_PERMISSION_ITEM:
+    MATERIAL: "RED_WOOL"
+    DATA: 0
+    NAME: "&4&l✘ &f%gadget_name% Gadget &4&l✘"
+    LORE:
+      - "&7&m------------------------------"
+      - "&cYou don't have this gadget,"
+      - "&cpurchase at celest.net"
+      - "&7&m------------------------------"
+  ITEMS:
+    snowball_velocity:
+      SLOT: 10
+      TYPE: "SNOWBALL_VELOCITY"
+      PERMISSION: "celest.gadget.snowball_velocity"
+      MATERIAL: "SNOWBALL"
+      DATA: 0
+      NAME: "&bSnowball Velocity"
+      LORE:
+        - "&7Forward dash with snowball visual."
+    enderbutt_rideable:
+      SLOT: 11
+      TYPE: "ENDERBUTT_RIDEABLE"
+      PERMISSION: "celest.gadget.enderbutt_rideable"
+      MATERIAL: "ENDER_PEARL"
+      DATA: 0
+      NAME: "&dEnderButt Rideable"
+      LORE:
+        - "&7Ride a projectile."
+    grappling_hook:
+      SLOT: 12
+      TYPE: "GRAPPLING_HOOK"
+      PERMISSION: "celest.gadget.grappling_hook"
+      MATERIAL: "FISHING_ROD"
+      DATA: 0
+      NAME: "&aGrappling Hook"
+      LORE:
+        - "&7Pull yourself to a block."
+    leap_boost:
+      SLOT: 13
+      TYPE: "LEAP_BOOST"
+      PERMISSION: "celest.gadget.leap_boost"
+      MATERIAL: "RABBIT_FOOT"
+      DATA: 0
+      NAME: "&eLeap Boost"
+      LORE:
+        - "&7Quick forward jump."
+    rainbow_trail:
+      SLOT: 14
+      TYPE: "RAINBOW_TRAIL"
+      PERMISSION: "celest.gadget.rainbow_trail"
+      MATERIAL: "GLASS"
+      DATA: 0
+      NAME: "&dRainbow Trail"
+      LORE:
+        - "&7Blocks below you become rainbow glass."
+    firework_dash:
+      SLOT: 15
+      TYPE: "FIREWORK_DASH"
+      PERMISSION: "celest.gadget.firework_dash"
+      MATERIAL: "FIREWORK_ROCKET"
+      DATA: 0
+      NAME: "&bFirework Dash"
+      LORE:
+        - "&7Dash forward with a firework burst."
+    dash_pad:
+      SLOT: 16
+      TYPE: "DASH_PAD"
+      PERMISSION: "celest.gadget.dash_pad"
+      MATERIAL: "WIND_CHARGE"
+      DATA: 0
+      NAME: "&fDash Pad"
+      LORE:
+        - "&7Instant wind dash in front."
+    blink:
+      SLOT: 19
+      TYPE: "BLINK"
+      PERMISSION: "celest.gadget.blink"
+      MATERIAL: "CHORUS_FRUIT"
+      DATA: 0
+      NAME: "&5Blink"
+      LORE:
+        - "&7Short teleport to target block."
+    boomerang:
+      SLOT: 20
+      TYPE: "BOOMERANG"
+      PERMISSION: "celest.gadget.boomerang"
+      MATERIAL: "TRIDENT"
+      DATA: 0
+      NAME: "&6Boomerang"
+      LORE:
+        - "&7Throw and call it back."
+    ice_trail:
+      SLOT: 22
+      TYPE: "ICE_TRAIL"
+      PERMISSION: "celest.gadget.ice_trail"
+      MATERIAL: "PACKED_ICE"
+      DATA: 0
+      NAME: "&bIce Trail"
+      LORE:
+        - "&7Temporary ice trail while moving."
+    jetpack_burst:
+      SLOT: 23
+      TYPE: "JETPACK_BURST"
+      PERMISSION: "celest.gadget.jetpack_burst"
+      MATERIAL: "BLAZE_POWDER"
+      DATA: 0
+      NAME: "&6Jetpack Burst"
+      LORE:
+        - "&7Vertical launch with slow falling."
+    clone_decoy:
+      SLOT: 24
+      TYPE: "CLONE_DECOY"
+      PERMISSION: "celest.gadget.clone_decoy"
+      MATERIAL: "PLAYER_HEAD"
+      DATA: 0
+      NAME: "&dClone Decoy"
+      LORE:
+        - "&7Spawn a temporary fake clone."
+    color_bomb:
+      SLOT: 25
+      TYPE: "COLOR_BOMB"
+      PERMISSION: "celest.gadget.color_bomb"
+      MATERIAL: "FIREWORK_STAR"
+      DATA: 0
+      NAME: "&cColor Bomb"
+      LORE:
+        - "&7Burst of colorful particles."
+    portal_jump:
+      SLOT: 21
+      TYPE: "PORTAL_JUMP"
+      PERMISSION: "celest.gadget.portal_jump"
+      MATERIAL: "END_PORTAL_FRAME"
+      PORTAL_SET_MATERIAL: "RESPAWN_ANCHOR"
+      DATA: 0
+      NAME: "&5Portal Jump"
+      PORTAL_SET_NAME: "&5Portal Jump &a[SET]"
+      LORE:
+        - "&7Set a point, use again to jump back."
+      PORTAL_SET_LORE:
+        - "&aPoint saved."
+        - "&7Use again to teleport."
+    confetti_cannon:
+      SLOT: 31
+      TYPE: "CONFETTI_CANNON"
+      PERMISSION: "celest.gadget.confetti_cannon"
+      MATERIAL: "TNT"
+      DATA: 0
+      NAME: "&dConfetti Cannon"
+      LORE:
+        - "&7Launch real TNT projectiles."
+
+messages:
+  selected: "&aSelected gadget: &f%gadget%"
+  disabled: "&cGadget disabled."
+  rainbow-enabled: "&aRainbow Trail enabled."
+  rainbow-disabled: "&cRainbow Trail disabled."
+  no-permission: "&cNo permission for this gadget."

@@ -81,7 +81,7 @@ public class GadgetButton extends Button {
 
         GadgetService.deactivatePersistentEffects(player);
         profile.setSelectedGadgetType(type.toUpperCase());
-        profile.save(false, true);
+        ModuleService.getManagerModule().getProfileManager().saveProfile(profile, true);
         ModuleService.getManagerModule().getHotbarManager().setHotbar(player);
         playSuccess(player);
         player.sendMessage(CC.translate(gadgetsMenu.getString("messages.selected", "&aSelected gadget: &f%gadget%", true)

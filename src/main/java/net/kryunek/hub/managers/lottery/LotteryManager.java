@@ -120,7 +120,8 @@ public class LotteryManager {
             for (String rawUuid : lotteryConfig.getConfiguration().getStringList(base + ".PARTICIPANTS")) {
                 try {
                     lottery.addParticipant(UUID.fromString(rawUuid));
-                } catch (IllegalArgumentException ignored) {
+                } catch (IllegalArgumentException ex) {
+                    Bukkit.getLogger().warning("[Celest] Ignoring invalid lottery participant UUID for " + key + ": " + rawUuid);
                     changed = true;
                 }
             }
@@ -315,6 +316,17 @@ public class LotteryManager {
                 sendJoinBroadcast(lottery, "LOTTERY.BROADCAST.REMINDER_LINES");
             }
         }, intervalSeconds * 20L, intervalSeconds * 20L);
+    }
+
+    public void shutdown() {
+        if (tickerTask != null) {
+            tickerTask.cancel();
+            tickerTask = null;
+        }
+        if (reminderTask != null) {
+            reminderTask.cancel();
+            reminderTask = null;
+        }
     }
 
     public int getReminderIntervalSeconds() {

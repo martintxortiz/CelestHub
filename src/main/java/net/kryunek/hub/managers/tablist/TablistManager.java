@@ -249,7 +249,8 @@ public class TablistManager {
             rango = valorSeguro(gestorRangos.getName(jugador.getUniqueId()));
             prefijo = valorSeguro(gestorRangos.getPrefix(jugador.getUniqueId()));
             sufijo = valorSeguro(gestorRangos.getSuffix(jugador.getUniqueId()));
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            Bukkit.getLogger().fine("[Celest] Failed to resolve rank placeholders for " + jugador.getName() + ": " + ex.getMessage());
         }
 
         if (limpiarResetMeta) {
@@ -338,8 +339,7 @@ public class TablistManager {
     }
 
     private String obtenerTexto(String ruta, String defecto) {
-        String texto = configuracion.getString(ruta);
-        return texto == null ? defecto : texto;
+        return configuracion.getString(ruta, defecto, true);
     }
 
     private List<String> obtenerLista(String ruta) {

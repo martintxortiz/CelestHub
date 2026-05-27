@@ -1,0 +1,25 @@
+SERVER_SELECTOR:
+  TITLE: "&7Server Selector"
+  SIZE: 27
+  ITEMS:
+    survival:
+      NAME: "&b&lSurvival &7| &f%queue% queueing"
+      ITEM: "DRAGON_HEAD"
+      DATA: 0
+      SLOT: 13
+      LORE:
+        - "&7&m------------------------------"
+        - ""
+        - "&bSurvival &7contains new"
+        - "&7different members!"
+        - ""
+        - "&7Status: %status%"
+        - "&7Queue Status: %queue_status%"
+        - "%TIMER%"
+        - ""
+        - "&7Click to join &bSurvival &7(%players%)"
+        - "&7&m------------------------------"
+      SERVER: "survival"
+      DECORATIVE: false
+      COMMAND: ""
+

@@ -1,0 +1,36 @@
+LICENSE: ""
+
+TIME:
+  ZONE: "Europe/Madrid"
+  DATE: "dd/MM/yyyy"
+  HOUR: "HH:mm:ss"
+
+SERVER:
+  survival:
+    PORT: 999
+    IP: localhost
+  hub1:
+    PORT: 666
+    IP: localhost
+  hub2:
+    PORT: 777
+    IP: localhost
+
+RANK:
+  SYSTEM: "AUTO"
+
+NETWORK_SYNC:
+  ENABLED: true
+  REDIS:
+    HOST: "127.0.0.1"
+    PORT: 6379
+    PASSWORD: ""
+    TIMEOUT_MS: 2000
+
+PERSISTENCE:
+  ENABLED: true
+  TYPE: "MONGO" # LOCAL or MONGO
+  MONGO:
+    URI: "mongodb://127.0.0.1:27017"
+    DATABASE: "celesthub"
+    COLLECTION: "profiles"

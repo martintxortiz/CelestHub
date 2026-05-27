@@ -90,7 +90,8 @@ public class IRankManager {
                 if (api != null) {
                     api.getGroupManager().getLoadedGroups().forEach(group -> ranks.add(group.getName()));
                 }
-            } catch (Throwable ignored) {
+            } catch (Throwable ex) {
+                Bukkit.getLogger().fine("[Celest] Failed to read LuckPerms groups: " + ex.getMessage());
             }
         }
 

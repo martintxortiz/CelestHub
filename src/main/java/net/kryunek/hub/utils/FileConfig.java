@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 
 
@@ -69,18 +70,19 @@ public class FileConfig {
     }
 
     public String getString(String path) {
-        if (configuration.contains(path)) {
-            return ChatColor.translateAlternateColorCodes('&', configuration.getString(path));
-        }
-        return null;
+        return getString(path, "", true);
     }
 
     public String getString(String path, String callback, boolean colorize) {
         if (configuration.contains(path)) {
+            String value = configuration.getString(path);
+            if (value == null) {
+                return callback;
+            }
             if (colorize) {
-                return ChatColor.translateAlternateColorCodes('&', configuration.getString(path));
+                return ChatColor.translateAlternateColorCodes('&', value);
             } else {
-                return configuration.getString(path);
+                return value;
             }
         }
         return callback;
@@ -126,8 +128,7 @@ public class FileConfig {
             this.configuration.save(this.file);
         }
         catch (IOException e) {
-            Bukkit.getLogger().severe("Could not save config file " + this.file.toString());
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Could not save config file " + this.file, e);
         }
     }
 

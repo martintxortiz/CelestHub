@@ -102,5 +102,30 @@ public class ManagerModule extends Module {
         return collection;
     }
 
+    public void shutdown() {
+        if (permissionAuditService != null) {
+            permissionAuditService.shutdown();
+        }
+        if (timerManager != null) {
+            timerManager.shutdown();
+        }
+        if (lotteryManager != null) {
+            lotteryManager.shutdown();
+        }
+        if (queueManager != null) {
+            queueManager.shutdown();
+        }
+        if (jukeboxManager != null) {
+            jukeboxManager.shutdown();
+        }
+        if (networkSyncManager != null) {
+            networkSyncManager.shutdown();
+        }
+        if (profileManager != null) {
+            profileManager.save();
+            profileManager.shutdown();
+        }
+    }
+
     
 }

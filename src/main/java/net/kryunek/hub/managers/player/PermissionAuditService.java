@@ -9,11 +9,13 @@ import net.kryunek.hub.utils.TaskUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PermissionAuditService {
 
     private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
     private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private BukkitTask task;
 
     public void start() {
         if (!settings.getConfiguration().contains("PERMISSION_AUDIT.ENABLED")) {
@@ -27,7 +29,14 @@ public class PermissionAuditService {
         }
 
         int intervalSeconds = Math.max(5, settings.getInt("PERMISSION_AUDIT.INTERVAL_SECONDS"));
-        TaskUtil.runSyncTimer(this::runAuditTick, intervalSeconds * 20L, intervalSeconds * 20L);
+        this.task = TaskUtil.runSyncTimer(this::runAuditTick, intervalSeconds * 20L, intervalSeconds * 20L);
+    }
+
+    public void shutdown() {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
     }
 
     private void runAuditTick() {
@@ -95,7 +104,7 @@ public class PermissionAuditService {
             }
 
             if (changed) {
-                profile.save(false, false);
+                ModuleService.getManagerModule().getProfileManager().saveProfile(profile, false);
             }
         }
     }

@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.FileConfig;
+import org.bukkit.Bukkit;
 import org.bson.Document;
 
 import java.util.HashMap;
@@ -87,7 +88,8 @@ public class MongoProfileStorage implements ProfileStorage {
                 data.setFirstJoinAt(firstJoin == null ? System.currentTimeMillis() : firstJoin);
                 data.setTimePreference(document.getString("time_preference") == null ? "SERVER" : document.getString("time_preference"));
                 result.put(uuid, data);
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException ex) {
+                Bukkit.getLogger().warning("[Celest] Ignoring Mongo profile with invalid UUID: " + id);
             }
         }
         return result;

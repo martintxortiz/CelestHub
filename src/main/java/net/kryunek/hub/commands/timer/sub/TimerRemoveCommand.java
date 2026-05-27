@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.timer.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.timer.TimerManager;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
@@ -24,7 +23,7 @@ public class TimerRemoveCommand extends BaseCommand {
 
         String queueName = args[0];
 
-        TimerManager timerManager = ModuleService.getManagerModule().getTimerManager();
+        TimerManager timerManager = managers().getTimerManager();
         if (!timerManager.deleteTimerInternal(queueName)) {
             player.sendMessage(CC.translate("&cNo active timer for &4" + queueName));
             return;

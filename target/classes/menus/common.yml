@@ -1,0 +1,44 @@
+BACK:
+  MATERIAL: "ARROW"
+  DATA: 0
+  NAME: "&a&lGo Back"
+  LORE:
+    - "&7Click here to return"
+    - "&7to the previous menu."
+
+CLOSE:
+  MATERIAL: "RED_DYE"
+  DATA: 0
+  NAME: "&cClose"
+  LORE:
+    - "&cClick here to close"
+    - "&cthe current menu."
+
+PAGE_INFO:
+  MATERIAL: "BOOK"
+  NAME: "&cPage Info"
+  LORE: "&f%current%&c/&f%total%"
+
+PAGE_BUTTON:
+  MATERIAL: "IRON_NUGGET"
+  DATA: 7
+  NEXT_MATERIAL: "GREEN_CARPET"
+  NEXT_DATA: 0
+  PREVIOUS_MATERIAL: "RED_CARPET"
+  PREVIOUS_DATA: 0
+  LAST_MATERIAL: "GRAY_CARPET"
+  LAST_DATA: 0
+  FIRST_MATERIAL: "GRAY_CARPET"
+  FIRST_DATA: 0
+  NEXT_NAME: "&aNext page"
+  PREVIOUS_NAME: "&cPrevious page"
+  LAST_NAME: "&7Last page"
+  FIRST_NAME: "&7First page"
+
+JUMP_TO_PAGE:
+  DEFAULT_MATERIAL: "BOOK"
+  CURRENT_MATERIAL: "ENCHANTED_BOOK"
+  NAME: "&cPage %page%"
+  CURRENT_LORE:
+    - ""
+    - "&aCurrent page"

@@ -1,0 +1,21 @@
+LOTTERY:
+  DEFAULT_WINNERS: 1
+  BROADCAST_REMINDER_SECONDS: 45
+  JOIN_ITEM:
+    ENABLED: true
+    MATERIAL: "PAPER"
+    NAME: "&d&lLOTTERY TICKET &7(Right Click)"
+    LORE:
+      - "&7A lottery is active right now."
+      - "&eRight click to join instantly."
+    SLOT: 7
+    AMOUNT: 1
+  LIST:
+    launch:
+      DURATION_SECONDS: 180
+      WINNERS: 1
+      ACTIVE: false
+      END_AT: 0
+      PARTICIPANTS: []
+      REWARDS:
+        - "COMMAND:give %player% diamond 1"

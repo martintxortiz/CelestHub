@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.lottery.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
@@ -19,15 +18,12 @@ public class LotteryEndCommand extends BaseCommand {
             return;
         }
 
-        boolean ended = ModuleService.getManagerModule().getLotteryManager().endLottery(args[0], player.getName());
+        boolean ended = managers().getLotteryManager().endLottery(args[0], player.getName());
         if (!ended) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.END_FAILED", "&cCould not finish that lottery.", true)));
+            send(player, "LOTTERY.END_FAILED", "&cCould not finish that lottery.");
             return;
         }
 
-        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                .getString("LOTTERY.ENDED", "&eLottery ended: &f%lottery%", true)
-                .replace("%lottery%", args[0])));
+        send(player, "LOTTERY.ENDED", "&eLottery ended: &f%lottery%", "%lottery%", args[0]);
     }
 }

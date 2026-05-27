@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.lottery.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
@@ -19,15 +18,12 @@ public class LotteryStartCommand extends BaseCommand {
             return;
         }
 
-        boolean started = ModuleService.getManagerModule().getLotteryManager().startLottery(args[0], player);
+        boolean started = managers().getLotteryManager().startLottery(args[0], player);
         if (!started) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.START_FAILED", "&cCould not start that lottery.", true)));
+            send(player, "LOTTERY.START_FAILED", "&cCould not start that lottery.");
             return;
         }
 
-        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                .getString("LOTTERY.STARTED", "&aLottery started: &f%lottery%", true)
-                .replace("%lottery%", args[0])));
+        send(player, "LOTTERY.STARTED", "&aLottery started: &f%lottery%", "%lottery%", args[0]);
     }
 }

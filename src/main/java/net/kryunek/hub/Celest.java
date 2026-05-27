@@ -2,7 +2,7 @@ package net.kryunek.hub;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.app.CelestApplication;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -10,15 +10,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Celest extends JavaPlugin {
 
     private boolean isServerLoaded;
+    private CelestApplication application;
 
     @Override
     public void onEnable() {
-        ModuleService.enable(this);
+        this.application = new CelestApplication(this);
+        this.application.enable();
     }
 
     @Override
     public void onDisable() {
-        ModuleService.disable(this);
+        if (this.application != null) {
+            this.application.disable();
+            this.application = null;
+        }
     }
 
     public static Celest get() {

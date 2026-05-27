@@ -1,7 +1,8 @@
 package net.kryunek.hub.utils.command;
 
 import net.kryunek.hub.managers.module.ModuleService;
-import net.kryunek.hub.utils.CC;
+import net.kryunek.hub.support.message.MessageKey;
+import net.kryunek.hub.support.message.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
@@ -24,12 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 public class CommandManager implements CommandExecutor {
 
     private final Map<String, Entry<Method, Object>> commandMap = new HashMap<>();
     private final JavaPlugin plugin;
     private final List<String> disabledCommands;
+    private final Messages messages;
     public static CommandManager instance;
 
     private CommandMap map;
@@ -42,6 +45,7 @@ public class CommandManager implements CommandExecutor {
         instance = this;
         this.plugin = plugin;
         this.disabledCommands = disabledCommands;
+        this.messages = Messages.from(ModuleService.getFileModule().getFile("messages"), plugin.getLogger());
 
         if (plugin.getServer().getPluginManager() instanceof SimplePluginManager manager) {
             try {
@@ -49,7 +53,7 @@ public class CommandManager implements CommandExecutor {
                 field.setAccessible(true);
                 map = (CommandMap) field.get(manager);
             } catch (IllegalArgumentException | SecurityException | NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, "Unable to access Bukkit command map.", e);
             }
         }
     }
@@ -73,18 +77,18 @@ public class CommandManager implements CommandExecutor {
                 Command command = method.getAnnotation(Command.class);
 
                 if (!command.permission().isEmpty() && !sender.hasPermission(command.permission())) {
-                    sender.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("COMMAND.NO_PERMISSION")));
+                    messages.send(sender, MessageKey.COMMAND_NO_PERMISSION);
                     return true;
                 }
                 if (command.inGameOnly() && !(sender instanceof Player)) {
-                    sender.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("COMMAND.IN_GAME_ONLY")));
+                    messages.send(sender, MessageKey.COMMAND_IN_GAME_ONLY);
                     return true;
                 }
 
                 try {
                     method.invoke(methodObject, new CommandArgs(sender, cmd, label, args, cmdLabel.split("\\.").length - 1));
                 } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    plugin.getLogger().log(Level.SEVERE, "Unable to execute command '" + cmdLabel + "'.", e);
                 }
                 return true;
             }
@@ -98,7 +102,7 @@ public class CommandManager implements CommandExecutor {
                 Command command = m.getAnnotation(Command.class);
 
                 if (m.getParameterTypes().length > 1 || m.getParameterTypes()[0] != CommandArgs.class) {
-                    System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
+                    plugin.getLogger().warning("Unable to register command " + m.getName() + ". Unexpected method arguments.");
                     continue;
                 }
 

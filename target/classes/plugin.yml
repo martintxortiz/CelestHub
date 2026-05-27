@@ -1,0 +1,6 @@
+name: Celest
+version: '1.0-SNAPSHOT'
+main: net.kryunek.hub.Celest
+api-version: '1.21'
+authors: [ kryunek ]
+softdepend: [ LuckPerms ]

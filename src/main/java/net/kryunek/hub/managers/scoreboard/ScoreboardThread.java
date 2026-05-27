@@ -2,14 +2,18 @@ package net.kryunek.hub.managers.scoreboard;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Objective;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
-public class ScoreboardThread extends Thread {
+public class ScoreboardThread {
 
     private final Scoreboard assemble;
+    private BukkitTask task;
+    private long elapsedTicks;
 
     /**
      * Scoreboard Thread.
@@ -18,18 +22,28 @@ public class ScoreboardThread extends Thread {
      */
     ScoreboardThread(Scoreboard assemble) {
         this.assemble = assemble;
-        this.start();
+        this.task = assemble.getPlugin().getServer().getScheduler()
+                .runTaskTimer(assemble.getPlugin(), this::runScheduledTick, 1L, 1L);
     }
 
-    @Override
-    public void run() {
-        while(true) {
-            try {
-                tick();
-                sleep(assemble.getTicks() * 50);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void stop() {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
+    private void runScheduledTick() {
+        elapsedTicks++;
+        if (elapsedTicks < Math.max(1L, assemble.getTicks())) {
+            return;
+        }
+        elapsedTicks = 0L;
+
+        try {
+            tick();
+        } catch (Exception e) {
+            assemble.getPlugin().getLogger().log(Level.SEVERE, "There was an error updating scoreboards.", e);
         }
     }
 
@@ -117,7 +131,6 @@ public class ScoreboardThread extends Thread {
                     player.setScoreboard(scoreboard);
                 }
             } catch(Exception e) {
-                e.printStackTrace();
                 throw new ScoreboardException("There was an error updating " + player.getName() + "'s scoreboard.");
             }
         }

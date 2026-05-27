@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Time {
-    private static final SimpleDateFormat timeDate = new SimpleDateFormat(ModuleService.getFileModule().getFile("config").getString("TIME.DATE"));
-    private static final SimpleDateFormat timeHour = new SimpleDateFormat(ModuleService.getFileModule().getFile("config").getString("TIME.HOUR"));
     public static DecimalFormat getDecimalFormat() {
         return new DecimalFormat("0.0");
     }
@@ -42,11 +40,15 @@ public class Time {
 
     }
     public static String getDate() {
+        SimpleDateFormat timeDate = new SimpleDateFormat(ModuleService.getFileModule().getFile("config")
+                .getString("TIME.DATE", "yyyy-MM-dd", false));
         timeDate.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile("config").getString("TIME.ZONE")));
         return timeDate.format(new Date());
     }
 
     public static String getHour() {
+        SimpleDateFormat timeHour = new SimpleDateFormat(ModuleService.getFileModule().getFile("config")
+                .getString("TIME.HOUR", "HH:mm", false));
         timeHour.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile("config").getString("TIME.ZONE")));
         return timeHour.format(new Date());
     }

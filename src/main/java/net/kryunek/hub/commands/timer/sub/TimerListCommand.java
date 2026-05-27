@@ -1,7 +1,6 @@
 package net.kryunek.hub.commands.timer.sub;
 
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.timer.Timer;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
@@ -19,7 +18,7 @@ public class TimerListCommand extends BaseCommand {
 
         Player player = cmdArgs.getPlayer();
 
-        List<Timer> timers = ModuleService.getManagerModule()
+        List<Timer> timers = managers()
                 .getTimerManager()
                 .getTimers();
 

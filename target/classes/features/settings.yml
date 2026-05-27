@@ -1,0 +1,109 @@
+NO_INTERACT_BLOCKS:
+  ALL_BLOCKS: true
+  OVERRIDE_BLOCKS:
+    - ''
+  BLOCKS:
+    - ''
+
+EVENT:
+  ANTI_DAMAGE: true
+  ANTI_FOOD: true
+  ANTI_ENTITY: true
+  ANTI_PICKUP: true
+  ANTI_DROP: true
+  ANTI_PLACE: true
+  ANTI_BREAK: true
+  ANTI_EXPLODE: true
+  ANTI_MOBS: true
+  ANTI_CLICK: true
+  ALWAYS_SUNNY: true
+
+PVP_ARENA:
+  ENABLED: false
+  WORLD: "void2"
+  PERIMETER_BLOCKS:
+    ALLOW: false
+    DISAPPEAR_SECONDS: 8
+  POS1:
+    X: -6.5
+    Y: 101.0
+    Z: 101.5
+  POS2:
+    X: 7.5
+    Y: 90.0
+    Z: 88.5
+  KIT:
+    0: "DIAMOND_SWORD:1"
+    1: "COOKED_BEEF:16"
+    2: "GOLDEN_APPLE:4"
+    3: ""
+    4: ""
+    5: ""
+    6: ""
+    7: ""
+    8: ""
+  EFFECTS: []
+
+WALK_SPEED: 0.4
+
+CHAT:
+  PREFIX: "&r"
+  PAUSED: false
+  SLOW_SECONDS: 0
+  CLEAR_LINES: 120
+
+HIDE_SHOW_PLAYER:
+  ENABLED: true
+  TIME: 0
+  MESSAGE: "&cYou're still on cooldown, wait &c&l%time%s&c."
+
+JOIN_MESSAGE:
+  ENABLED: true
+  MESSAGE: "&b%player% &7join into the &fHub&7."
+
+JOIN_TITLE:
+  ENABLED: true
+  TITLE: "&fWelcome to &b&lCelest &9%player%&f!"
+  SUBTITLE: "&7&oWe are new on this!"
+  # Timing in seconds unless set to ticks, (20 ticks in 1 second)
+  SETTIMINGTOTICKS: false
+  FADEINTIME: 1
+  STAYTIME: 3
+  FADEOUTTIME: 1
+
+JOIN_CLEARCHAT:
+  ENABLED: true
+  LINES: 50
+
+JOIN_SOUND:
+  ENABLED: true
+  SOUND: 'BLOCK_AMETHYST_BLOCK_BREAK'
+  VOLUME: 1.0
+  PITCH: 1.0
+
+show-player: "&7Player visibility has been &aenable&7."
+hide-player: "&7Player visibility has been &cdisable&7."
+
+DOUBLE_JUMP:
+  ENABLED: true
+  INFINITE: true
+  MULTIPLY: 3
+  SET-Y: 1
+  SHIFT_BOOST:
+    ENABLED: true
+    MULTIPLY: 2.4
+    SET-Y: 0.35
+    PARTICLE: "CLOUD"
+    SOUND: "ENTITY_FIREWORK_ROCKET_LAUNCH"
+    VOLUME: 1.0
+    PITCH: 1.2
+  PARTICLE: "FLAME"
+  SOUND: 'ENTITY_BAT_TAKEOFF'
+  VOLUME: 1.0
+  PITCH: 1.0
+
+PERMISSION_AUDIT:
+  ENABLED: true
+  INTERVAL_SECONDS: 30
+
+SPAWN_LOCATION: void2, 0.5, 101.0, 0.5, 0.5147618, -1.6729622

@@ -1,0 +1,35 @@
+enabled: true
+
+# Update interval in ticks (20 = 1 second)
+update-interval: 5
+
+header-footer:
+  enabled: true
+  header:
+    - '&#33cccc&m                                                '
+    - ''
+    - '&#66ffff&lCELEST HUB'
+    - '&#99ffffWelcome back, &f%player%'
+    - ''
+  footer:
+    - ''
+    - '&#80ffffYou are currently in hub with &#4ddfff%online% &#80ffffplayers'
+    - '&#ccffffstore.celest.net &8| &#ccffffdiscord.gg/celest'
+    - ''
+    - '&#33cccc&m                                                '
+
+tablist-name-formatting:
+  enabled: true
+  format: '{lp_prefix}%player%{lp_suffix}'
+
+nametag:
+  enabled: true
+  prefix: '{lp_prefix}'
+  suffix: '{lp_suffix}'
+
+group-sorting:
+  enabled: true
+  groups:
+    - owner
+    - admin
+    - default

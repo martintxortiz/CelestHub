@@ -1,0 +1,117 @@
+TITLE: "&8Outfits Menu"
+SIZE: 36
+FILLER: false
+
+BUTTONS:
+  OUTFIT:
+    ALLOWED:
+      ICON:
+        NAME: "&a&l✧ &f%outfit_name% Outfit &a&l✧"
+        LORE:
+          - "&7&m------------------------------"
+          - "&aClick to equip this outfit."
+          - "&7&m------------------------------"
+    DENIED:
+      ICON:
+        NAME: "&4&l✘ &f%outfit_name% Outfit &4&l✘"
+        MATERIAL: "RED_WOOL"
+        DATA: 0
+        LORE:
+          - "&7&m------------------------------"
+          - "&cYou don't have this outfit."
+          - "&7&m------------------------------"
+    EQUIPPED:
+      ICON:
+        NAME: "&b&l✦ &f%outfit_name% Outfit &b&l✦"
+        LORE:
+          - "&7&m------------------------------"
+          - "&bYou have already equipped"
+          - "&bthis outfit."
+          - "&7&m------------------------------"
+    REMOVE:
+      ICON:
+        NAME: "&c&lRemove Outfit"
+        LORE:
+          - "&7&m------------------------------"
+          - "&7Click to remove your "
+          - "&7current outfit."
+          - ""
+          - "&fSelected Outfit: &b%outfit_name%"
+          - "&7&m------------------------------"
+        MATERIAL: "BRUSH"
+        DATA: 0
+
+OUTFITS:
+  Ruby:
+    RED: 255
+    GREEN: 0
+    BLUE: 0
+  Ocean:
+    RED: 0
+    GREEN: 170
+    BLUE: 255
+  Emerald:
+    RED: 0
+    GREEN: 200
+    BLUE: 90
+  Sunset:
+    RED: 255
+    GREEN: 110
+    BLUE: 40
+  Violet:
+    RED: 135
+    GREEN: 60
+    BLUE: 255
+  Gold:
+    RED: 255
+    GREEN: 200
+    BLUE: 40
+  Rose:
+    RED: 255
+    GREEN: 70
+    BLUE: 140
+  Aqua:
+    RED: 40
+    GREEN: 220
+    BLUE: 220
+  Lime:
+    RED: 120
+    GREEN: 255
+    BLUE: 70
+  Ice:
+    RED: 170
+    GREEN: 230
+    BLUE: 255
+  Midnight:
+    RED: 40
+    GREEN: 40
+    BLUE: 80
+  Obsidian:
+    RED: 20
+    GREEN: 20
+    BLUE: 20
+  CottonCandy:
+    RED: 255
+    GREEN: 170
+    BLUE: 220
+  Orange:
+    RED: 255
+    GREEN: 140
+    BLUE: 20
+  Sky:
+    RED: 90
+    GREEN: 170
+    BLUE: 255
+  Forest:
+    RED: 30
+    GREEN: 120
+    BLUE: 60
+  Silver:
+    RED: 180
+    GREEN: 180
+    BLUE: 190
+  Inferno:
+    RED: 255
+    GREEN: 40
+    BLUE: 0
+    ENCHANTED: true

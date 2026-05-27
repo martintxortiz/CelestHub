@@ -1,0 +1,55 @@
+ENABLED: true
+UPDATE-TASK: 3
+TITLE:
+  - "&b&lCelest"
+  - "&f&lC&b&lelest"
+  - "&f&lCe&b&llest"
+  - "&f&lCel&b&lest"
+  - "&f&lCele&b&lst"
+  - "&f&lCeles&b&lt"
+  - "&f&lCelest"
+  - "&b&lCelest"
+  - "&f&lCelest"
+  - "&b&lCelest"
+  - "&f&lCelest"
+  - "&b&lC&f&lelest"
+  - "&b&lCe&f&llest"
+  - "&b&lCel&f&lest"
+  - "&b&lCele&f&lst"
+  - "&b&lCeles&f&lt"
+
+TITLE-TASK: 0.5
+
+FOOTER-ENABLED: true
+FOOTER:
+  - "&7celest.net"
+FOOTER-TASK: 1.5
+
+MAIN:
+  - "&7&m----------------------"
+  - "&bPlayer&7 » &f%player%"
+  - "&bOnline&7 » &f%global%"
+  - ""
+  - "&bServer&7 » "
+  - "%TIMER%"
+  - "%QUEUE%"
+  - ""
+  - "%FOOTER%"
+  - "&7&m----------------------"
+
+PVP_ARENA:
+  - "&7&m----------------------"
+  - ""
+  - "&bKills&7 » &f%pvp_kills%"
+  - "&bDeaths&7 » &f%pvp_deaths%"
+  - "&bBest killstreak&7 » &f%pvp_max_killstreak%"
+  - "&bCurrent Killstreak&7 » &f%pvp_killstreak%"
+  - "&bCombat&7 &f%combat_remaining%s"
+  - ""
+  - "%FOOTER%"
+  - "&7&m----------------------"
+
+QUEUE:
+  - ""
+  - "&bQueue &7(&f%queue%&7)"
+  - "&bPosition&7 » &f%queue_pos%&7/&f%queue_size%"

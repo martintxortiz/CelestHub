@@ -8,7 +8,9 @@ import net.kryunek.hub.listeners.hotbar.HideShowItemListener;
 import net.kryunek.hub.listeners.hotbar.HotbarCommandListener;
 import net.kryunek.hub.listeners.hotbar.ServerItemListener;
 import net.kryunek.hub.listeners.hotbar.SettingsItemListener;
+import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.module.Module;
+import net.kryunek.hub.support.message.Messages;
 import net.kryunek.hub.utils.menu.ButtonListener;
 
 public class ListenerModule extends Module {
@@ -18,7 +20,9 @@ public class ListenerModule extends Module {
         new JoinLeaveListener(hub);
         new ChatListener(hub);
         new EditorListener(hub);
-        new ProfileListener(hub);
+        new ProfileListener(hub,
+                ModuleService.getManagerModule().getProfileManager(),
+                Messages.from(ModuleService.getFileModule().getFile("messages"), hub.getLogger()));
         new ServerItemListener(hub);
         new HotbarCommandListener(hub);
         new GadgetsItemListener(hub);
@@ -31,7 +35,6 @@ public class ListenerModule extends Module {
         new OutfitListener(hub);
         new QueueListener(hub);
         new LotteryListener(hub);
-        new ProfileListener(hub);
         new TimerListener(hub);
         new TrailParticleListener(hub);
         new DoubleJumpListener(hub);

@@ -91,7 +91,7 @@ public class PvpArenaEffectEntryButton extends Button {
             if (!parts[0].equalsIgnoreCase(type.getName())) continue;
             try {
                 return Math.max(0, Integer.parseInt(parts[1]));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException ex) {
                 return 0;
             }
         }

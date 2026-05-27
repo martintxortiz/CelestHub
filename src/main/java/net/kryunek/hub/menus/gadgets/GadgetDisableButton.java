@@ -60,7 +60,7 @@ public class GadgetDisableButton extends Button {
 
         GadgetService.deactivatePersistentEffects(player);
         profile.setSelectedGadgetType("NONE");
-        profile.save(false, true);
+        ModuleService.getManagerModule().getProfileManager().saveProfile(profile, true);
         ModuleService.getManagerModule().getHotbarManager().setHotbar(player);
         player.sendMessage(CC.translate(gadgetsMenu.getString("messages.disabled", "&cGadget disabled.", true)));
         playSuccess(player);

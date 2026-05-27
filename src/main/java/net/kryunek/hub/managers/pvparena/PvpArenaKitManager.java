@@ -290,7 +290,7 @@ public class PvpArenaKitManager {
             return;
         }
         profile.setPvpArenaKitSerialized(serializeLoadout(kit));
-        profile.save(false, false);
+        profileManager.saveProfile(profile, false);
     }
 
     private void applyDefaultKitToEditor(Inventory inventory) {
@@ -332,7 +332,7 @@ public class PvpArenaKitManager {
             if (parts.length > 1) {
                 try {
                     amount = Math.max(1, Math.min(64, Integer.parseInt(parts[1].trim())));
-                } catch (NumberFormatException ignored) {
+                } catch (NumberFormatException ex) {
                     amount = 1;
                 }
             }
@@ -503,7 +503,7 @@ public class PvpArenaKitManager {
             if (parts.length > 1) {
                 try {
                     amplifier = Math.max(0, Integer.parseInt(parts[1].trim()) - 1);
-                } catch (NumberFormatException ignored) {
+                } catch (NumberFormatException ex) {
                     amplifier = 0;
                 }
             }

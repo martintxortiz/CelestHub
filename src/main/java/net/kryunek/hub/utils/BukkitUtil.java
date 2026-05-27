@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.logging.Level;
 
 public class BukkitUtil {
 
@@ -37,7 +38,6 @@ public class BukkitUtil {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream bukkitObjectOutputStream = new BukkitObjectOutputStream(byteArrayOutputStream);
             bukkitObjectOutputStream.writeInt(stack.length);
-            long stacckk = stack.length;
             for (ItemStack stack1 : stack) {
                 bukkitObjectOutputStream.writeObject(stack1);
             }
@@ -45,7 +45,7 @@ public class BukkitUtil {
             return Base64Coder.encodeLines(byteArrayOutputStream.toByteArray());
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Failed to serialize item stack array", e);
             return "";
         }
     }
@@ -75,7 +75,7 @@ public class BukkitUtil {
             return stack;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Failed to deserialize item stack array", e);
             return new ItemStack[0];
         }
     }

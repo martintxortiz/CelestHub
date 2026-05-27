@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,14 +18,21 @@ import java.util.List;
 public class TimerManager {
 
     private final List<Timer> timers;
+    private final BukkitTask updateTask;
 
     public TimerManager() {
         this.timers = new ArrayList<>();
-        TaskUtil.runTaskTimer(this::updateTimers, 1, 1);
+        this.updateTask = TaskUtil.runSyncTimer(this::updateTimers, 20L, 20L);
     }
 
     public List<Timer> getTimers() {
         return timers;
+    }
+
+    public void shutdown() {
+        if (updateTask != null) {
+            updateTask.cancel();
+        }
     }
 
     public void createTimer(Player player, String name, long durationInSeconds, String prefix) {

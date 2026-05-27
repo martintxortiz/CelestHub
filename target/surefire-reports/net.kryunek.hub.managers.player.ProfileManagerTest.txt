@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: net.kryunek.hub.managers.player.ProfileManagerTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.420 s -- in net.kryunek.hub.managers.player.ProfileManagerTest

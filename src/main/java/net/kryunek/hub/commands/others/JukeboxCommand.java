@@ -1,7 +1,6 @@
 package net.kryunek.hub.commands.others;
 
 import net.kryunek.hub.managers.jukebox.JukeboxManager;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.jukebox.JukeboxMenu;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
@@ -15,7 +14,7 @@ public class JukeboxCommand extends BaseCommand {
     @Override
     public void onCommand(CommandArgs cmdArgs) {
         Player player = cmdArgs.getPlayer();
-        JukeboxManager manager = ModuleService.getManagerModule().getJukeboxManager();
+        JukeboxManager manager = managers().getJukeboxManager();
         if (manager == null || !manager.isEnabled()) {
             player.sendMessage(CC.translate("&cJukebox is disabled."));
             return;

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class BungeeUtils implements PluginMessageListener {
 
@@ -44,11 +45,15 @@ public class BungeeUtils implements PluginMessageListener {
                     if (server == null) server = new BungeeServer(name);
                     server.setPlayerCount(playerCount);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                Celest.get().getLogger().log(Level.FINE, "Failed to read BungeeCord PlayerCount payload", e);
+            }
         } else if (subChannel.equals("GetServer")) {
             try {
                 currentServerName = in.readUTF();
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                Celest.get().getLogger().log(Level.FINE, "Failed to read BungeeCord GetServer payload", e);
+            }
         } else if (subChannel.equals("GetServers")) {
             String[] serverList = in.readUTF().split(", ");
             for (String serverName : serverList) {
@@ -93,8 +98,8 @@ public class BungeeUtils implements PluginMessageListener {
             out.writeUTF("Connect");
             out.writeUTF(server);
         } catch (Exception e) {
-            System.out.println("Error while connecting to server. The error was: " + e.getMessage());
-            e.printStackTrace();
+            Celest.get().getLogger().log(Level.WARNING, "Failed to create BungeeCord connect message for server " + server, e);
+            return;
         }
         p.sendPluginMessage(Celest.get(), "BungeeCord", out.toByteArray());
     }

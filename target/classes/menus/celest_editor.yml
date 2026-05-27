@@ -1,0 +1,110 @@
+EDITOR_MENU:
+  TITLE: "&8Celest Editor"
+  SIZE: 45
+  LAYOUT_VERSION: 2
+  FILLER: true
+  BUTTONS:
+    GADGETS:
+      SLOT: 10
+      MATERIAL: "ENDER_PEARL"
+      DATA: 0
+      NAME: "&bGadgets Editor"
+      LORE:
+        - "&7Enable/disable gadgets"
+        - "&7Edit cooldown and slot"
+        - ""
+        - "&eClick to open"
+    QUEUE:
+      SLOT: 15
+      MATERIAL: "LECTERN"
+      DATA: 0
+      NAME: "&bQueue Manager"
+      LORE:
+        - "&7Edit queues and delay"
+        - ""
+        - "&eClick to open"
+    PARTICLES:
+      SLOT: 11
+      MATERIAL: "HONEYCOMB"
+      DATA: 0
+      NAME: "&bParticles Manager"
+      LORE:
+        - "&7Edit trail particles"
+        - ""
+        - "&eClick to open"
+    OUTFIT:
+      SLOT: 12
+      MATERIAL: "LEATHER_CHESTPLATE"
+      DATA: 0
+      NAME: "&bOutfit Manager"
+      LORE:
+        - "&7Edit outfits"
+        - ""
+        - "&eClick to open"
+    SERVER_SELECTOR:
+      SLOT: 13
+      MATERIAL: "COMPASS"
+      DATA: 0
+      NAME: "&bServer Selector Editor"
+      LORE:
+        - "&7Edit server selector items"
+        - ""
+        - "&eClick to open"
+    HOTBAR:
+      SLOT: 14
+      MATERIAL: "HOPPER"
+      DATA: 0
+      NAME: "&bHotbar Editor"
+      LORE:
+        - "&7Edit hotbar items"
+        - ""
+        - "&eClick to open"
+    TIMER:
+      SLOT: 22
+      MATERIAL: "CLOCK"
+      DATA: 0
+      NAME: "&bTimer Manager"
+      LORE:
+        - "&7Edit timers"
+        - ""
+        - "&eClick to open"
+    CHAT:
+      SLOT: 23
+      MATERIAL: "OAK_SIGN"
+      DATA: 0
+      NAME: "&bChat Editor"
+      LORE:
+        - "&7Edit chat settings"
+        - ""
+        - "&eClick to open"
+    PVP_ARENA:
+      SLOT: 31
+      MATERIAL: "DIAMOND_SWORD"
+      DATA: 0
+      NAME: "&cPvP Arena Editor"
+      LORE:
+        - "&7Configure PvP arena area"
+        - "&7Edit default arena kit"
+        - ""
+        - "&eClick to open"
+    RANKS:
+      SLOT: 16
+      MATERIAL: "EMERALD"
+      DATA: 0
+      NAME: "&bRanks Editor"
+      LORE:
+        - "&7Select rank provider"
+        - "&7Edit queue/tab priorities"
+        - ""
+        - "&eClick to open"
+    LOTTERY:
+      SLOT: 21
+      MATERIAL: "PAPER"
+      DATA: 0
+      NAME: "&dLottery Manager"
+      LORE:
+        - "&7Create and run lotteries"
+        - ""
+        - "&eClick to open"
+    CLOSE:
+      SLOT: 40

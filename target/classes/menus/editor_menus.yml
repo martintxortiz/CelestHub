@@ -1,0 +1,82 @@
+CHAT_EDITOR:
+  TITLE: "&8Chat Editor"
+  SIZE: 9
+  FILLER: false
+  BUTTONS:
+    PAUSE:
+      SLOT: 0
+    SLOW:
+      SLOT: 1
+    CLEAR_LINES:
+      SLOT: 2
+    PREFIX:
+      SLOT: 3
+    CLEAR_NOW:
+      SLOT: 4
+    BACK:
+      SLOT: 8
+
+HOTBAR_EDITOR:
+  TITLE: "&8Hotbar Editor"
+  SIZE: 27
+  MAX_ITEMS_PER_PAGE: 9
+
+PVP_ARENA_EDITOR:
+  TITLE: "&8PvP Arena Editor"
+  SIZE: 36
+  FILLER: false
+  BUTTONS:
+    TOGGLE:
+      SLOT: 10
+      MATERIAL: "REDSTONE_TORCH"
+      NAME: "&cToggle PvP Arena"
+      LORE:
+        - "&7Enable or disable the arena."
+        - "&7This controls zone PvP + zone kits."
+    SET_WORLD:
+      SLOT: 12
+      MATERIAL: "GRASS_BLOCK"
+      NAME: "&aSet Arena World"
+      LORE:
+        - "&7Set arena world to your current world."
+    POS_MODE:
+      SLOT: 13
+      MATERIAL: "GOLDEN_AXE"
+      NAME: "&6Position Select Mode"
+      LORE:
+        - "&7Gives you a selector tool."
+        - "&7Left click: POS1"
+        - "&7Right click: POS2"
+        - "&7Chat: type pos1 / pos2"
+    EFFECTS:
+      SLOT: 14
+      MATERIAL: "BREWING_STAND"
+      NAME: "&bArena Effects"
+      LORE:
+        - "&7Open visual effects menu."
+        - "&7No chat typing needed."
+    PERIMETER_BLOCKS_TOGGLE:
+      SLOT: 15
+      MATERIAL: "BRICKS"
+      NAME: "&6Perimeter Build"
+      LORE:
+        - "&7Toggle block placement/breaking"
+        - "&7inside PvP arena."
+    PERIMETER_BLOCKS_DURATION:
+      SLOT: 11
+      MATERIAL: "CLOCK"
+      NAME: "&eBlock Disappear Time"
+      LORE:
+        - "&7Set temporary block lifetime."
+        - "&7Left click: increase"
+        - "&7Right click: decrease"
+    EDIT_DEFAULT_KIT:
+      SLOT: 16
+      MATERIAL: "CHEST"
+      NAME: "&bEdit Default Kit"
+      LORE:
+        - "&7Open inventory editor"
+        - "&7for default arena kit."
+        - "&7Includes copy-inventory and clear."
+    BACK:
+      SLOT: 34

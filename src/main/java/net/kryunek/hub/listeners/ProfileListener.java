@@ -1,10 +1,9 @@
 package net.kryunek.hub.listeners;
 
-import net.kryunek.hub.Celest;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
-import net.kryunek.hub.utils.CC;
+import net.kryunek.hub.support.message.MessageKey;
+import net.kryunek.hub.support.message.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,20 +15,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ProfileListener implements Listener {
 
     private final ProfileManager profileManager;
+    private final Messages messages;
 
-    public ProfileListener(Celest hub) {
-        Bukkit.getPluginManager().registerEvents(this, hub);
-        this.profileManager = ModuleService.getManagerModule().getProfileManager();
+    public ProfileListener(org.bukkit.plugin.Plugin plugin, ProfileManager profileManager, Messages messages) {
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.profileManager = profileManager;
+        this.messages = messages;
     }
 
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerSaveProfile(PlayerQuitEvent event) {
-        Profile profile = this.profileManager.getProfile(event.getPlayer().getUniqueId());
-
-        profile.save(true, false);
-
+        this.profileManager.saveAndRemove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -37,21 +35,17 @@ public class ProfileListener implements Listener {
         Profile profile = this.profileManager.getProfile(event.getPlayer().getUniqueId());
         if (profile == null) {
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(CC.translate("&cFailed in load your profile, please join again."));
+            event.setKickMessage(messages.get(MessageKey.PROFILE_NOT_LOADED));
             return;
         }
         profile.setName(event.getPlayer().getName());
-        profile.save(false, true);
-    }
-
-    public ProfileListener() {
-        this.profileManager = ModuleService.getManagerModule().getProfileManager();
+        this.profileManager.saveProfile(profile, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         Profile profile = this.profileManager.createProfile(event.getUniqueId(), event.getName());
-        profile.load();
+        this.profileManager.loadProfile(profile);
 
     }
 }

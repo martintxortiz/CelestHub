@@ -23,4 +23,11 @@ public class ScoreboardHook {
 
         }
     }
+
+    public void shutdown() {
+        if (scoreboard != null) {
+            scoreboard.cleanup();
+            scoreboard = null;
+        }
+    }
 }

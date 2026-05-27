@@ -1,7 +1,6 @@
 package net.kryunek.hub.commands.hub.sub;
 
 import net.kryunek.hub.managers.editor.EditorInputSession;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.outfit.OutfitCreateSession;
 import net.kryunek.hub.managers.particles.TrailParticleCreateSession;
 import net.kryunek.hub.managers.queue.QueueCreateSession;
@@ -41,13 +40,13 @@ public class CelestDebugCommand extends BaseCommand {
         sender.sendMessage(CC.translate("&bPlayers: &f" + Bukkit.getOnlinePlayers().size()));
         sender.sendMessage(CC.translate("&bTPS (1m/5m/15m): &f" + tpsLine));
         sender.sendMessage(CC.translate("&bMemory (used/total/max): &f" + usedMemoryMb + "MB / " + totalMemoryMb + "MB / " + maxMemoryMb + "MB"));
-        sender.sendMessage(CC.translate("&bHotbars loaded: &f" + ModuleService.getManagerModule().getHotbarManager().getHotbars().size()));
-        sender.sendMessage(CC.translate("&bQueues loaded: &f" + ModuleService.getManagerModule().getQueueManager().getQueues().size()));
-        sender.sendMessage(CC.translate("&bTimers active: &f" + ModuleService.getManagerModule().getTimerManager().getTimers().size()));
-        sender.sendMessage(CC.translate("&bOutfits loaded: &f" + ModuleService.getManagerModule().getOutfitManager().getOutfits().size()));
-        sender.sendMessage(CC.translate("&bTrails loaded: &f" + ModuleService.getManagerModule().getTrailParticleManager().getTrails().size()));
-        sender.sendMessage(CC.translate("&bChat muted: &f" + ModuleService.getManagerModule().getChatManager().isPaused()));
-        sender.sendMessage(CC.translate("&bChat slow: &f" + ModuleService.getManagerModule().getChatManager().getSlowSeconds() + "s"));
+        sender.sendMessage(CC.translate("&bHotbars loaded: &f" + managers().getHotbarManager().getHotbars().size()));
+        sender.sendMessage(CC.translate("&bQueues loaded: &f" + managers().getQueueManager().getQueues().size()));
+        sender.sendMessage(CC.translate("&bTimers active: &f" + managers().getTimerManager().getTimers().size()));
+        sender.sendMessage(CC.translate("&bOutfits loaded: &f" + managers().getOutfitManager().getOutfits().size()));
+        sender.sendMessage(CC.translate("&bTrails loaded: &f" + managers().getTrailParticleManager().getTrails().size()));
+        sender.sendMessage(CC.translate("&bChat muted: &f" + managers().getChatManager().isPaused()));
+        sender.sendMessage(CC.translate("&bChat slow: &f" + managers().getChatManager().getSlowSeconds() + "s"));
         sender.sendMessage(CC.translate(""));
         sender.sendMessage(CC.translate("&bSessions active:"));
         sender.sendMessage(CC.translate("&7- Editor input: &f" + EditorInputSession.activeCount()));

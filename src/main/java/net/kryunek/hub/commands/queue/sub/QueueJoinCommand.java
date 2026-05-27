@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.queue.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.queue.Queue;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -21,15 +20,15 @@ public class QueueJoinCommand extends BaseCommand {
             player.sendMessage(CC.translate("&cUsage: /queue join <queue>"));
             return;
         }
-        Queue queue = ModuleService.getManagerModule().getQueueManager().getQueue(args[0]);
+        Queue queue = managers().getQueueManager().getQueue(args[0]);
         if (queue == null) {
             player.sendMessage(CC.translate(queueConfig.getString("QUEUE_NOT_FOUND").replace("%queue%", args[0])));
             return;
         }
-        ModuleService.getManagerModule().getQueueManager().addToQueue(player, args[0]);
+        managers().getQueueManager().addToQueue(player, args[0]);
     }
 
     public QueueJoinCommand() {
-        this.queueConfig = ModuleService.getFileModule().getFile("queue");
+        this.queueConfig = file("queue");
     }
 }

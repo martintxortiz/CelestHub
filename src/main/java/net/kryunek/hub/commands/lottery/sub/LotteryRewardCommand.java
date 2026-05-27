@@ -1,6 +1,5 @@
 package net.kryunek.hub.commands.lottery.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
@@ -22,16 +21,13 @@ public class LotteryRewardCommand extends BaseCommand {
         }
 
         String rewardCommand = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        boolean updated = ModuleService.getManagerModule().getLotteryManager().addReward(args[0], rewardCommand);
+        boolean updated = managers().getLotteryManager().addReward(args[0], rewardCommand);
 
         if (!updated) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.NOT_FOUND", "&cLottery not found.", true)));
+            send(player, "LOTTERY.NOT_FOUND", "&cLottery not found.");
             return;
         }
 
-        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                .getString("LOTTERY.REWARD_ADDED", "&aReward added to &f%lottery%&a.", true)
-                .replace("%lottery%", args[0])));
+        send(player, "LOTTERY.REWARD_ADDED", "&aReward added to &f%lottery%&a.", "%lottery%", args[0]);
     }
 }

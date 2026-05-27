@@ -15,6 +15,7 @@ import org.bukkit.profile.PlayerProfile;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class ItemBuilder {
 
@@ -122,7 +123,8 @@ public class ItemBuilder {
             try {
                 UUID uuid = UUID.fromString(owner);
                 return owner(uuid);
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException notUuid) {
+                // Treat non-UUID values as player names below.
             }
         }
 
@@ -162,7 +164,8 @@ public class ItemBuilder {
                 }
                 PlayerProfile profile = Bukkit.createPlayerProfile(uuid, name);
                 meta.setOwnerProfile(profile);
-            } catch (Throwable ignored) {
+            } catch (Throwable ex) {
+                Bukkit.getLogger().log(Level.FINE, "Failed to apply owner profile to player head.", ex);
             }
         }
 

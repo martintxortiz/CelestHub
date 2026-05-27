@@ -1,9 +1,6 @@
 package net.kryunek.hub.commands.timer.sub;
 
-import net.kryunek.hub.managers.module.ModuleService;
-import net.kryunek.hub.managers.queue.Queue;
 import net.kryunek.hub.utils.CC;
-import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
 import net.kryunek.hub.utils.command.CommandArgs;
@@ -38,7 +35,7 @@ public class TimerCreateCommand extends BaseCommand {
         // 🔥 prefix con colores
         String prefix = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
-        ModuleService.getManagerModule()
+        managers()
                 .getTimerManager()
                 .createTimer(player, queueName, seconds, prefix);
     }

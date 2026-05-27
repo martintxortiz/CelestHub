@@ -1,8 +1,6 @@
 package net.kryunek.hub.commands.lottery.sub;
 
 import net.kryunek.hub.managers.lottery.Lottery;
-import net.kryunek.hub.managers.module.ModuleService;
-import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.command.BaseCommand;
 import net.kryunek.hub.utils.command.Command;
 import net.kryunek.hub.utils.command.CommandArgs;
@@ -17,11 +15,10 @@ public class LotteryListCommand extends BaseCommand {
     @Override
     public void onCommand(CommandArgs cmdArgs) {
         Player player = cmdArgs.getPlayer();
-        Collection<Lottery> lotteries = ModuleService.getManagerModule().getLotteryManager().getLotteries();
+        Collection<Lottery> lotteries = managers().getLotteryManager().getLotteries();
 
         if (lotteries.isEmpty()) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                    .getString("LOTTERY.LIST_EMPTY", "&cNo lotteries found.", true)));
+            send(player, "LOTTERY.LIST_EMPTY", "&cNo lotteries found.");
             return;
         }
 
@@ -29,8 +26,6 @@ public class LotteryListCommand extends BaseCommand {
                 .map(lottery -> lottery.getName() + (lottery.isActive() ? " &a(active)" : " &7(inactive)"))
                 .collect(Collectors.joining("&7, &f"));
 
-        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
-                .getString("LOTTERY.LIST", "&dLotteries&7: &f%list%", true)
-                .replace("%list%", list)));
+        send(player, "LOTTERY.LIST", "&dLotteries&7: &f%list%", "%list%", list);
     }
 }

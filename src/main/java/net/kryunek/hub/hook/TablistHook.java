@@ -37,4 +37,12 @@ public class TablistHook {
         tablistManager = new TablistManager(plugin);
         tablistManager.iniciar();
     }
+
+    public void shutdown() {
+        if (tablistManager != null) {
+            tablistManager.detener();
+            tablistManager = null;
+        }
+        plugin = null;
+    }
 }

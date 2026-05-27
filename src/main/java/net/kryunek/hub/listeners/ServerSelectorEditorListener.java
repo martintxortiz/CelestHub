@@ -115,7 +115,7 @@ public class ServerSelectorEditorListener implements Listener {
         int value;
         try {
             value = Integer.parseInt(text);
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
             player.sendMessage(CC.translate("&cType a valid slot between 0 and " + maxSlot + "."));
             return;
         }
@@ -145,7 +145,7 @@ public class ServerSelectorEditorListener implements Listener {
         int requested;
         try {
             requested = Integer.parseInt(text);
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ex) {
             player.sendMessage(CC.translate("&cType a valid size: 9, 18, 27, 36, 45, 54."));
             return;
         }

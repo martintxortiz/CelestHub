@@ -1,0 +1,30 @@
+JUKEBOX:
+  ENABLED: true
+  DEFAULT_ENABLED: true
+  AUTO_PLAY_ON_JOIN: true
+  STOP_IN_PVP: false
+  PLAYBACK:
+    SHUFFLE: false
+    REPEAT_PLAYLIST: true
+    REPEAT_TRACK: false
+  CONTROLS:
+    ENABLE_PAUSE: true
+    ENABLE_SEEK: true
+    SEEK_SECONDS: 15
+    VOLUME_STEP: 0.10
+    DEFAULT_VOLUME: 1.0
+    MIN_VOLUME: 0.2
+    MAX_VOLUME: 2.0
+  # For custom songs use a resource-pack sound key, e.g. "celest:lobby.theme1"
+  # and make sure DURATION_SECONDS matches your audio length.
+  TRACKS:
+    lobby_track_1:
+      SOUND: "celest:lobby.theme1"
+      VOLUME: 1.0
+      PITCH: 1.0
+      DURATION_SECONDS: 120
+    lobby_track_2:
+      SOUND: "celest:lobby.theme2"
+      VOLUME: 1.0
+      PITCH: 1.0
+      DURATION_SECONDS: 150

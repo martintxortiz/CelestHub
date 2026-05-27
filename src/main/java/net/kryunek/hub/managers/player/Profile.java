@@ -3,24 +3,17 @@ package net.kryunek.hub.managers.player;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.outfit.Outfit;
 import net.kryunek.hub.managers.particles.TrailParticle;
 import net.kryunek.hub.utils.Cooldown;
-import net.kryunek.hub.utils.TaskUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class Profile {
-
-    @Getter
-    private static Map<UUID, Profile> profiles = new HashMap<>();
 
     private UUID uuid;
     private String name;
@@ -50,13 +43,7 @@ public class Profile {
     }
 
 
-    public void load() {
-        ProfileData data = ModuleService.getManagerModule().getProfileManager().getStorage().load(getUuid());
-        if (data == null) {
-            save(false, false);
-            return;
-        }
-
+    void applyData(ProfileData data) {
         setName(data.getName() == null ? getName() : data.getName());
         setVisibilityOn(data.isVisibilityOn());
         setBuildModeEnabled(data.isBuildModeEnabled());
@@ -83,7 +70,7 @@ public class Profile {
         setTimePreference(data.getTimePreference() == null ? "SERVER" : data.getTimePreference());
     }
 
-    public void save(boolean remove, boolean savedelay) {
+    ProfileData toData() {
         ProfileData data = new ProfileData();
         data.setName(getName());
         data.setShowScoreboard(isShowScoreboard());
@@ -103,18 +90,14 @@ public class Profile {
         data.setPvpMaxKillstreak(getPvpMaxKillstreak());
         data.setFirstJoinAt(getFirstJoinAt());
         data.setTimePreference(getTimePreference() == null ? "SERVER" : getTimePreference());
-        if (savedelay) {
-            TaskUtil.scheduleSyncDelayedTask(() -> ModuleService.getManagerModule().getProfileManager().getStorage().save(getUuid(), data));
-        } else {
-            ModuleService.getManagerModule().getProfileManager().getStorage().save(getUuid(), data);
-        }
-
-        if (remove) {
-            profiles.remove(getUuid());
-        }
+        return data;
     }
 
     public Profile(UUID uuid, String name) {
+        this(uuid, name, true, 1.0D);
+    }
+
+    Profile(UUID uuid, String name, boolean jukeboxEnabled, double jukeboxVolume) {
         this.uuid = uuid;
         this.name = name;
         this.profileStatus = ProfileStatus.HUB;
@@ -122,13 +105,8 @@ public class Profile {
         this.showScoreboard = true;
         this.showTablist = true;
         this.flyOnJoin = false;
-        this.jukeboxEnabled = ModuleService.getFileModule() != null
-                && ModuleService.getFileModule().getFile("jukebox") != null
-                && ModuleService.getFileModule().getFile("jukebox").getConfiguration().getBoolean("JUKEBOX.DEFAULT_ENABLED", true);
-        this.jukeboxVolume = ModuleService.getFileModule() != null
-                && ModuleService.getFileModule().getFile("jukebox") != null
-                ? ModuleService.getFileModule().getFile("jukebox").getConfiguration().getDouble("JUKEBOX.CONTROLS.DEFAULT_VOLUME", 1.0D)
-                : 1.0D;
+        this.jukeboxEnabled = jukeboxEnabled;
+        this.jukeboxVolume = jukeboxVolume;
         this.buildModeEnabled = false;
         this.selectedGadgetType = "NONE";
         this.pvpArenaKitSerialized = "";
@@ -138,7 +116,5 @@ public class Profile {
         this.pvpMaxKillstreak = 0;
         this.firstJoinAt = System.currentTimeMillis();
         this.timePreference = "SERVER";
-
-        profiles.put(uuid, this);
     }
 }

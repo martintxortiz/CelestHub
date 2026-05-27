@@ -2,6 +2,7 @@ package net.kryunek.hub.managers.player;
 
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.FileConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class LocalProfileStorage implements ProfileStorage {
     private final FileConfig playersConfig = ModuleService.getFileModule().getFile("players");
 
     @Override
-    public ProfileData load(UUID uuid) {
+    public synchronized ProfileData load(UUID uuid) {
         ConfigurationSection section = playersConfig.getConfiguration().getConfigurationSection("players." + uuid);
         if (section == null) {
             return null;
@@ -45,7 +46,7 @@ public class LocalProfileStorage implements ProfileStorage {
     }
 
     @Override
-    public Map<UUID, ProfileData> loadAll() {
+    public synchronized Map<UUID, ProfileData> loadAll() {
         Map<UUID, ProfileData> result = new HashMap<>();
         ConfigurationSection players = playersConfig.getConfiguration().getConfigurationSection("players");
         if (players == null) {
@@ -59,14 +60,15 @@ public class LocalProfileStorage implements ProfileStorage {
                 if (data != null) {
                     result.put(uuid, data);
                 }
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException ex) {
+                Bukkit.getLogger().warning("[Celest] Ignoring local profile with invalid UUID: " + key);
             }
         }
         return result;
     }
 
     @Override
-    public void save(UUID uuid, ProfileData data) {
+    public synchronized void save(UUID uuid, ProfileData data) {
         ConfigurationSection section = playersConfig.getConfiguration().getConfigurationSection("players." + uuid);
         if (section == null) {
             section = playersConfig.getConfiguration().createSection("players." + uuid);
