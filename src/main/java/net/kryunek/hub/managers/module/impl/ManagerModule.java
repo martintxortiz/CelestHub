@@ -60,28 +60,26 @@ public class ManagerModule extends Module {
     
     @Override
     public void onEnable(Celest hub) {
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    BungeeUtils.refreshGlobalCount();
-                    BungeeUtils.refreshServerList();
-                    BungeeUtils.refreshServerCount();
-                    BungeeUtils.refreshCurrentServer();
-                }
-            }.runTaskTimer(hub, 20L, 20L);
-            hub.getServer().getMessenger().registerOutgoingPluginChannel(hub, "BungeeCord");
-           hub.getServer().getMessenger().registerIncomingPluginChannel(hub, "BungeeCord", new BungeeUtils());
-        this.rankManager = new IRankManager(hub);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                BungeeUtils.refreshGlobalCount();
+                BungeeUtils.refreshServerList();
+                BungeeUtils.refreshServerCount();
+                BungeeUtils.refreshCurrentServer();
+            }
+        }.runTaskTimer(hub, 20L, 20L);
+        hub.getServer().getMessenger().registerOutgoingPluginChannel(hub, "BungeeCord");
+        hub.getServer().getMessenger().registerIncomingPluginChannel(hub, "BungeeCord", new BungeeUtils());
+        this.rankManager = new IRankManager();
         this.rankManager.loadRank();
         this.profileManager = new ProfileManager();
-        this.networkSyncManager = new NetworkSyncManager();
-        this.networkSyncManager.start();
-        this.queueManager = new QueueManager();
+        this.networkSyncManager = new NetworkSyncManager(hub, this);
+        this.queueManager = new QueueManager(rankManager);
         this.lotteryManager = new LotteryManager();
         this.spawnManager = new SpawnManager();
         this.hotbarManager = new HotbarManager();
-        this.pvpArenaKitManager = new PvpArenaKitManager();
+        this.pvpArenaKitManager = new PvpArenaKitManager(profileManager, hotbarManager);
         this.pvpArenaSelectionManager = new PvpArenaSelectionManager();
         this.jukeboxManager = new JukeboxManager();
         this.timerManager = new TimerManager();
@@ -92,6 +90,7 @@ public class ManagerModule extends Module {
         this.outfitManager.load();
         this.permissionAuditService = new PermissionAuditService();
         this.permissionAuditService.start();
+        this.networkSyncManager.start();
         this.load(false);
     }
     public Collection<? extends Player> getOnlinePlayers() {

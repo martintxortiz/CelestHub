@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="net.kryunek.hub.support.profile.ProfileAccessTest" time="0.038" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="net.kryunek.hub.managers.rank.IRankManagerTest" time="0.148" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -58,10 +58,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="sendsFailureMessageWhenProfileIsMissing" classname="net.kryunek.hub.support.profile.ProfileAccessTest" time="0.035">
-    <system-err><![CDATA[May 28, 2026 9:04:13 AM net.kryunek.hub.support.message.Messages reportMissing
-WARNING: [Celest] Missing message key 'PROFILE.NOT_LOADED'. Using fallback text.
-]]></system-err>
-  </testcase>
-  <testcase name="returnsProfileForPlayer" classname="net.kryunek.hub.support.profile.ProfileAccessTest" time="0.003"/>
+  <testcase name="setQueuePriorityClampsNegativeValuesToZero" classname="net.kryunek.hub.managers.rank.IRankManagerTest" time="0.076"/>
+  <testcase name="getAvailableRanksMergesQueuePriorityKeysAndTabGroups" classname="net.kryunek.hub.managers.rank.IRankManagerTest" time="0.059"/>
+  <testcase name="getQueuePriorityLowercasesRankName" classname="net.kryunek.hub.managers.rank.IRankManagerTest" time="0.012"/>
 </testsuite>

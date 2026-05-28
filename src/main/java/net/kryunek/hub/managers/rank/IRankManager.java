@@ -5,9 +5,9 @@ import lombok.Setter;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.rank.impl.Default;
 import net.kryunek.hub.managers.rank.impl.LuckPerms;
+import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -18,22 +18,23 @@ import java.util.Set;
 @Getter @Setter
 public class IRankManager {
 
-    @Getter
-    private static IRankManager instance;
-    private Plugin plugin;
+    private final FileConfig config;
+    private final FileConfig queueConfig;
+    private final FileConfig tabConfig;
     private String rankSystem;
     private String configuredSystemMode;
     private IRank rank;
 
-    public IRankManager(Plugin plugin) {
-        instance = this;
-        this.plugin = plugin;
+    public IRankManager() {
+        var files = ModuleService.getFileModule();
+        this.config = files.getFile("config");
+        this.queueConfig = files.getFile("queue");
+        this.tabConfig = files.getFile("tab");
     }
 
     public void loadRank() {
         ensureDefaults();
-        String mode = ModuleService.getFileModule().getFile("config")
-                .getString("RANK.SYSTEM", "AUTO", false);
+        String mode = config.getString("RANK.SYSTEM", "AUTO", false);
         this.configuredSystemMode = mode == null ? "AUTO" : mode.toUpperCase(Locale.ROOT);
 
         if ("DEFAULT".equalsIgnoreCase(configuredSystemMode)) {
@@ -64,21 +65,20 @@ public class IRankManager {
             normalized = "AUTO";
         }
         this.configuredSystemMode = normalized;
-        ModuleService.getFileModule().getFile("config").getConfiguration().set("RANK.SYSTEM", normalized);
-        ModuleService.getFileModule().getFile("config").save();
+        config.getConfiguration().set("RANK.SYSTEM", normalized);
+        config.save();
         loadRank();
     }
 
     public List<String> getAvailableRanks() {
         Set<String> ranks = new LinkedHashSet<>();
 
-        ConfigurationSection queuePriority = ModuleService.getFileModule().getFile("queue")
-                .getConfiguration().getConfigurationSection("QUEUE.PRIORITY");
+        ConfigurationSection queuePriority = queueConfig.getConfiguration().getConfigurationSection("QUEUE.PRIORITY");
         if (queuePriority != null) {
             ranks.addAll(queuePriority.getKeys(false));
         }
 
-        List<String> tabGroups = ModuleService.getFileModule().getFile("tab").getStringList("group-sorting.groups");
+        List<String> tabGroups = tabConfig.getStringList("group-sorting.groups");
         if (!(tabGroups.size() == 1 && "ERROR: STRING LIST NOT FOUND!".equals(tabGroups.get(0)))) {
             ranks.addAll(tabGroups);
         }
@@ -103,14 +103,13 @@ public class IRankManager {
     }
 
     public int getQueuePriority(String rankName) {
-        return ModuleService.getFileModule().getFile("queue").getInt("QUEUE.PRIORITY." + rankName.toLowerCase(Locale.ROOT));
+        return queueConfig.getInt("QUEUE.PRIORITY." + rankName.toLowerCase(Locale.ROOT));
     }
 
     public void setQueuePriority(String rankName, int priority) {
         int value = Math.max(0, priority);
-        ModuleService.getFileModule().getFile("queue").getConfiguration()
-                .set("QUEUE.PRIORITY." + rankName.toLowerCase(Locale.ROOT), value);
-        ModuleService.getFileModule().getFile("queue").save();
+        queueConfig.getConfiguration().set("QUEUE.PRIORITY." + rankName.toLowerCase(Locale.ROOT), value);
+        queueConfig.save();
     }
 
     public int getTabPriority(String rankName) {
@@ -129,8 +128,8 @@ public class IRankManager {
         int index = Math.max(0, Math.min(priority, groups.size()));
         groups.add(index, rankName.toLowerCase(Locale.ROOT));
 
-        ModuleService.getFileModule().getFile("tab").getConfiguration().set("group-sorting.groups", groups);
-        ModuleService.getFileModule().getFile("tab").save();
+        tabConfig.getConfiguration().set("group-sorting.groups", groups);
+        tabConfig.save();
     }
 
     public boolean isLuckPermsActive() {
@@ -138,7 +137,7 @@ public class IRankManager {
     }
 
     private List<String> getTabGroupsMutable() {
-        List<String> groups = new ArrayList<>(ModuleService.getFileModule().getFile("tab").getStringList("group-sorting.groups"));
+        List<String> groups = new ArrayList<>(tabConfig.getStringList("group-sorting.groups"));
         if (groups.size() == 1 && "ERROR: STRING LIST NOT FOUND!".equals(groups.get(0))) {
             groups.clear();
         }
@@ -146,9 +145,9 @@ public class IRankManager {
     }
 
     private void ensureDefaults() {
-        if (!ModuleService.getFileModule().getFile("config").getConfiguration().contains("RANK.SYSTEM")) {
-            ModuleService.getFileModule().getFile("config").getConfiguration().set("RANK.SYSTEM", "AUTO");
-            ModuleService.getFileModule().getFile("config").save();
+        if (!config.getConfiguration().contains("RANK.SYSTEM")) {
+            config.getConfiguration().set("RANK.SYSTEM", "AUTO");
+            config.save();
         }
     }
 

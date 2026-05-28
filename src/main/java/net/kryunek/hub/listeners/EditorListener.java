@@ -1,8 +1,11 @@
 package net.kryunek.hub.listeners;
 
 import net.kryunek.hub.Celest;
+import net.kryunek.hub.managers.chat.ChatManager;
 import net.kryunek.hub.managers.editor.EditorInputSession;
+import net.kryunek.hub.managers.hotbar.HotbarManager;
 import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.managers.pvparena.PvpArenaKitManager;
 import net.kryunek.hub.menus.editor.chat.ChatEditorMenu;
 import net.kryunek.hub.menus.editor.hotbar.HotbarEditorMenu;
 import net.kryunek.hub.menus.editor.hotbar.HotbarItemEditorMenu;
@@ -25,11 +28,24 @@ import java.util.stream.Collectors;
 
 public class EditorListener implements Listener {
 
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
-    private final FileConfig hotbar = ModuleService.getFileModule().getFile("hotbar");
+    private final Celest hub;
+    private final ChatManager chatManager;
+    private final HotbarManager hotbarManager;
+    private final PvpArenaKitManager pvpArenaKitManager;
+    private final FileConfig settings;
+    private final FileConfig messages;
+    private final FileConfig hotbar;
 
     public EditorListener(Celest hub) {
+        this.hub = hub;
+        var files = ModuleService.getFileModule();
+        var managers = ModuleService.getManagerModule();
+        this.settings = files.getFile("settings");
+        this.messages = files.getFile("messages");
+        this.hotbar = files.getFile("hotbar");
+        this.chatManager = managers.getChatManager();
+        this.hotbarManager = managers.getHotbarManager();
+        this.pvpArenaKitManager = managers.getPvpArenaKitManager();
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
@@ -70,8 +86,8 @@ public class EditorListener implements Listener {
 
     private void handleChatSlow(Player player, String text, EditorInputSession session) {
         if (text.equalsIgnoreCase("off")) {
-            ModuleService.getManagerModule().getChatManager().setSlowSeconds(0);
-            ModuleService.getManagerModule().getChatManager().clearChatCooldowns();
+            chatManager.setSlowSeconds(0);
+            chatManager.clearChatCooldowns();
             EditorInputSession.stop(player);
             player.sendMessage(CC.translate(messages.getString("CHAT.MESSAGES.DISABLED_SLOW", "&eChat slow mode disabled.", true)));
             openBackMenu(player, session);
@@ -83,8 +99,8 @@ public class EditorListener implements Listener {
             return;
         }
 
-        ModuleService.getManagerModule().getChatManager().setSlowSeconds(value);
-        ModuleService.getManagerModule().getChatManager().clearChatCooldowns();
+        chatManager.setSlowSeconds(value);
+        chatManager.clearChatCooldowns();
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("CHAT.MESSAGES.SET_SLOW", "&eChat slow mode set to &f%time%s&e.", true)
                 .replace("%time%", String.valueOf(value))));
@@ -106,7 +122,7 @@ public class EditorListener implements Listener {
     }
 
     private void handleChatPrefix(Player player, String text, EditorInputSession session) {
-        ModuleService.getManagerModule().getChatManager().setPrefix(text);
+        chatManager.setPrefix(text);
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.CHAT.PREFIX_UPDATED", "&aChat prefix updated: %prefix%", true)
                 .replace("%prefix%", CC.translate(text))));
@@ -129,8 +145,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".SLOT", value);
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.SLOT_UPDATED", "&aUpdated slot of &f%item% &ato &f%slot%&a.", true)
@@ -156,8 +171,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".NAME", String.join("\n", parts));
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.NAME_UPDATED", "&aUpdated name of &f%item%&a.", true)
@@ -177,8 +191,7 @@ public class EditorListener implements Listener {
         if (text.equalsIgnoreCase("clear")) {
             hotbar.getConfiguration().set(item + ".LORE", List.of());
             hotbar.save();
-            ModuleService.getManagerModule().getHotbarManager().load();
-            ModuleService.getManagerModule().getHotbarManager().reload();
+            reloadHotbarConfig();
 
             EditorInputSession.stop(player);
             player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.LORE_UPDATED", "&aUpdated lore of &f%item%&a.", true)
@@ -195,8 +208,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".LORE", lines);
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.LORE_UPDATED", "&aUpdated lore of &f%item%&a.", true)
@@ -220,8 +232,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".COMMAND", value);
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.COMMAND_UPDATED", "&aUpdated command of &f%item%&a.", true)
@@ -247,8 +258,7 @@ public class EditorListener implements Listener {
         }
 
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.HEAD_OWNER_UPDATED", "&aUpdated head owner of &f%item%&a.", true)
@@ -279,8 +289,7 @@ public class EditorListener implements Listener {
         }
 
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.HEAD_OWNER_UUID_UPDATED", "&aUpdated head owner UUID of &f%item%&a.", true)
@@ -306,8 +315,7 @@ public class EditorListener implements Listener {
         }
 
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.CLICK_SOUND.SOUND_UPDATED", "&aUpdated click sound of &f%item%&a.", true)
@@ -339,8 +347,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".CLICK_SOUND.VOLUME", volume);
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.CLICK_SOUND.VOLUME_UPDATED", "&aUpdated click sound volume of &f%item%&a.", true)
@@ -372,8 +379,7 @@ public class EditorListener implements Listener {
 
         hotbar.getConfiguration().set(item + ".CLICK_SOUND.PITCH", pitch);
         hotbar.save();
-        ModuleService.getManagerModule().getHotbarManager().load();
-        ModuleService.getManagerModule().getHotbarManager().reload();
+        reloadHotbarConfig();
 
         EditorInputSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("EDITOR.HOTBAR.CLICK_SOUND.PITCH_UPDATED", "&aUpdated click sound pitch of &f%item%&a.", true)
@@ -465,8 +471,8 @@ public class EditorListener implements Listener {
         settings.getConfiguration().set("PVP_ARENA.EFFECTS", effects);
         settings.save();
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if (ModuleService.getManagerModule().getPvpArenaKitManager().isInArenaSession(online.getUniqueId())) {
-                ModuleService.getManagerModule().getPvpArenaKitManager().refreshArenaState(online);
+            if (pvpArenaKitManager.isInArenaSession(online.getUniqueId())) {
+                pvpArenaKitManager.refreshArenaState(online);
             }
         }
         EditorInputSession.stop(player);
@@ -474,7 +480,7 @@ public class EditorListener implements Listener {
     }
 
     private void openBackMenu(Player player, EditorInputSession session) {
-        Bukkit.getScheduler().runTask(Celest.get(), () -> {
+        Bukkit.getScheduler().runTask(hub, () -> {
             if (session.getType() == EditorInputSession.Type.HOTBAR_SLOT
                     || session.getType() == EditorInputSession.Type.HOTBAR_NAME
                     || session.getType() == EditorInputSession.Type.HOTBAR_LORE
@@ -497,5 +503,10 @@ public class EditorListener implements Listener {
             }
             new ChatEditorMenu().openMenu(player);
         });
+    }
+
+    private void reloadHotbarConfig() {
+        hotbarManager.load();
+        hotbarManager.reload();
     }
 }

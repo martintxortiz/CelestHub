@@ -43,11 +43,11 @@ public class PvpArenaKitManager {
     private final Map<UUID, Long> combatUntil = new HashMap<>();
     private final Map<UUID, UUID> lastCombatOpponent = new HashMap<>();
 
-    public PvpArenaKitManager() {
+    public PvpArenaKitManager(ProfileManager profileManager, HotbarManager hotbarManager) {
         this.settingsConfig = ModuleService.getFileModule().getFile("settings");
         this.settingsMenuConfig = ModuleService.getFileModule().getFile("settings_menu");
-        this.profileManager = ModuleService.getManagerModule().getProfileManager();
-        this.hotbarManager = ModuleService.getManagerModule().getHotbarManager();
+        this.profileManager = profileManager;
+        this.hotbarManager = hotbarManager;
     }
 
     public boolean isEditingKit(UUID uuid) {

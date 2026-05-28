@@ -3,9 +3,13 @@ package net.kryunek.hub.listeners;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.hotbar.HotbarManager;
+import net.kryunek.hub.managers.jukebox.JukeboxManager;
 import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.managers.outfit.OutfitManager;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
+import net.kryunek.hub.managers.pvparena.PvpArenaKitManager;
+import net.kryunek.hub.managers.spawn.SpawnManager;
 import net.kryunek.hub.menus.settings.SettingsButton;
 import net.kryunek.hub.menus.gadgets.GadgetService;
 import net.kryunek.hub.utils.CC;
@@ -23,14 +27,25 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinLeaveListener implements Listener {
 
+    private final Celest hub;
     private final ProfileManager profileManager;
     private final HotbarManager hotbarManager;
-    private FileConfig settingsConfig;
+    private final SpawnManager spawnManager;
+    private final JukeboxManager jukeboxManager;
+    private final OutfitManager outfitManager;
+    private final PvpArenaKitManager pvpArenaKitManager;
+    private final FileConfig settingsConfig;
 
     public JoinLeaveListener(Celest hub) {
+        this.hub = hub;
+        var managers = ModuleService.getManagerModule();
         Bukkit.getPluginManager().registerEvents(this, hub);
-        this.profileManager = ModuleService.getManagerModule().getProfileManager();
-        this.hotbarManager = ModuleService.getManagerModule().getHotbarManager();
+        this.profileManager = managers.getProfileManager();
+        this.hotbarManager = managers.getHotbarManager();
+        this.spawnManager = managers.getSpawnManager();
+        this.jukeboxManager = managers.getJukeboxManager();
+        this.outfitManager = managers.getOutfitManager();
+        this.pvpArenaKitManager = managers.getPvpArenaKitManager();
         this.settingsConfig = ModuleService.getFileModule().getFile("settings");
     }
 
@@ -42,7 +57,7 @@ public class JoinLeaveListener implements Listener {
         player.setFoodLevel(20);
         player.setGameMode(profile.isBuildModeEnabled() ? GameMode.CREATIVE : GameMode.SURVIVAL);
         player.setWalkSpeed((float) settingsConfig.getDouble("WALK_SPEED"));
-        ModuleService.getManagerModule().getSpawnManager().toSpawn(event.getPlayer(), false);
+        spawnManager.toSpawn(event.getPlayer(), false);
         if (profile.isBuildModeEnabled()) {
             PlayerUtil.clear(player, true, true);
         } else {
@@ -50,8 +65,8 @@ public class JoinLeaveListener implements Listener {
         }
         event.setJoinMessage(null);
         SettingsButton.applyTimePreference(player, profile.getTimePreference());
-        if (ModuleService.getManagerModule().getJukeboxManager() != null) {
-            ModuleService.getManagerModule().getJukeboxManager().handleJoin(player);
+        if (jukeboxManager != null) {
+            jukeboxManager.handleJoin(player);
         }
 
         for (Player players : Bukkit.getServer().getOnlinePlayers()) {
@@ -114,7 +129,7 @@ public class JoinLeaveListener implements Listener {
                     (float) settingsConfig.getDouble("JOIN_SOUND.PITCH"));
         }
 
-        Bukkit.getScheduler().runTaskLater(Celest.get(), () -> {
+        Bukkit.getScheduler().runTaskLater(hub, () -> {
             if (!player.isOnline()) {
                 return;
             }
@@ -134,18 +149,17 @@ public class JoinLeaveListener implements Listener {
             if (PvpArenaUtil.isInsideArena(settingsConfig, player.getLocation())) {
                 return;
             }
-            ModuleService.getManagerModule().getOutfitManager().applySelectedOutfit(player, profile);
+            outfitManager.applySelectedOutfit(player, profile);
         }, 1L);
 
-        Bukkit.getScheduler().runTaskLater(Celest.get(), () -> {
+        Bukkit.getScheduler().runTaskLater(hub, () -> {
             if (!player.isOnline()) {
                 return;
             }
-            var pvpManager = ModuleService.getManagerModule().getPvpArenaKitManager();
-            pvpManager.enforceArenaVisibility(player);
+            pvpArenaKitManager.enforceArenaVisibility(player);
             for (Player online : Bukkit.getOnlinePlayers()) {
-                if (pvpManager.isInArenaSession(online.getUniqueId())) {
-                    pvpManager.enforceArenaVisibility(online);
+                if (pvpArenaKitManager.isInArenaSession(online.getUniqueId())) {
+                    pvpArenaKitManager.enforceArenaVisibility(online);
                 }
             }
         }, 2L);
@@ -157,8 +171,8 @@ public class JoinLeaveListener implements Listener {
         event.setQuitMessage(null);
         event.getPlayer().setWalkSpeed(0.2f);
         GadgetService.deactivatePersistentEffects(event.getPlayer());
-        if (ModuleService.getManagerModule().getJukeboxManager() != null) {
-            ModuleService.getManagerModule().getJukeboxManager().stop(event.getPlayer());
+        if (jukeboxManager != null) {
+            jukeboxManager.stop(event.getPlayer());
         }
         PlayerUtil.clear(profile == null ? event.getPlayer() : profile.getPlayer(), true, true);
 

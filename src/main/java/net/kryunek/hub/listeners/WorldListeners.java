@@ -2,9 +2,12 @@ package net.kryunek.hub.listeners;
 
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
+import net.kryunek.hub.managers.hotbar.HotbarManager;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
+import net.kryunek.hub.managers.pvparena.PvpArenaKitManager;
+import net.kryunek.hub.managers.spawn.SpawnManager;
 import net.kryunek.hub.menus.gadgets.GadgetService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -39,14 +42,23 @@ public class WorldListeners implements Listener {
 
     private static final long TEMP_BLOCK_ANIMATION_PERIOD_TICKS = 5L;
 
+    private final Celest hub;
     private final ProfileManager profileManager;
+    private final HotbarManager hotbarManager;
+    private final PvpArenaKitManager pvpArenaKitManager;
+    private final SpawnManager spawnManager;
     private final FileConfig settingsConfig;
     private final Map<BlockKey, TemporaryBlockData> temporaryBlocks = new HashMap<>();
 
     public WorldListeners(Celest hub) {
+        this.hub = hub;
+        var managers = ModuleService.getManagerModule();
         Bukkit.getPluginManager().registerEvents(this, hub);
         this.settingsConfig = ModuleService.getFileModule().getFile("settings");
-        this.profileManager = ModuleService.getManagerModule().getProfileManager();
+        this.profileManager = managers.getProfileManager();
+        this.hotbarManager = managers.getHotbarManager();
+        this.pvpArenaKitManager = managers.getPvpArenaKitManager();
+        this.spawnManager = managers.getSpawnManager();
         Bukkit.getScheduler().runTaskTimer(hub, this::updateTemporaryBlockAnimations, 2L, TEMP_BLOCK_ANIMATION_PERIOD_TICKS);
     }
 
@@ -111,7 +123,7 @@ public class WorldListeners implements Listener {
                 if (event.getEntity() instanceof Player victim) {
                     Player attacker = getDamagingPlayer(event.getDamager());
                     if (attacker != null) {
-                        ModuleService.getManagerModule().getPvpArenaKitManager().markCombat(attacker, victim);
+                        pvpArenaKitManager.markCombat(attacker, victim);
                     }
                 }
                 return;
@@ -128,7 +140,7 @@ public class WorldListeners implements Listener {
         if (isBuildMode(player)) {
             return;
         }
-        if (ModuleService.getManagerModule().getPvpArenaKitManager().isEditingKit(player.getUniqueId())) {
+        if (pvpArenaKitManager.isEditingKit(player.getUniqueId())) {
             return;
         }
         if (event.getClick() == ClickType.NUMBER_KEY) {
@@ -150,7 +162,7 @@ public class WorldListeners implements Listener {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
             return;
         }
-        for (Hotbar hotbar : ModuleService.getManagerModule().getHotbarManager().getHotbars().values()) {
+        for (Hotbar hotbar : hotbarManager.getHotbars().values()) {
             if (hotbar.isHotbarItem(clickedItem)) {
                 event.setCancelled(true);
 
@@ -178,7 +190,7 @@ public class WorldListeners implements Listener {
         if (isBuildMode(player)) {
             return;
         }
-        if (ModuleService.getManagerModule().getPvpArenaKitManager().isEditingKit(player.getUniqueId())) {
+        if (pvpArenaKitManager.isEditingKit(player.getUniqueId())) {
             return;
         }
 
@@ -196,7 +208,7 @@ public class WorldListeners implements Listener {
         if (isBuildMode(player)) {
             return;
         }
-        if (ModuleService.getManagerModule().getPvpArenaKitManager().isEditingKit(player.getUniqueId())) {
+        if (pvpArenaKitManager.isEditingKit(player.getUniqueId())) {
             return;
         }
         event.setCancelled(true);
@@ -208,10 +220,9 @@ public class WorldListeners implements Listener {
         event.setKeepInventory(true);
         event.getDrops().clear();
         Player victim = event.getEntity();
-        var pvpManager = ModuleService.getManagerModule().getPvpArenaKitManager();
         Player killer = victim.getKiller();
-        boolean victimInArena = pvpManager.isInArenaSession(victim.getUniqueId());
-        boolean killerInArena = killer != null && pvpManager.isInArenaSession(killer.getUniqueId());
+        boolean victimInArena = pvpArenaKitManager.isInArenaSession(victim.getUniqueId());
+        boolean killerInArena = killer != null && pvpArenaKitManager.isInArenaSession(killer.getUniqueId());
 
         if (killer != null && victimInArena && killerInArena) {
             Profile victimProfile = profileManager.getProfile(victim.getUniqueId());
@@ -228,24 +239,24 @@ public class WorldListeners implements Listener {
                     killerProfile.setPvpMaxKillstreak(nextStreak);
                 }
             }
-            pvpManager.clearCombat(killer.getUniqueId());
+            pvpArenaKitManager.clearCombat(killer.getUniqueId());
         }
 
-        pvpManager.clearCombat(victim.getUniqueId());
-        pvpManager.resetArenaStateOnDeath(victim);
+        pvpArenaKitManager.clearCombat(victim.getUniqueId());
+        pvpArenaKitManager.resetArenaStateOnDeath(victim);
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (!victim.isOnline()) return;
                 victim.spigot().respawn();
-                Bukkit.getScheduler().runTaskLater(Celest.get(), () -> {
+                Bukkit.getScheduler().runTaskLater(hub, () -> {
                     if (!victim.isOnline()) return;
-                    ModuleService.getManagerModule().getSpawnManager().toSpawn(victim, true);
-                    ModuleService.getManagerModule().getPvpArenaKitManager().restoreHubStateNow(victim);
+                    spawnManager.toSpawn(victim, true);
+                    pvpArenaKitManager.restoreHubStateNow(victim);
                 }, 1L);
             }
-        }.runTaskLater(Celest.get(), 1L);
+        }.runTaskLater(hub, 1L);
     }
 
 
@@ -395,7 +406,7 @@ public class WorldListeners implements Listener {
         Player player = event.getPlayer();
         if (player.getLocation().getBlockY() < 0) {
 
-            ModuleService.getManagerModule().getSpawnManager().toSpawn(player, true);
+            spawnManager.toSpawn(player, true);
 
         }
     }
@@ -428,7 +439,7 @@ public class WorldListeners implements Listener {
         long durationMillis = getTemporaryBlockDurationSeconds() * 1000L;
         long expiresAt = now + durationMillis;
 
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(Celest.get(), () -> {
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(hub, () -> {
             TemporaryBlockData active = temporaryBlocks.remove(key);
             if (active == null) {
                 return;

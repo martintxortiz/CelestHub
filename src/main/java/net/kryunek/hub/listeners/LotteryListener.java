@@ -2,6 +2,7 @@ package net.kryunek.hub.listeners;
 
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.lottery.LotteryCreateSession;
+import net.kryunek.hub.managers.lottery.LotteryManager;
 import net.kryunek.hub.managers.lottery.LotteryReminderEditSession;
 import net.kryunek.hub.managers.lottery.LotteryRewardSession;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -22,9 +23,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class LotteryListener implements Listener {
 
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final Celest hub;
+    private final LotteryManager lotteryManager;
+    private final FileConfig messages;
 
     public LotteryListener(Celest hub) {
+        this.hub = hub;
+        this.lotteryManager = ModuleService.getManagerModule().getLotteryManager();
+        this.messages = ModuleService.getFileModule().getFile("messages");
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
@@ -40,7 +46,7 @@ public class LotteryListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        ModuleService.getManagerModule().getLotteryManager().handleJoin(event.getPlayer());
+        lotteryManager.handleJoin(event.getPlayer());
     }
 
     @EventHandler
@@ -52,16 +58,15 @@ public class LotteryListener implements Listener {
             return;
         }
 
-        var manager = ModuleService.getManagerModule().getLotteryManager();
-        if (!manager.isJoinItem(event.getItem())) {
+        if (!lotteryManager.isJoinItem(event.getItem())) {
             return;
         }
 
         event.setCancelled(true);
-        var active = manager.getSingleActiveLottery();
+        var active = lotteryManager.getSingleActiveLottery();
         if (active == null) {
-            manager.handleJoin(event.getPlayer());
-            if (manager.getFirstActiveLottery() != null) {
+            lotteryManager.handleJoin(event.getPlayer());
+            if (lotteryManager.getFirstActiveLottery() != null) {
                 event.getPlayer().sendMessage(CC.translate("&cThere are multiple active lotteries, use /lottery join <name>."));
                 return;
             }
@@ -69,7 +74,7 @@ public class LotteryListener implements Listener {
             return;
         }
 
-        switch (manager.joinLottery(event.getPlayer(), active.getName())) {
+        switch (lotteryManager.joinLottery(event.getPlayer(), active.getName())) {
             case JOINED -> event.getPlayer().sendMessage(CC.translate(messages.getString("LOTTERY.JOINED", "&aYou joined lottery &f%lottery%&a.", true)
                     .replace("%lottery%", active.getName())));
             case ALREADY_JOINED -> event.getPlayer().sendMessage(CC.translate(messages.getString("LOTTERY.ALREADY_JOINED", "&eYou are already in this lottery.", true)));
@@ -134,7 +139,7 @@ public class LotteryListener implements Listener {
             return;
         }
 
-        boolean created = ModuleService.getManagerModule().getLotteryManager().createLottery(split[0], duration);
+        boolean created = lotteryManager.createLottery(split[0], duration);
         if (!created) {
             player.sendMessage(CC.translate(messages.getString("LOTTERY.ALREADY_EXISTS", "&cA lottery with that name already exists.", true)));
             return;
@@ -144,7 +149,7 @@ public class LotteryListener implements Listener {
         player.sendMessage(CC.translate(messages.getString("LOTTERY.CREATED", "&aLottery created: &f%lottery% &7(%seconds%s)", true)
                 .replace("%lottery%", split[0])
                 .replace("%seconds%", String.valueOf(duration))));
-        Bukkit.getScheduler().runTask(Celest.get(), () -> new LotteryEditorMenu(split[0]).openMenu(player));
+        Bukkit.getScheduler().runTask(hub, () -> new LotteryEditorMenu(split[0]).openMenu(player));
     }
 
     private void handleRewardSession(Player player, String text) {
@@ -156,7 +161,7 @@ public class LotteryListener implements Listener {
         if (text.equalsIgnoreCase("cancel")) {
             LotteryRewardSession.stop(player);
             player.sendMessage(CC.translate(messages.getString("LOTTERY.REWARD.CANCELLED", "&cReward edition cancelled.", true)));
-            Bukkit.getScheduler().runTask(Celest.get(), () -> new LotteryEditorMenu(session.getLotteryName()).openMenu(player));
+            Bukkit.getScheduler().runTask(hub, () -> new LotteryEditorMenu(session.getLotteryName()).openMenu(player));
             return;
         }
 
@@ -165,7 +170,7 @@ public class LotteryListener implements Listener {
             return;
         }
 
-        boolean updated = ModuleService.getManagerModule().getLotteryManager().addReward(session.getLotteryName(), text);
+        boolean updated = lotteryManager.addReward(session.getLotteryName(), text);
         if (!updated) {
             LotteryRewardSession.stop(player);
             player.sendMessage(CC.translate(messages.getString("LOTTERY.NOT_FOUND", "&cLottery not found.", true)));
@@ -175,14 +180,14 @@ public class LotteryListener implements Listener {
         LotteryRewardSession.stop(player);
         player.sendMessage(CC.translate(messages.getString("LOTTERY.REWARD_ADDED", "&aReward added to &f%lottery%&a.", true)
                 .replace("%lottery%", session.getLotteryName())));
-        Bukkit.getScheduler().runTask(Celest.get(), () -> new LotteryEditorMenu(session.getLotteryName()).openMenu(player));
+        Bukkit.getScheduler().runTask(hub, () -> new LotteryEditorMenu(session.getLotteryName()).openMenu(player));
     }
 
     private void handleReminderSession(Player player, String text) {
         if (text.equalsIgnoreCase("cancel")) {
             LotteryReminderEditSession.stop(player);
             player.sendMessage(CC.translate(messages.getString("EDITOR.CANCELLED", "&cEditor action cancelled.", true)));
-            Bukkit.getScheduler().runTask(Celest.get(), () -> new LotteryPaginatedMenu().openMenu(player));
+            Bukkit.getScheduler().runTask(hub, () -> new LotteryPaginatedMenu().openMenu(player));
             return;
         }
 
@@ -199,9 +204,9 @@ public class LotteryListener implements Listener {
             return;
         }
 
-        ModuleService.getManagerModule().getLotteryManager().updateReminderIntervalSeconds(value);
+        lotteryManager.updateReminderIntervalSeconds(value);
         LotteryReminderEditSession.stop(player);
         player.sendMessage(CC.translate("&aUpdated lottery reminder interval to &f" + value + "s&a."));
-        Bukkit.getScheduler().runTask(Celest.get(), () -> new LotteryPaginatedMenu().openMenu(player));
+        Bukkit.getScheduler().runTask(hub, () -> new LotteryPaginatedMenu().openMenu(player));
     }
 }

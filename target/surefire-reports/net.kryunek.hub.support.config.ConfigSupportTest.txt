@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: net.kryunek.hub.support.config.ConfigSupportTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.576 s -- in net.kryunek.hub.support.config.ConfigSupportTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.447 s -- in net.kryunek.hub.support.config.ConfigSupportTest

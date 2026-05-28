@@ -1,6 +1,7 @@
 package net.kryunek.hub.managers.queue;
 
 import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.managers.rank.IRankManager;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.TaskUtil;
@@ -21,11 +22,13 @@ public class QueueManager {
     private final List<Queue> queues = new ArrayList<>();
     private final Map<UUID, Queue> playerQueueMap = new HashMap<>();
     private final FileConfig config;
+    private final IRankManager rankManager;
     private BukkitTask sendTask;
     private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
 
-    public QueueManager() {
+    public QueueManager(IRankManager rankManager) {
         this.config = ModuleService.getFileModule().getFile("queue");
+        this.rankManager = rankManager;
         migrateLegacyTickValuesIfNeeded();
         loadQueues();
         iniciarSendTask();
@@ -75,7 +78,7 @@ public class QueueManager {
 
         for (String server : section.getKeys(false)) {
             boolean paused = section.getBoolean(server + ".paused");
-            Queue queue = new Queue(server);
+            Queue queue = new Queue(server, this, rankManager, config);
             queue.setPausedSilently(paused);
             queue.loadEntries(section.getStringList(server + ".entries"));
             queues.add(queue);
@@ -88,7 +91,7 @@ public class QueueManager {
             return;
         }
 
-        Queue queue = new Queue(name);
+        Queue queue = new Queue(name, this, rankManager, config);
         queues.add(queue);
 
         config.getConfiguration().set("QUEUE.SERVERS." + name + ".paused", false);

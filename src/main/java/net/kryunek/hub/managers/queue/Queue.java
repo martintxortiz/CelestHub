@@ -2,7 +2,7 @@ package net.kryunek.hub.managers.queue;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.managers.rank.IRankManager;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.TaskUtil;
@@ -26,14 +26,18 @@ public class Queue {
     private final List<UUID> playerList = new ArrayList<>();
     private boolean paused;
     private final String server;
+    private final QueueManager queueManager;
+    private final IRankManager rankManager;
     private final FileConfig config;
     private BukkitTask positionTask;
 
     private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
 
-    public Queue(String server) {
+    public Queue(String server, QueueManager queueManager, IRankManager rankManager, FileConfig config) {
         this.server = server;
-        this.config = ModuleService.getFileModule().getFile("queue");
+        this.queueManager = queueManager;
+        this.rankManager = rankManager;
+        this.config = config;
         iniciarTaskPosicion();
     }
 
@@ -57,7 +61,7 @@ public class Queue {
 
                 int position = getPosition(player);
                 if (position <= 0) {
-                    ModuleService.getManagerModule().getQueueManager().removeFromMap(player);
+                    queueManager.removeFromMap(player);
                     continue;
                 }
 
@@ -88,7 +92,7 @@ public class Queue {
         this.paused = paused;
         config.getConfiguration().set("QUEUE.SERVERS." + server + ".paused", paused);
         config.save();
-        ModuleService.getManagerModule().getQueueManager().persistAndSyncQueues(true);
+        queueManager.persistAndSyncQueues(true);
     }
 
     public void setPausedSilently(boolean paused) {
@@ -107,9 +111,9 @@ public class Queue {
         playerList.remove(playerId);
         Player player = Bukkit.getPlayer(playerId);
         if (player != null) {
-            ModuleService.getManagerModule().getQueueManager().removeFromMap(player);
+            queueManager.removeFromMap(player);
         }
-        ModuleService.getManagerModule().getQueueManager().persistAndSyncQueues(true);
+        queueManager.persistAndSyncQueues(true);
     }
 
     public void loadEntries(List<String> rawEntries) {
@@ -147,7 +151,7 @@ public class Queue {
         }
         playerList.add(uuid);
         playerList.sort(Comparator.comparingInt(this::getPriority).reversed());
-        ModuleService.getManagerModule().getQueueManager().persistAndSyncQueues(true);
+        queueManager.persistAndSyncQueues(true);
         return true;
     }
 
@@ -177,7 +181,7 @@ public class Queue {
 
         playerList.add(playerId);
         playerList.sort(Comparator.comparingInt(this::getPriority).reversed());
-        ModuleService.getManagerModule().getQueueManager().persistAndSyncQueues(true);
+        queueManager.persistAndSyncQueues(true);
         return true;
     }
 
@@ -212,11 +216,11 @@ public class Queue {
         }
 
         BungeeUtils.sendToServer(player, server);
-        ModuleService.getManagerModule().getQueueManager().removeFromMap(player);
+        queueManager.removeFromMap(player);
     }
 
     public int getPriority(UUID playerId) {
-        String rankName = ModuleService.getManagerModule().getRankManager().getRank().getName(playerId);
+        String rankName = rankManager.getRank().getName(playerId);
         if (rankName == null || rankName.isBlank()) {
             rankName = "default";
         }

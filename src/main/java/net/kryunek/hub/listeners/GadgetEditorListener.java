@@ -15,11 +15,15 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class GadgetEditorListener implements Listener {
 
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
-    private final FileConfig settings = ModuleService.getFileModule().getFile("gadgets");
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final Celest hub;
+    private final FileConfig gadgets;
+    private final FileConfig messages;
 
     public GadgetEditorListener(Celest hub) {
+        this.hub = hub;
+        var files = ModuleService.getFileModule();
+        this.gadgets = files.getFile("gadgets");
+        this.messages = files.getFile("messages");
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
@@ -36,7 +40,7 @@ public class GadgetEditorListener implements Listener {
         String key = session.getKey();
         String basePath = "GADGETS_MENU.ITEMS." + key;
 
-        if (!gadgetsMenu.getConfiguration().contains(basePath)) {
+        if (!gadgets.getConfiguration().contains(basePath)) {
             GadgetEditSession.stop(player);
             player.sendMessage(CC.translate("&cGadget no longer exists."));
             return;
@@ -71,15 +75,15 @@ public class GadgetEditorListener implements Listener {
             return;
         }
 
-        String type = gadgetsMenu.getString("GADGETS_MENU.ITEMS." + key + ".TYPE", "", false);
+        String type = gadgets.getString("GADGETS_MENU.ITEMS." + key + ".TYPE", "", false);
         if (type == null || type.isBlank()) {
             GadgetEditSession.stop(player);
             player.sendMessage(CC.translate("&cGadget type not found."));
             return;
         }
 
-        settings.getConfiguration().set("GADGETS." + type.toUpperCase() + ".COOLDOWN_SECONDS", value);
-        settings.save();
+        gadgets.getConfiguration().set("GADGETS." + type.toUpperCase() + ".COOLDOWN_SECONDS", value);
+        gadgets.save();
         GadgetEditSession.stop(player);
         player.sendMessage(CC.translate("&aUpdated cooldown of &f" + key + " &ato &f" + value + "s&a."));
         openMenu(player, key);
@@ -99,14 +103,14 @@ public class GadgetEditorListener implements Listener {
             return;
         }
 
-        gadgetsMenu.getConfiguration().set("GADGETS_MENU.ITEMS." + key + ".SLOT", value);
-        gadgetsMenu.save();
+        gadgets.getConfiguration().set("GADGETS_MENU.ITEMS." + key + ".SLOT", value);
+        gadgets.save();
         GadgetEditSession.stop(player);
         player.sendMessage(CC.translate("&aUpdated slot of &f" + key + " &ato &f" + value + "&a."));
         openMenu(player, key);
     }
 
     private void openMenu(Player player, String key) {
-        Bukkit.getScheduler().runTask(Celest.get(), () -> new GadgetItemEditorMenu(key).openMenu(player));
+        Bukkit.getScheduler().runTask(hub, () -> new GadgetItemEditorMenu(key).openMenu(player));
     }
 }

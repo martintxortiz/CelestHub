@@ -2,6 +2,7 @@ package net.kryunek.hub.managers.network;
 
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.managers.module.impl.ManagerModule;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
@@ -17,6 +18,8 @@ import java.util.logging.Level;
 public class NetworkSyncManager {
 
     private static final String CHANNEL = "celesthub:sync";
+    private final Celest hub;
+    private final ManagerModule managers;
     private final FileConfig config;
     private final String serverId;
     private volatile boolean enabled;
@@ -25,7 +28,9 @@ public class NetworkSyncManager {
     private volatile JedisPubSub subscription;
     private Thread subscriberThread;
 
-    public NetworkSyncManager() {
+    public NetworkSyncManager(Celest hub, ManagerModule managers) {
+        this.hub = hub;
+        this.managers = managers;
         this.config = ModuleService.getFileModule().getFile("config");
         this.serverId = UUID.randomUUID().toString();
     }
@@ -142,15 +147,15 @@ public class NetworkSyncManager {
             Bukkit.getLogger().warning("[Celest] Ignoring malformed Redis sync payload for topic " + topic + ".");
             return;
         }
-        Bukkit.getScheduler().runTask(Celest.get(), () -> {
-            if ("QUEUE_STATE".equalsIgnoreCase(topic) && ModuleService.getManagerModule().getQueueManager() != null) {
-                ModuleService.getManagerModule().getQueueManager().applyRemoteSnapshot(payload);
-            } else if ("LOTTERY_STATE".equalsIgnoreCase(topic) && ModuleService.getManagerModule().getLotteryManager() != null) {
-                ModuleService.getManagerModule().getLotteryManager().applyRemoteSnapshot(payload);
-            } else if ("TIMER_STATE".equalsIgnoreCase(topic) && ModuleService.getManagerModule().getTimerManager() != null) {
-                ModuleService.getManagerModule().getTimerManager().applyRemoteSnapshot(payload);
-            } else if ("CHAT_STATE".equalsIgnoreCase(topic) && ModuleService.getManagerModule().getChatManager() != null) {
-                ModuleService.getManagerModule().getChatManager().applyRemoteSnapshot(payload);
+        Bukkit.getScheduler().runTask(hub, () -> {
+            if ("QUEUE_STATE".equalsIgnoreCase(topic) && managers.getQueueManager() != null) {
+                managers.getQueueManager().applyRemoteSnapshot(payload);
+            } else if ("LOTTERY_STATE".equalsIgnoreCase(topic) && managers.getLotteryManager() != null) {
+                managers.getLotteryManager().applyRemoteSnapshot(payload);
+            } else if ("TIMER_STATE".equalsIgnoreCase(topic) && managers.getTimerManager() != null) {
+                managers.getTimerManager().applyRemoteSnapshot(payload);
+            } else if ("CHAT_STATE".equalsIgnoreCase(topic) && managers.getChatManager() != null) {
+                managers.getChatManager().applyRemoteSnapshot(payload);
             }
         });
     }
