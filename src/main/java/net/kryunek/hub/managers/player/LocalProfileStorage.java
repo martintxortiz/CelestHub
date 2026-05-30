@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.player;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Bukkit;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public class LocalProfileStorage implements ProfileStorage {
 
-    private final FileConfig playersConfig = ModuleService.getFileModule().getFile("players");
+    private final FileConfig playersConfig = ModuleService.getFileModule().getFile(ConfigFiles.PLAYERS);
 
     @Override
     public synchronized ProfileData load(UUID uuid) {

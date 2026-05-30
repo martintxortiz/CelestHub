@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.utils.CC;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class GadgetDisableButton extends Button {
 
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     @Override
     public ItemStack getButtonItem(Player player) {

@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class CelestEditorMenu extends Menu {
 
     private static final int LAYOUT_VERSION = 3;
-    private final FileConfig editorMenuConfig = ModuleService.getFileModule().getFile("celest_editor");
+    private final FileConfig editorMenuConfig = ModuleService.getFileModule().getFile(ConfigFiles.CELEST_EDITOR);
 
     @Override
     public String getTitle(Player player) {

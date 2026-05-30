@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.timer;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.timer.Timer;
 import net.kryunek.hub.menus.editor.CelestEditorMenu;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class TimerPaginatedMenu extends PaginatedMenu {
 
-    private final FileConfig adminMenus = ModuleService.getFileModule().getFile("admin_menus");
+    private final FileConfig adminMenus = ModuleService.getFileModule().getFile(ConfigFiles.ADMIN_MENUS);
 
     {
         setAutoUpdate(true);

@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.gadgets.GadgetEditSession;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -11,7 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class GadgetEditorListener implements Listener {
 
@@ -22,20 +24,20 @@ public class GadgetEditorListener implements Listener {
     public GadgetEditorListener(Celest hub) {
         this.hub = hub;
         var files = ModuleService.getFileModule();
-        this.gadgets = files.getFile("gadgets");
-        this.messages = files.getFile("messages");
+        this.gadgets = files.getFile(ConfigFiles.GADGETS);
+        this.messages = files.getFile(ConfigFiles.MESSAGES);
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         if (!GadgetEditSession.isActive(player)) {
             return;
         }
 
         event.setCancelled(true);
-        String text = event.getMessage().trim();
+        String text = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
         GadgetEditSession session = GadgetEditSession.get(player);
         String key = session.getKey();
         String basePath = "GADGETS_MENU.ITEMS." + key;

@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.particles;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kryunek.hub.Celest;
@@ -74,7 +75,7 @@ public final class TrailParticleCreateSession {
             STARTED.remove(uuid);
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                         .getString("SESSION.EXPIRED", "&cEditor session expired after 60 seconds.", true)));
             }
         }, TIMEOUT_TICKS);

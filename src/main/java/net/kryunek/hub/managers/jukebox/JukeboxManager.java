@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Per-player background music playback (play/pause/seek/volume) driven by the injected jukebox
+ * config, suspending while a player is inside a PvP arena.
+ */
 public class JukeboxManager {
 
     private final FileConfig jukeboxConfig;
@@ -30,9 +34,9 @@ public class JukeboxManager {
     private final Map<UUID, Boolean> suspendedPlayback = new LinkedHashMap<>();
     private BukkitTask tickerTask;
 
-    public JukeboxManager() {
-        this.jukeboxConfig = ModuleService.getFileModule().getFile("jukebox");
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+    public JukeboxManager(FileConfig jukeboxConfig, FileConfig settingsConfig) {
+        this.jukeboxConfig = jukeboxConfig;
+        this.settingsConfig = settingsConfig;
         load();
         startTicker();
     }

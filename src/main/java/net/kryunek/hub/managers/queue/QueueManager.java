@@ -1,7 +1,8 @@
 package net.kryunek.hub.managers.queue;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
-import net.kryunek.hub.managers.rank.IRankManager;
+import net.kryunek.hub.managers.rank.RankManager;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.TaskUtil;
@@ -17,25 +18,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Owns the server send-queues: membership, periodic sending ordered by rank priority, persistence
+ * to the injected queue config and cross-hub network sync.
+ */
 public class QueueManager {
 
     private final List<Queue> queues = new ArrayList<>();
     private final Map<UUID, Queue> playerQueueMap = new HashMap<>();
     private final FileConfig config;
-    private final IRankManager rankManager;
+    private final RankManager rankManager;
     private BukkitTask sendTask;
     private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
 
-    public QueueManager(IRankManager rankManager) {
-        this.config = ModuleService.getFileModule().getFile("queue");
+    public QueueManager(RankManager rankManager, FileConfig config) {
+        this.config = config;
         this.rankManager = rankManager;
         migrateLegacyTickValuesIfNeeded();
         loadQueues();
-        iniciarSendTask();
+        startSendTask();
     }
 
-    public void iniciarSendTask() {
-        detenerSendTask();
+    public void startSendTask() {
+        stopSendTask();
         long delayTicks = toTicks(config.getInt("QUEUE.DELAY"));
         this.sendTask = TaskUtil.runSyncTimer(() -> {
             for (Queue queue : queues) {
@@ -51,7 +56,7 @@ public class QueueManager {
         }, delayTicks, delayTicks);
     }
 
-    public void detenerSendTask() {
+    public void stopSendTask() {
         if (sendTask != null) {
             sendTask.cancel();
             sendTask = null;
@@ -59,15 +64,15 @@ public class QueueManager {
     }
 
     public void shutdown() {
-        detenerSendTask();
+        stopSendTask();
         for (Queue queue : queues) {
-            queue.detenerTaskPosicion();
+            queue.stopPositionTask();
         }
     }
 
     public void loadQueues() {
         for (Queue queue : queues) {
-            queue.detenerTaskPosicion();
+            queue.stopPositionTask();
         }
         queues.clear();
 
@@ -185,7 +190,7 @@ public class QueueManager {
     public void updateQueueDelay(int delaySeconds) {
         config.getConfiguration().set("QUEUE.DELAY", delaySeconds);
         config.save();
-        iniciarSendTask();
+        startSendTask();
         notifyQueueSync();
     }
 
@@ -193,7 +198,7 @@ public class QueueManager {
         config.getConfiguration().set("QUEUE.POSITION_MESSAGE_DELAY", delaySeconds);
         config.save();
         for (Queue queue : queues) {
-            queue.iniciarTaskPosicion();
+            queue.startPositionTask();
         }
         notifyQueueSync();
     }
@@ -240,7 +245,7 @@ public class QueueManager {
             config.getConfiguration().loadFromString(yaml);
             config.save();
             loadQueues();
-            iniciarSendTask();
+            startSendTask();
         } catch (InvalidConfigurationException e) {
             org.bukkit.Bukkit.getLogger().warning("[Celest] Invalid remote queue snapshot.");
         }
@@ -268,7 +273,7 @@ public class QueueManager {
     }
 
     private void sendActionBar(Player player, String path, Map<String, String> placeholders) {
-        FileConfig messages = ModuleService.getFileModule().getFile("messages");
+        FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
         String prefix = messages.getString("ACTIONBAR.PREFIX", "", true);
         String message = messages.getString(path, "", true);
         if (message == null || message.isEmpty()) {

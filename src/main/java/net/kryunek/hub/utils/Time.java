@@ -1,5 +1,6 @@
 package net.kryunek.hub.utils;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 
 import net.kryunek.hub.managers.module.ModuleService;
 
@@ -40,16 +41,16 @@ public class Time {
 
     }
     public static String getDate() {
-        SimpleDateFormat timeDate = new SimpleDateFormat(ModuleService.getFileModule().getFile("config")
+        SimpleDateFormat timeDate = new SimpleDateFormat(ModuleService.getFileModule().getFile(ConfigFiles.CONFIG)
                 .getString("TIME.DATE", "yyyy-MM-dd", false));
-        timeDate.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile("config").getString("TIME.ZONE")));
+        timeDate.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile(ConfigFiles.CONFIG).getString("TIME.ZONE")));
         return timeDate.format(new Date());
     }
 
     public static String getHour() {
-        SimpleDateFormat timeHour = new SimpleDateFormat(ModuleService.getFileModule().getFile("config")
+        SimpleDateFormat timeHour = new SimpleDateFormat(ModuleService.getFileModule().getFile(ConfigFiles.CONFIG)
                 .getString("TIME.HOUR", "HH:mm", false));
-        timeHour.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile("config").getString("TIME.ZONE")));
+        timeHour.setTimeZone(TimeZone.getTimeZone(ModuleService.getFileModule().getFile(ConfigFiles.CONFIG).getString("TIME.ZONE")));
         return timeHour.format(new Date());
     }
 }

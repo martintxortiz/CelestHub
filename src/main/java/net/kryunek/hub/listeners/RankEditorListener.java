@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.hook.TablistHook;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -12,25 +13,26 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class RankEditorListener implements Listener {
 
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     public RankEditorListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         if (!RankEditSession.isActive(player)) {
             return;
         }
 
         event.setCancelled(true);
-        String text = event.getMessage().trim();
+        String text = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
         RankEditSession session = RankEditSession.get(player);
 
         if (text.equalsIgnoreCase("cancel")) {

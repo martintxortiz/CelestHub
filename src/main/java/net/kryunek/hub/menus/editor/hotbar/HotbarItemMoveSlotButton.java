@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.hotbar;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -18,8 +19,8 @@ public class HotbarItemMoveSlotButton extends Button {
 
     private final String key;
     private final int delta;
-    private final FileConfig hotbar = ModuleService.getFileModule().getFile("hotbar");
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig hotbar = ModuleService.getFileModule().getFile(ConfigFiles.HOTBAR);
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     @Override
     public ItemStack getButtonItem(Player player) {

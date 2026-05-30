@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.hotbar;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class HotbarItemEditorMenu extends Menu {
 
     private final String key;
-    private final FileConfig hotbar = ModuleService.getFileModule().getFile("hotbar");
+    private final FileConfig hotbar = ModuleService.getFileModule().getFile(ConfigFiles.HOTBAR);
 
     public HotbarItemEditorMenu(String key) {
         this.key = key;

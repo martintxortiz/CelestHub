@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
@@ -32,7 +33,7 @@ public class DoubleJumpListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, hub);
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
         this.logger = hub.getLogger();
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+        this.settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
     }
 
     @EventHandler

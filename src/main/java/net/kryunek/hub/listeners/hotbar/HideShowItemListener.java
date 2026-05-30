@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners.hotbar;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.hotbar.HotbarManager;
@@ -26,7 +27,7 @@ public class HideShowItemListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, hub);
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
         this.hotbarManager = ModuleService.getManagerModule().getHotbarManager();
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+        this.settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
     }
 
 
@@ -56,7 +57,7 @@ public class HideShowItemListener implements Listener {
                         return;
                     }
                     for (Player online : Bukkit.getServer().getOnlinePlayers()) {
-                        player.hidePlayer(online);
+                        player.hidePlayer(Celest.get(), online);
                     }
 
                     profile.setVisibilityOn(false);
@@ -97,7 +98,7 @@ public class HideShowItemListener implements Listener {
                         return;
                     }
                     for (Player online : Bukkit.getServer().getOnlinePlayers()) {
-                        player.showPlayer(online);
+                        player.showPlayer(Celest.get(), online);
                     }
                     profile.setVisibilityOn(true);
                     player.getInventory().setItem(hide.getSlot(), hide.getItem());

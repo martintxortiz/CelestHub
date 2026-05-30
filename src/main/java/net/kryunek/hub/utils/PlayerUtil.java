@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -45,7 +46,7 @@ public class PlayerUtil {
 
 
     public void clear(Player player, boolean armor, boolean inventory) {
-        if (armor) player.getInventory().setArmorContents(null);
+        if (armor) player.getInventory().setArmorContents(new ItemStack[4]);
         if (inventory) player.getInventory().clear();
     }
     public void denyMovement(final Player player) {

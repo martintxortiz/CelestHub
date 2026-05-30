@@ -2,7 +2,7 @@ package net.kryunek.hub.managers.queue;
 
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.rank.IRank;
-import net.kryunek.hub.managers.rank.IRankManager;
+import net.kryunek.hub.managers.rank.RankManager;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -33,7 +33,7 @@ class QueueTest {
     @Test
     void getPriorityReadsRankFromInjectedRankManager() {
         UUID player = UUID.randomUUID();
-        IRankManager rankManager = rankManagerReturning(player, "vip");
+        RankManager rankManager = rankManagerReturning(player, "vip");
         FileConfig config = newQueueConfig("priority.yml");
         config.getConfiguration().set("QUEUE.PRIORITY.vip", 50);
 
@@ -52,7 +52,7 @@ class QueueTest {
         IRank rank = mock(IRank.class);
         when(rank.getName(blank)).thenReturn("");
         when(rank.getName(missing)).thenReturn(null);
-        IRankManager rankManager = mock(IRankManager.class);
+        RankManager rankManager = mock(RankManager.class);
         when(rankManager.getRank()).thenReturn(rank);
 
         FileConfig config = newQueueConfig("default.yml");
@@ -68,7 +68,7 @@ class QueueTest {
     @Test
     void getPriorityLowercasesRankName() {
         UUID player = UUID.randomUUID();
-        IRankManager rankManager = rankManagerReturning(player, "ADMIN");
+        RankManager rankManager = rankManagerReturning(player, "ADMIN");
         FileConfig config = newQueueConfig("lower.yml");
         config.getConfiguration().set("QUEUE.PRIORITY.admin", 99);
 
@@ -88,7 +88,7 @@ class QueueTest {
         when(rank.getName(lowRank)).thenReturn("default");
         when(rank.getName(midRank)).thenReturn("vip");
         when(rank.getName(highRank)).thenReturn("admin");
-        IRankManager rankManager = mock(IRankManager.class);
+        RankManager rankManager = mock(RankManager.class);
         when(rankManager.getRank()).thenReturn(rank);
 
         FileConfig config = newQueueConfig("order.yml");
@@ -108,10 +108,10 @@ class QueueTest {
         });
     }
 
-    private IRankManager rankManagerReturning(UUID player, String rankName) {
+    private RankManager rankManagerReturning(UUID player, String rankName) {
         IRank rank = mock(IRank.class);
         when(rank.getName(player)).thenReturn(rankName);
-        IRankManager rankManager = mock(IRankManager.class);
+        RankManager rankManager = mock(RankManager.class);
         when(rankManager.getRank()).thenReturn(rank);
         return rankManager;
     }
@@ -144,6 +144,6 @@ class QueueTest {
 
     @FunctionalInterface
     private interface QueueFactory {
-        Queue create(IRankManager rankManager, FileConfig config);
+        Queue create(RankManager rankManager, FileConfig config);
     }
 }

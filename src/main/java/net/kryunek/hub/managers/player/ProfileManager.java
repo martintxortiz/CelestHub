@@ -1,7 +1,7 @@
 package net.kryunek.hub.managers.player;
 
 import net.kryunek.hub.Celest;
-import net.kryunek.hub.managers.module.ModuleService;
+import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.TaskUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * In-memory registry of player {@link Profile}s with periodic autosave, backed by a pluggable
+ * {@link ProfileStorage} (local file or MongoDB) selected from the injected config.
+ */
 public class ProfileManager {
     private final Map<UUID, Profile> profiles;
     private final ProfileStorage storage;
@@ -20,8 +24,8 @@ public class ProfileManager {
     private final double defaultJukeboxVolume;
     private BukkitTask autosaveTask;
 
-    public ProfileManager() {
-        this(createStorage(), true, readDefaultJukeboxEnabled(), readDefaultJukeboxVolume());
+    public ProfileManager(FileConfig config, FileConfig jukebox) {
+        this(createStorage(config), true, readDefaultJukeboxEnabled(jukebox), readDefaultJukeboxVolume(jukebox));
     }
 
     ProfileManager(ProfileStorage storage, boolean startAutosave) {
@@ -38,25 +42,21 @@ public class ProfileManager {
         }
     }
 
-    private static ProfileStorage createStorage() {
-        String type = ModuleService.getFileModule().getFile("config").getConfiguration()
-                .getString("PERSISTENCE.TYPE", "LOCAL");
-        boolean enabled = ModuleService.getFileModule().getFile("config").getConfiguration()
-                .getBoolean("PERSISTENCE.ENABLED", false);
+    private static ProfileStorage createStorage(FileConfig config) {
+        String type = config.getConfiguration().getString("PERSISTENCE.TYPE", "LOCAL");
+        boolean enabled = config.getConfiguration().getBoolean("PERSISTENCE.ENABLED", false);
         if (enabled && "MONGO".equalsIgnoreCase(type)) {
             return new MongoProfileStorage();
         }
         return new LocalProfileStorage();
     }
 
-    private static boolean readDefaultJukeboxEnabled() {
-        return ModuleService.getFileModule().getFile("jukebox")
-                .getConfiguration().getBoolean("JUKEBOX.DEFAULT_ENABLED", true);
+    private static boolean readDefaultJukeboxEnabled(FileConfig jukebox) {
+        return jukebox.getConfiguration().getBoolean("JUKEBOX.DEFAULT_ENABLED", true);
     }
 
-    private static double readDefaultJukeboxVolume() {
-        return ModuleService.getFileModule().getFile("jukebox")
-                .getConfiguration().getDouble("JUKEBOX.CONTROLS.DEFAULT_VOLUME", 1.0D);
+    private static double readDefaultJukeboxVolume(FileConfig jukebox) {
+        return jukebox.getConfiguration().getDouble("JUKEBOX.CONTROLS.DEFAULT_VOLUME", 1.0D);
     }
 
     private void startAutosave() {

@@ -42,6 +42,9 @@ public class ScoreboardBoard {
 	 */
 	public org.bukkit.scoreboard.Scoreboard getScoreboard() {
 		Player player = Bukkit.getPlayer(getUuid());
+		if (player == null) {
+			return Bukkit.getScoreboardManager().getNewScoreboard();
+		}
 		if (getAssemble().isHook() || player.getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
 			return player.getScoreboard();
 		} else {

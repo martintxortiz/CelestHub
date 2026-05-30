@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.Module;
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.utils.FileConfig;
 
 import java.util.Map;
@@ -29,26 +30,26 @@ public class FileModule extends Module {
     
     @Override
     public void onEnable(Celest hub) {
-        this.files.put("config", new FileConfig(hub, "core/config.yml"));
-        this.files.put("players", new FileConfig(hub, "core/players.yml"));
-        this.files.put("messages", new FileConfig(hub, "core/messages.yml"));
-        this.files.put("hotbar", new FileConfig(hub, "features/hotbar.yml"));
-        this.files.put("settings", new FileConfig(hub, "features/settings.yml"));
-        this.files.put("scoreboard", new FileConfig(hub, "features/scoreboard.yml"));
-        this.files.put("queue", new FileConfig(hub, "features/queue.yml"));
-        this.files.put("lottery", new FileConfig(hub, "features/lottery.yml"));
-        this.files.put("gadgets", new FileConfig(hub, "features/gadgets.yml"));
-        this.files.put("particle", new FileConfig(hub, "features/particle.yml"));
-        this.files.put("outfit", new FileConfig(hub, "features/outfit.yml"));
-        this.files.put("tab", new FileConfig(hub, "features/tab.yml"));
-        this.files.put("jukebox", new FileConfig(hub, "features/jukebox.yml"));
-        this.files.put("common_menu", new FileConfig(hub, "menus/common.yml"));
-        this.files.put("admin_menus", new FileConfig(hub, "menus/admin_menus.yml"));
-        this.files.put("server_selector", new FileConfig(hub, "menus/server_selector.yml"));
-        this.files.put("hub_selector", new FileConfig(hub, "menus/hub_selector.yml"));
-        this.files.put("editor_menus", new FileConfig(hub, "menus/editor_menus.yml"));
-        this.files.put("celest_editor", new FileConfig(hub, "menus/celest_editor.yml"));
-        this.files.put("settings_menu", new FileConfig(hub, "menus/settings_menu.yml"));
+        this.files.put(ConfigFiles.CONFIG, new FileConfig(hub, "core/config.yml"));
+        this.files.put(ConfigFiles.PLAYERS, new FileConfig(hub, "core/players.yml"));
+        this.files.put(ConfigFiles.MESSAGES, new FileConfig(hub, "core/messages.yml"));
+        this.files.put(ConfigFiles.HOTBAR, new FileConfig(hub, "features/hotbar.yml"));
+        this.files.put(ConfigFiles.SETTINGS, new FileConfig(hub, "features/settings.yml"));
+        this.files.put(ConfigFiles.SCOREBOARD, new FileConfig(hub, "features/scoreboard.yml"));
+        this.files.put(ConfigFiles.QUEUE, new FileConfig(hub, "features/queue.yml"));
+        this.files.put(ConfigFiles.LOTTERY, new FileConfig(hub, "features/lottery.yml"));
+        this.files.put(ConfigFiles.GADGETS, new FileConfig(hub, "features/gadgets.yml"));
+        this.files.put(ConfigFiles.PARTICLE, new FileConfig(hub, "features/particle.yml"));
+        this.files.put(ConfigFiles.OUTFIT, new FileConfig(hub, "features/outfit.yml"));
+        this.files.put(ConfigFiles.TAB, new FileConfig(hub, "features/tab.yml"));
+        this.files.put(ConfigFiles.JUKEBOX, new FileConfig(hub, "features/jukebox.yml"));
+        this.files.put(ConfigFiles.COMMON_MENU, new FileConfig(hub, "menus/common.yml"));
+        this.files.put(ConfigFiles.ADMIN_MENUS, new FileConfig(hub, "menus/admin_menus.yml"));
+        this.files.put(ConfigFiles.SERVER_SELECTOR, new FileConfig(hub, "menus/server_selector.yml"));
+        this.files.put(ConfigFiles.HUB_SELECTOR, new FileConfig(hub, "menus/hub_selector.yml"));
+        this.files.put(ConfigFiles.EDITOR_MENUS, new FileConfig(hub, "menus/editor_menus.yml"));
+        this.files.put(ConfigFiles.CELEST_EDITOR, new FileConfig(hub, "menus/celest_editor.yml"));
+        this.files.put(ConfigFiles.SETTINGS_MENU, new FileConfig(hub, "menus/settings_menu.yml"));
     }
     
     public FileModule() {

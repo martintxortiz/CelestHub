@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.lottery.list.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.lottery.LotteryRewardSession;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class LotteryAddRewardButton extends Button {
 
     private final String lotteryName;
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     public LotteryAddRewardButton(String lotteryName) {
         this.lotteryName = lotteryName;

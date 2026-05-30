@@ -1,5 +1,6 @@
 package net.kryunek.hub.hook;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.kryunek.hub.Celest;
@@ -13,34 +14,34 @@ public class TablistHook {
     private TablistManager tablistManager;
     private Celest plugin;
 
-    public void init(Celest hub) {
+    public synchronized void init(Celest hub) {
         plugin = hub;
-        if (!ModuleService.getFileModule().getFile("tab").getBoolean("enabled")) {
+        if (!ModuleService.getFileModule().getFile(ConfigFiles.TAB).getBoolean("enabled")) {
             return;
         }
 
         tablistManager = new TablistManager(hub);
-        tablistManager.iniciar();
+        tablistManager.start();
     }
 
-    public void reload() {
+    public synchronized void reload() {
         if (plugin == null) {
             return;
         }
         if (tablistManager != null) {
-            tablistManager.detener();
+            tablistManager.stop();
         }
-        if (!ModuleService.getFileModule().getFile("tab").getBoolean("enabled")) {
+        if (!ModuleService.getFileModule().getFile(ConfigFiles.TAB).getBoolean("enabled")) {
             tablistManager = null;
             return;
         }
         tablistManager = new TablistManager(plugin);
-        tablistManager.iniciar();
+        tablistManager.start();
     }
 
-    public void shutdown() {
+    public synchronized void shutdown() {
         if (tablistManager != null) {
-            tablistManager.detener();
+            tablistManager.stop();
             tablistManager = null;
         }
         plugin = null;

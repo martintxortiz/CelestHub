@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.editor.CelestEditorMenu;
 import net.kryunek.hub.utils.CC;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class GadgetEditorMenu extends PaginatedMenu {
 
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     {
         setAutoUpdate(true);

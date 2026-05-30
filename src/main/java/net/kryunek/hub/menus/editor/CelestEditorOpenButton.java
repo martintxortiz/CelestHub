@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.editor.chat.ChatEditorMenu;
@@ -18,7 +19,6 @@ import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.ItemBuilder;
 import net.kryunek.hub.utils.menu.Button;
 import net.kryunek.hub.utils.menu.Menu;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -27,12 +27,12 @@ import org.bukkit.inventory.ItemStack;
 public class CelestEditorOpenButton extends Button {
 
     private final String key;
-    private final FileConfig editorMenuConfig = ModuleService.getFileModule().getFile("celest_editor");
+    private final FileConfig editorMenuConfig = ModuleService.getFileModule().getFile(ConfigFiles.CELEST_EDITOR);
 
     @Override
     public ItemStack getButtonItem(Player player) {
         String basePath = "EDITOR_MENU.BUTTONS." + key + ".";
-        return new ItemBuilder(Material.valueOf(editorMenuConfig.getString(basePath + "MATERIAL")))
+        return new ItemBuilder(editorMenuConfig.getString(basePath + "MATERIAL"))
                 .name(editorMenuConfig.getString(basePath + "NAME"))
                 .lore(editorMenuConfig.getStringList(basePath + "LORE"))
                 .data(editorMenuConfig.getInt(basePath + "DATA"))

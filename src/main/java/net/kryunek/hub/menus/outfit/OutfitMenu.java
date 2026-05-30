@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.outfit;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.google.common.collect.Maps;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.outfit.Outfit;
@@ -22,7 +23,7 @@ public class OutfitMenu extends PaginatedMenu {
 
     public OutfitMenu() {
         this.outfitManager = ModuleService.getManagerModule().getOutfitManager();
-        this.outfitConfig = ModuleService.getFileModule().getFile("outfit");
+        this.outfitConfig = ModuleService.getFileModule().getFile(ConfigFiles.OUTFIT);
     }
 
     @Override

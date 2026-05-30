@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.chat.ChatManager;
 import net.kryunek.hub.managers.editor.EditorInputSession;
@@ -19,7 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +42,9 @@ public class EditorListener implements Listener {
         this.hub = hub;
         var files = ModuleService.getFileModule();
         var managers = ModuleService.getManagerModule();
-        this.settings = files.getFile("settings");
-        this.messages = files.getFile("messages");
-        this.hotbar = files.getFile("hotbar");
+        this.settings = files.getFile(ConfigFiles.SETTINGS);
+        this.messages = files.getFile(ConfigFiles.MESSAGES);
+        this.hotbar = files.getFile(ConfigFiles.HOTBAR);
         this.chatManager = managers.getChatManager();
         this.hotbarManager = managers.getHotbarManager();
         this.pvpArenaKitManager = managers.getPvpArenaKitManager();
@@ -50,14 +52,14 @@ public class EditorListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         if (!EditorInputSession.isActive(player)) {
             return;
         }
 
         event.setCancelled(true);
-        String text = event.getMessage().trim();
+        String text = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
         EditorInputSession session = EditorInputSession.get(player);
 
         if (text.equalsIgnoreCase("cancel")) {

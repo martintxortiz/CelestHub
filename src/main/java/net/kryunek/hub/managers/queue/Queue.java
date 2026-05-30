@@ -2,7 +2,7 @@ package net.kryunek.hub.managers.queue;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kryunek.hub.managers.rank.IRankManager;
+import net.kryunek.hub.managers.rank.RankManager;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.TaskUtil;
@@ -27,22 +27,22 @@ public class Queue {
     private boolean paused;
     private final String server;
     private final QueueManager queueManager;
-    private final IRankManager rankManager;
+    private final RankManager rankManager;
     private final FileConfig config;
     private BukkitTask positionTask;
 
     private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
 
-    public Queue(String server, QueueManager queueManager, IRankManager rankManager, FileConfig config) {
+    public Queue(String server, QueueManager queueManager, RankManager rankManager, FileConfig config) {
         this.server = server;
         this.queueManager = queueManager;
         this.rankManager = rankManager;
         this.config = config;
-        iniciarTaskPosicion();
+        startPositionTask();
     }
 
-    public void iniciarTaskPosicion() {
-        detenerTaskPosicion();
+    public void startPositionTask() {
+        stopPositionTask();
         long delayTicks = toTicks(config.getInt("QUEUE.POSITION_MESSAGE_DELAY"));
         this.positionTask = TaskUtil.runSyncTimer(() -> {
             Iterator<UUID> iterator = playerList.iterator();
@@ -81,7 +81,7 @@ public class Queue {
         }, delayTicks, delayTicks);
     }
 
-    public void detenerTaskPosicion() {
+    public void stopPositionTask() {
         if (positionTask != null) {
             positionTask.cancel();
             positionTask = null;

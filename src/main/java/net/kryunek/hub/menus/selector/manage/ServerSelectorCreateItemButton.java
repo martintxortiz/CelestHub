@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 
 public class ServerSelectorCreateItemButton extends Button {
 
-    private final FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
 
     @Override
     public ItemStack getButtonItem(Player player) {

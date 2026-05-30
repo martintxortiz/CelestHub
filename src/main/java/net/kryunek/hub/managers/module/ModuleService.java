@@ -14,6 +14,13 @@ import org.bukkit.event.HandlerList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Bootstrap coordinator and static service-locator facade. {@link #enable(Celest)} publishes the
+ * active instance and enables each {@link Module} in priority order; the static {@code getXModule}
+ * accessors then expose those modules globally. Construction-time dependencies are injected at the
+ * composition root ({@link net.kryunek.hub.managers.module.impl.ManagerModule}); these accessors
+ * remain for method-body navigation between features.
+ */
 public class ModuleService {
     private static ModuleService current;
 

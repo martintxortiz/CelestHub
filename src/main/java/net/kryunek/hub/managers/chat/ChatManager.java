@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.chat;
 
+import net.kryunek.hub.support.config.ConfigSupport;
 import lombok.Getter;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.FileConfig;
@@ -7,10 +8,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Chat-moderation state — pause, slow-mode and prefix — backed by the injected settings config,
+ * enforcing per-player slow-mode cooldowns and mirroring state across hubs via {@code NetworkSyncManager}.
+ */
 @Getter
 public class ChatManager {
 
@@ -20,8 +26,8 @@ public class ChatManager {
     private int slowSeconds;
     private String prefix;
 
-    public ChatManager() {
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+    public ChatManager(FileConfig settingsConfig) {
+        this.settingsConfig = settingsConfig;
         ensureDefaults();
         load();
     }
@@ -81,26 +87,13 @@ public class ChatManager {
     }
 
     private void ensureDefaults() {
-        boolean changed = false;
+        Map<String, Object> defaults = new LinkedHashMap<>();
+        defaults.put("CHAT.PREFIX", "&8[&bHub&8] &r");
+        defaults.put("CHAT.PAUSED", false);
+        defaults.put("CHAT.SLOW_SECONDS", 0);
+        defaults.put("CHAT.CLEAR_LINES", 120);
 
-        if (!settingsConfig.getConfiguration().contains("CHAT.PREFIX")) {
-            settingsConfig.getConfiguration().set("CHAT.PREFIX", "&8[&bHub&8] &r");
-            changed = true;
-        }
-        if (!settingsConfig.getConfiguration().contains("CHAT.PAUSED")) {
-            settingsConfig.getConfiguration().set("CHAT.PAUSED", false);
-            changed = true;
-        }
-        if (!settingsConfig.getConfiguration().contains("CHAT.SLOW_SECONDS")) {
-            settingsConfig.getConfiguration().set("CHAT.SLOW_SECONDS", 0);
-            changed = true;
-        }
-        if (!settingsConfig.getConfiguration().contains("CHAT.CLEAR_LINES")) {
-            settingsConfig.getConfiguration().set("CHAT.CLEAR_LINES", 120);
-            changed = true;
-        }
-
-        if (changed) {
+        if (ConfigSupport.applyMissingDefaults(settingsConfig.getConfiguration(), defaults)) {
             settingsConfig.save();
         }
     }

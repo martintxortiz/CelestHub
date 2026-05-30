@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.selector.ServerSelectorEditSession;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ServerSelectorSetNameFromChatButton extends Button {
 
     private final String key;
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     @Override
     public ItemStack getButtonItem(Player player) {

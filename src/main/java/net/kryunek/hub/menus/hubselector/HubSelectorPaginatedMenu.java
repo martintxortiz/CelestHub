@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.hubselector;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -19,8 +20,8 @@ import java.util.Set;
 
 public class HubSelectorPaginatedMenu extends PaginatedMenu {
 
-    private final FileConfig hubSelectorConfig = ModuleService.getFileModule().getFile("hub_selector");
-    private final FileConfig coreConfig = ModuleService.getFileModule().getFile("config");
+    private final FileConfig hubSelectorConfig = ModuleService.getFileModule().getFile(ConfigFiles.HUB_SELECTOR);
+    private final FileConfig coreConfig = ModuleService.getFileModule().getFile(ConfigFiles.CONFIG);
 
     {
         setAutoUpdate(true);

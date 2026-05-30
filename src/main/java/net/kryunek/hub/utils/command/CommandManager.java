@@ -1,5 +1,6 @@
 package net.kryunek.hub.utils.command;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.support.message.MessageKey;
 import net.kryunek.hub.support.message.Messages;
@@ -45,7 +46,7 @@ public class CommandManager implements CommandExecutor {
         instance = this;
         this.plugin = plugin;
         this.disabledCommands = disabledCommands;
-        this.messages = Messages.from(ModuleService.getFileModule().getFile("messages"), plugin.getLogger());
+        this.messages = Messages.from(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES), plugin.getLogger());
 
         if (plugin.getServer().getPluginManager() instanceof SimplePluginManager manager) {
             try {

@@ -1,5 +1,6 @@
 package net.kryunek.hub.utils;
 
+import net.kryunek.hub.support.config.ConfigSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -26,12 +27,12 @@ public class ItemBuilder {
     }
 
     public ItemBuilder(String material) {
-        this.itemStack = new ItemStack(Material.valueOf(material), 1);
+        this.itemStack = new ItemStack(ConfigSupport.getMaterial(material, Material.BARRIER, Bukkit.getLogger()), 1);
     }
 
 
     public ItemBuilder(int material) {
-        this.itemStack = new ItemStack(Material.valueOf(String.valueOf(material)), 1);
+        this.itemStack = new ItemStack(ConfigSupport.getMaterial(String.valueOf(material), Material.BARRIER, Bukkit.getLogger()), 1);
     }
 
     public ItemBuilder(ItemStack itemStack) {
@@ -119,16 +120,21 @@ public class ItemBuilder {
             throw new IllegalArgumentException("setOwner() only applicable for Skull Item");
         }
 
-        if (owner != null) {
-            try {
-                UUID uuid = UUID.fromString(owner);
-                return owner(uuid);
-            } catch (IllegalArgumentException notUuid) {
-                // Treat non-UUID values as player names below.
-            }
+        if (owner == null || owner.isBlank()) {
+            return this;
+        }
+
+        try {
+            return owner(UUID.fromString(owner));
+        } catch (IllegalArgumentException notUuid) {
+            // Not a UUID; treat the value as a player name below.
         }
 
         SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
+        if (meta == null) {
+            return this;
+        }
+
         Player online = Bukkit.getPlayerExact(owner);
         if (online != null) {
             meta.setOwningPlayer(online);

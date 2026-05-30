@@ -10,7 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class TimerListener implements Listener {
 
@@ -22,12 +23,12 @@ public class TimerListener implements Listener {
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
         if (TimerCreateSession.isActive(player)) {
             event.setCancelled(true);
-            TimerCreateSession.handleChat(player, event.getMessage());
+            TimerCreateSession.handleChat(player, PlainTextComponentSerializer.plainText().serialize(event.message()));
         }
     }
     }

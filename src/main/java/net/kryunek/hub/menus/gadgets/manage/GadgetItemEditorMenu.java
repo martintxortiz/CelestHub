@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class GadgetItemEditorMenu extends Menu {
 
     private final String key;
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     public GadgetItemEditorMenu(String key) {
         this.key = key;

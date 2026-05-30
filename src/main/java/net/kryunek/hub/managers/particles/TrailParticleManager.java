@@ -11,9 +11,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Map;
 
+/** CRUD and validation of cosmetic particle trails stored in the injected particle config. */
 public class TrailParticleManager {
     private final Map<String, TrailParticle> trails;
-    private FileConfig particleConfig;
+    private final FileConfig particleConfig;
 
     public Map<String, TrailParticle> getTrails() {
         return this.trails;
@@ -122,9 +123,9 @@ public class TrailParticleManager {
         return true;
     }
 
-    public TrailParticleManager() {
+    public TrailParticleManager(FileConfig particleConfig) {
         this.trails = Maps.newHashMap();
-        this.particleConfig = ModuleService.getFileModule().getFile("particle");
+        this.particleConfig = particleConfig;
     }
 
     private boolean isValidParticle(String effect) {

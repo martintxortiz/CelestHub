@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -55,11 +56,11 @@ public final class GadgetService {
     }
 
     private static FileConfig gadgetsMenu() {
-        return ModuleService.getFileModule().getFile("gadgets");
+        return ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
     }
 
     private static FileConfig settings() {
-        return ModuleService.getFileModule().getFile("gadgets");
+        return ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
     }
 
     public static ItemStack getItemByType(String type) {
@@ -871,7 +872,7 @@ public final class GadgetService {
     }
 
     private static void sendActionBar(Player player, String path, Map<String, String> placeholders) {
-        FileConfig messages = ModuleService.getFileModule().getFile("messages");
+        FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
         String prefix = messages.getString("ACTIONBAR.PREFIX", "", true);
         String message = messages.getString(path, "", true);
         if (message == null || message.isEmpty()) {

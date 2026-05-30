@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.queue.Queue;
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class ServerButton extends Button {
 
     private String server;
-    private final FileConfig settingsConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
 
     @Override
     public ItemStack getButtonItem(Player player) {

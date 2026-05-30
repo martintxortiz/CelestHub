@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.outfit.manage.list;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 
 public class OutfitMenuSizeButton extends Button {
 
-    private final FileConfig outfitConfig = ModuleService.getFileModule().getFile("outfit");
+    private final FileConfig outfitConfig = ModuleService.getFileModule().getFile(ConfigFiles.OUTFIT);
 
     @Override
     public ItemStack getButtonItem(Player player) {

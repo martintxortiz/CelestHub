@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.outfit;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public class Outfit {
 
     public Outfit(String name) {
         this.name = name;
-        this.outfitConfig = ModuleService.getFileModule().getFile("outfit");
+        this.outfitConfig = ModuleService.getFileModule().getFile(ConfigFiles.OUTFIT);
     }
 
     public String getPermission() {

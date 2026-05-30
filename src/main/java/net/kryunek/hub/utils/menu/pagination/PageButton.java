@@ -1,5 +1,6 @@
 package net.kryunek.hub.utils.menu.pagination;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.FileConfig;
@@ -15,7 +16,7 @@ public class PageButton extends Button {
 
     private final int mod;
     private final PaginatedMenu menu;
-    private final FileConfig commonMenu = ModuleService.getFileModule().getFile("common_menu");
+    private final FileConfig commonMenu = ModuleService.getFileModule().getFile(ConfigFiles.COMMON_MENU);
 
     @Override
     public ItemStack getButtonItem(Player player) {

@@ -15,7 +15,7 @@ public class CelestReloadCommand extends BaseCommand {
 
         files().reload();
         managers().getQueueManager().loadQueues();
-        managers().getQueueManager().iniciarSendTask();
+        managers().getQueueManager().startSendTask();
         managers().getTrailParticleManager().load();
         managers().getOutfitManager().load();
         managers().getJukeboxManager().load();

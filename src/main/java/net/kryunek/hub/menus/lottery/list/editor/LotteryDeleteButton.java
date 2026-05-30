@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.lottery.list.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.lottery.list.LotteryPaginatedMenu;
@@ -38,14 +39,14 @@ public class LotteryDeleteButton extends Button {
             boolean removed = ModuleService.getManagerModule().getLotteryManager().deleteLottery(lotteryName);
             if (!removed) {
                 playFail(player);
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                         .getString("LOTTERY.NOT_FOUND", "&cLottery not found.", true)));
                 new LotteryPaginatedMenu().openMenu(player);
                 return;
             }
 
             playSuccess(player);
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                     .getString("LOTTERY.DELETED", "&cLottery deleted: &f%lottery%", true)
                     .replace("%lottery%", lotteryName)));
             new LotteryPaginatedMenu().openMenu(player);

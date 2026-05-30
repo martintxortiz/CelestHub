@@ -1,6 +1,7 @@
 package net.kryunek.hub.support.command;
 
 import net.kryunek.hub.support.message.Messages;
+import net.kryunek.hub.utils.command.CommandArgs;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -43,6 +44,16 @@ class CommandSupportTest {
     }
 
     @Test
+    void requirePermissionViaCommandArgsDelegatesToSender() {
+        CommandSender sender = mock(CommandSender.class);
+        CommandArgs command = mock(CommandArgs.class);
+        when(command.getSender()).thenReturn(sender);
+        when(sender.hasPermission(Permissions.CHAT_MUTE)).thenReturn(true);
+
+        assertTrue(commands.requirePermission(command, Permissions.CHAT_MUTE));
+    }
+
+    @Test
     void requireAnyPermissionAllowsAnyMatchingPermission() {
         CommandSender sender = mock(CommandSender.class);
         when(sender.hasPermission(Permissions.CHAT_MUTE)).thenReturn(false);
@@ -50,6 +61,35 @@ class CommandSupportTest {
 
         assertTrue(commands.requireAnyPermission(sender, Permissions.CHAT_MUTE, Permissions.CHAT_PAUSE));
         verify(sender, never()).sendMessage(org.mockito.ArgumentMatchers.anyString());
+    }
+
+    @Test
+    void requireAnyPermissionSkipsNullEntriesAndStillMatches() {
+        CommandSender sender = mock(CommandSender.class);
+        when(sender.hasPermission(Permissions.CHAT_PAUSE)).thenReturn(true);
+
+        assertTrue(commands.requireAnyPermission(sender, null, Permissions.CHAT_PAUSE));
+        verify(sender, never()).sendMessage(org.mockito.ArgumentMatchers.anyString());
+    }
+
+    @Test
+    void requireAnyPermissionRejectsWhenNoPermissionMatches() {
+        CommandSender sender = mock(CommandSender.class);
+        when(sender.hasPermission(Permissions.CHAT_MUTE)).thenReturn(false);
+        when(sender.hasPermission(Permissions.CHAT_PAUSE)).thenReturn(false);
+
+        assertFalse(commands.requireAnyPermission(sender, Permissions.CHAT_MUTE, Permissions.CHAT_PAUSE));
+        verify(sender).sendMessage(ChatColor.RED + "No permission.");
+    }
+
+    @Test
+    void requireAnyPermissionViaCommandArgsDelegatesToSender() {
+        CommandSender sender = mock(CommandSender.class);
+        CommandArgs command = mock(CommandArgs.class);
+        when(command.getSender()).thenReturn(sender);
+        when(sender.hasPermission(Permissions.CHAT_MUTE)).thenReturn(true);
+
+        assertTrue(commands.requireAnyPermission(command, Permissions.CHAT_MUTE));
     }
 
     @Test
@@ -64,6 +104,15 @@ class CommandSupportTest {
         Player player = mock(Player.class);
 
         assertSame(player, commands.requirePlayer(player));
+    }
+
+    @Test
+    void requirePlayerViaCommandArgsReturnsPlayerSender() {
+        Player player = mock(Player.class);
+        CommandArgs command = mock(CommandArgs.class);
+        when(command.getSender()).thenReturn(player);
+
+        assertSame(player, commands.requirePlayer(command));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.particles;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.google.common.collect.Maps;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.particles.TrailParticle;
@@ -58,7 +59,7 @@ public class TrailParticlesMenu extends PaginatedMenu {
 
     public TrailParticlesMenu() {
         this.trailManager = ModuleService.getManagerModule().getTrailParticleManager();
-        this.particleConfig = ModuleService.getFileModule().getFile("particle");
+        this.particleConfig = ModuleService.getFileModule().getFile(ConfigFiles.PARTICLE);
     }
 
     @Override

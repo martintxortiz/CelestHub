@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.queue;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.session.SessionGuard;
@@ -48,7 +49,7 @@ public class QueueCreateSession {
             active.remove(uuid);
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                         .getString("SESSION.EXPIRED", "&cEditor session expired after 60 seconds.", true)));
             }
         }, TIMEOUT_TICKS);

@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.session;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.editor.EditorInputSession;
 import net.kryunek.hub.managers.gadgets.GadgetEditSession;
 import net.kryunek.hub.managers.lottery.LotteryCreateSession;
@@ -23,7 +24,7 @@ public final class SessionGuard {
 
     public static boolean canStart(Player player, String currentSessionId) {
         if (hasOtherActiveSession(player, currentSessionId)) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                     .getString("SESSION.ALREADY_ACTIVE", "&cYou already have an active session. Type 'cancel' in chat first.", true)));
             return false;
         }

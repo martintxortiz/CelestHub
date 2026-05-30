@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.outfit.OutfitCreateSession;
@@ -12,7 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class OutfitListener implements Listener {
 
@@ -22,18 +24,18 @@ public class OutfitListener implements Listener {
     public OutfitListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);
         this.outfitManager = ModuleService.getManagerModule().getOutfitManager();
-        this.messages = ModuleService.getFileModule().getFile("messages");
+        this.messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         if (!OutfitCreateSession.isActive(player)) {
             return;
         }
 
         event.setCancelled(true);
-        String message = event.getMessage().trim();
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
         if (message.equalsIgnoreCase("cancel")) {
             OutfitCreateEditorMenu.restorePreview(player);
             OutfitCreateSession.stop(player);

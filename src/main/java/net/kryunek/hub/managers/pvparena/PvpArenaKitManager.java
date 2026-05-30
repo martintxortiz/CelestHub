@@ -28,6 +28,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+/**
+ * PvP arena sessions: the kit editor, arena enter/leave state, combat tracking and per-arena player
+ * visibility. Reads the injected settings and settings-menu configs; collaborates with the profile
+ * and hotbar managers.
+ */
 public class PvpArenaKitManager {
 
     private static final int[] EDITOR_CONTROL_SLOTS = new int[]{45, 46, 47, 48, 49};
@@ -43,9 +48,10 @@ public class PvpArenaKitManager {
     private final Map<UUID, Long> combatUntil = new HashMap<>();
     private final Map<UUID, UUID> lastCombatOpponent = new HashMap<>();
 
-    public PvpArenaKitManager(ProfileManager profileManager, HotbarManager hotbarManager) {
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
-        this.settingsMenuConfig = ModuleService.getFileModule().getFile("settings_menu");
+    public PvpArenaKitManager(ProfileManager profileManager, HotbarManager hotbarManager,
+                              FileConfig settingsConfig, FileConfig settingsMenuConfig) {
+        this.settingsConfig = settingsConfig;
+        this.settingsMenuConfig = settingsMenuConfig;
         this.profileManager = profileManager;
         this.hotbarManager = hotbarManager;
     }
@@ -189,7 +195,7 @@ public class PvpArenaKitManager {
         player.setFlying(false);
         player.setWalkSpeed(0.2F);
         player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
+        player.getInventory().setArmorContents(new ItemStack[4]);
         player.getInventory().setItemInOffHand(null);
 
         SavedLoadout kit = getPlayerKit(player);
@@ -257,9 +263,9 @@ public class PvpArenaKitManager {
         }
 
         player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
+        player.getInventory().setArmorContents(new ItemStack[4]);
         player.getInventory().setItemInOffHand(null);
-        player.setWalkSpeed((float) ModuleService.getFileModule().getFile("settings").getDouble("WALK_SPEED"));
+        player.setWalkSpeed((float) settingsConfig.getDouble("WALK_SPEED"));
 
         hotbarManager.setHotbar(player);
         if (profile != null && profile.isFlyOnJoin()) {
@@ -529,33 +535,33 @@ public class PvpArenaKitManager {
             if (other.equals(changed)) continue;
             boolean otherInside = playersInArena.contains(other.getUniqueId());
             if (changedInside && otherInside) {
-                changed.showPlayer(other);
-                other.showPlayer(changed);
+                changed.showPlayer(Celest.get(), other);
+                other.showPlayer(Celest.get(), changed);
                 continue;
             }
             if (changedInside && !otherInside) {
-                changed.hidePlayer(other);
-                other.showPlayer(changed);
+                changed.hidePlayer(Celest.get(), other);
+                other.showPlayer(Celest.get(), changed);
                 continue;
             }
             if (!changedInside && otherInside) {
-                changed.showPlayer(other);
-                other.hidePlayer(changed);
+                changed.showPlayer(Celest.get(), other);
+                other.hidePlayer(Celest.get(), changed);
                 continue;
             }
 
             Profile changedProfile = profileManager.getProfile(changed.getUniqueId());
             if (changedProfile != null && !changedProfile.isVisibilityOn()) {
-                changed.hidePlayer(other);
+                changed.hidePlayer(Celest.get(), other);
             } else {
-                changed.showPlayer(other);
+                changed.showPlayer(Celest.get(), other);
             }
 
             Profile otherProfile = profileManager.getProfile(other.getUniqueId());
             if (otherProfile != null && !otherProfile.isVisibilityOn()) {
-                other.hidePlayer(changed);
+                other.hidePlayer(Celest.get(), changed);
             } else {
-                other.showPlayer(changed);
+                other.showPlayer(Celest.get(), changed);
             }
         }
     }

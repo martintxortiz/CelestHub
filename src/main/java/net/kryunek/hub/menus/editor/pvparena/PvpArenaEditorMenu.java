@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.pvparena;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.editor.CelestEditorMenu;
 import net.kryunek.hub.utils.CC;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class PvpArenaEditorMenu extends Menu {
 
-    private final FileConfig editorMenus = ModuleService.getFileModule().getFile("editor_menus");
+    private final FileConfig editorMenus = ModuleService.getFileModule().getFile(ConfigFiles.EDITOR_MENUS);
 
     @Override
     public boolean isUpdateAfterClick() {

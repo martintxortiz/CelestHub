@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.lottery;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.session.SessionGuard;
@@ -47,7 +48,7 @@ public final class LotteryCreateSession {
             ACTIVE.remove(uuid);
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                         .getString("SESSION.EXPIRED", "&cSession expired after 60 seconds without input.", true)));
             }
         }, TIMEOUT_TICKS);

@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.tablist;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kryunek.hub.Celest;
@@ -25,106 +26,102 @@ import java.util.regex.Pattern;
 
 public class TablistManager {
 
-    private static final LegacyComponentSerializer SERIALIZADOR = LegacyComponentSerializer.legacySection();
+    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
     private final Celest plugin;
-    private final FileConfig configuracion;
-    private final IRank gestorRangos;
+    private final FileConfig config;
+    private final IRank rank;
 
-    private BukkitTask tarea;
+    private BukkitTask updateTask;
 
-    private final long intervaloActualizacion;
-    private final List<String> cabecera;
-    private final List<String> pie;
-    private final String formatoNombre;
-    private final String formatoPrefijoNametag;
-    private final String formatoSufijoNametag;
-    private final List<String> ordenGrupos;
-    private final boolean headerFooterHabilitado;
-    private final boolean formatoNombreHabilitado;
-    private final boolean mostrarNametag;
-    private final boolean ordenarPorGrupo;
+    private final long updateIntervalTicks;
+    private final List<String> headerLines;
+    private final List<String> footerLines;
+    private final String nameFormat;
+    private final String nametagPrefixFormat;
+    private final String nametagSuffixFormat;
+    private final List<String> groupOrder;
+    private final boolean headerFooterEnabled;
+    private final boolean nameFormatEnabled;
+    private final boolean showNametag;
+    private final boolean sortByGroup;
 
     public TablistManager(Celest plugin) {
         this.plugin = plugin;
-        this.configuracion = ModuleService.getFileModule().getFile("tab");
-        this.gestorRangos = ModuleService.getManagerModule().getRankManager().getRank();
-        this.intervaloActualizacion = Math.max(1L, configuracion.getLong("update-interval"));
-        this.headerFooterHabilitado = configuracion.getBoolean("header-footer.enabled");
-        this.formatoNombreHabilitado = configuracion.getBoolean("tablist-name-formatting.enabled");
-        this.cabecera = new ArrayList<>(obtenerListaConFallback("header-footer.header", "header"));
-        this.pie = new ArrayList<>(obtenerListaConFallback("header-footer.footer", "footer"));
-        this.formatoNombre = obtenerTexto("tablist-name-formatting.format", "{lp_prefix}%player%{lp_suffix}");
-        this.formatoPrefijoNametag = obtenerTexto("nametag.prefix", "{lp_prefix}");
-        this.formatoSufijoNametag = obtenerTexto("nametag.suffix", "{lp_suffix}");
-        this.mostrarNametag = configuracion.getBoolean("nametag.enabled");
-        this.ordenarPorGrupo = configuracion.getBoolean("group-sorting.enabled");
-        this.ordenGrupos = new ArrayList<>(obtenerLista("group-sorting.groups"));
+        this.config = ModuleService.getFileModule().getFile(ConfigFiles.TAB);
+        this.rank = ModuleService.getManagerModule().getRankManager().getRank();
+        this.updateIntervalTicks = Math.max(1L, config.getLong("update-interval"));
+        this.headerFooterEnabled = config.getBoolean("header-footer.enabled");
+        this.nameFormatEnabled = config.getBoolean("tablist-name-formatting.enabled");
+        this.headerLines = new ArrayList<>(getListWithFallback("header-footer.header", "header"));
+        this.footerLines = new ArrayList<>(getListWithFallback("header-footer.footer", "footer"));
+        this.nameFormat = getText("tablist-name-formatting.format", "{lp_prefix}%player%{lp_suffix}");
+        this.nametagPrefixFormat = getText("nametag.prefix", "{lp_prefix}");
+        this.nametagSuffixFormat = getText("nametag.suffix", "{lp_suffix}");
+        this.showNametag = config.getBoolean("nametag.enabled");
+        this.sortByGroup = config.getBoolean("group-sorting.enabled");
+        this.groupOrder = new ArrayList<>(getList("group-sorting.groups"));
     }
 
-    public void iniciar() {
-        detener();
+    public void start() {
+        stop();
 
-        this.tarea = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            Collection<? extends Player> jugadores = Bukkit.getOnlinePlayers();
-            if (jugadores.isEmpty()) {
+        this.updateTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+            if (players.isEmpty()) {
                 return;
             }
 
-            for (Player jugador : jugadores) {
-                if (!debeVerTablist(jugador)) {
-                    limpiarTablist(jugador);
-                } else if (headerFooterHabilitado) {
-                    actualizarCabeceraYPie(jugador);
+            for (Player player : players) {
+                if (!shouldSeeTablist(player)) {
+                    clearTablist(player);
+                } else if (headerFooterEnabled) {
+                    updateHeaderAndFooter(player);
                 }
 
-                if (formatoNombreHabilitado) {
-                    actualizarNombreEnTab(jugador);
+                if (nameFormatEnabled) {
+                    updateTabName(player);
                 }
             }
 
-            if (mostrarNametag || ordenarPorGrupo) {
-                for (Player visor : jugadores) {
-                    sincronizarEquipos(visor, jugadores);
+            if (showNametag || sortByGroup) {
+                for (Player viewer : players) {
+                    syncTeams(viewer, players);
                 }
             }
-        }, 20L, intervaloActualizacion);
+        }, 20L, updateIntervalTicks);
     }
 
-    public void detener() {
-        if (tarea != null) {
-            tarea.cancel();
-            tarea = null;
+    public void stop() {
+        if (updateTask != null) {
+            updateTask.cancel();
+            updateTask = null;
         }
     }
 
-    private void actualizarCabeceraYPie(Player jugador) {
-        Component header = deserializar(unirLineas(cabecera, jugador));
-        Component footer = deserializar(unirLineas(pie, jugador));
-        jugador.sendPlayerListHeaderAndFooter(header, footer);
+    private void updateHeaderAndFooter(Player player) {
+        Component header = deserialize(joinLines(headerLines, player));
+        Component footer = deserialize(joinLines(footerLines, player));
+        player.sendPlayerListHeaderAndFooter(header, footer);
     }
 
-    private void actualizarNombreEnTab(Player jugador) {
-        String texto = resolverPlaceholders(formatoNombre, jugador);
-        jugador.playerListName(deserializar(texto));
+    private void updateTabName(Player player) {
+        String text = resolvePlaceholders(nameFormat, player);
+        player.playerListName(deserialize(text));
     }
 
-    private void restaurarNombreTab(Player jugador) {
-        jugador.playerListName(Component.text(jugador.getName()));
+    public void clearTablist(Player player) {
+        player.sendPlayerListHeaderAndFooter(Component.empty(), Component.empty());
     }
 
-    public void limpiarTablist(Player jugador) {
-        jugador.sendPlayerListHeaderAndFooter(Component.empty(), Component.empty());
+    public void clearVisuals(Player player) {
+        clearTablist(player);
+        clearNametag(player);
     }
 
-    public void limpiarVisuales(Player jugador) {
-        limpiarTablist(jugador);
-        limpiarNametag(jugador);
-    }
-
-    public void limpiarNametag(Player jugador) {
-        Scoreboard scoreboard = jugador.getScoreboard();
+    public void clearNametag(Player player) {
+        Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard == null) {
             return;
         }
@@ -136,35 +133,35 @@ public class TablistManager {
         }
     }
 
-    private void sincronizarEquipos(Player visor, Collection<? extends Player> jugadores) {
-        Scoreboard scoreboard = obtenerScoreboardSeguro(visor);
-        limpiarEquiposTab(scoreboard, jugadores);
+    private void syncTeams(Player viewer, Collection<? extends Player> players) {
+        Scoreboard scoreboard = safeScoreboard(viewer);
+        clearTabTeams(scoreboard, players);
 
-        for (Player objetivo : jugadores) {
-            String nombreEquipo = construirNombreEquipo(objetivo);
-            Team team = scoreboard.getTeam(nombreEquipo);
+        for (Player target : players) {
+            String teamName = buildTeamName(target);
+            Team team = scoreboard.getTeam(teamName);
 
             if (team == null) {
-                team = scoreboard.registerNewTeam(nombreEquipo);
+                team = scoreboard.registerNewTeam(teamName);
             }
 
             for (String entry : new ArrayList<>(team.getEntries())) {
-                if (!entry.equals(objetivo.getName())) {
+                if (!entry.equals(target.getName())) {
                     team.removeEntry(entry);
                 }
             }
 
-            if (!team.hasEntry(objetivo.getName())) {
-                team.addEntry(objetivo.getName());
+            if (!team.hasEntry(target.getName())) {
+                team.addEntry(target.getName());
             }
 
-            if (mostrarNametag) {
-                String prefixTexto = resolverPlaceholders(formatoPrefijoNametag, objetivo, true);
-                String suffixTexto = resolverPlaceholders(formatoSufijoNametag, objetivo, true);
+            if (showNametag) {
+                String prefixText = resolvePlaceholders(nametagPrefixFormat, target, true);
+                String suffixText = resolvePlaceholders(nametagSuffixFormat, target, true);
 
-                team.prefix(deserializar(prefixTexto));
-                team.suffix(deserializar(suffixTexto));
-                team.setColor(obtenerColorNombreDesdePrefix(prefixTexto));
+                team.prefix(deserialize(prefixText));
+                team.suffix(deserialize(suffixText));
+                team.setColor(nameColorFromPrefix(prefixText));
             } else {
                 team.prefix(Component.empty());
                 team.suffix(Component.empty());
@@ -173,39 +170,39 @@ public class TablistManager {
         }
     }
 
-    private void limpiarEquiposTab(Scoreboard scoreboard, Collection<? extends Player> jugadores) {
-        List<String> nombresActuales = jugadores.stream().map(this::construirNombreEquipo).collect(Collectors.toList());
+    private void clearTabTeams(Scoreboard scoreboard, Collection<? extends Player> players) {
+        List<String> currentNames = players.stream().map(this::buildTeamName).collect(Collectors.toList());
         for (Team team : new ArrayList<>(scoreboard.getTeams())) {
-            if (team.getName().startsWith("tab") && !nombresActuales.contains(team.getName())) {
+            if (team.getName().startsWith("tab") && !currentNames.contains(team.getName())) {
                 team.unregister();
             }
         }
     }
 
-    private Scoreboard obtenerScoreboardSeguro(Player jugador) {
-        Scoreboard actual = jugador.getScoreboard();
-        if (actual == null || actual == Bukkit.getScoreboardManager().getMainScoreboard()) {
-            actual = Bukkit.getScoreboardManager().getNewScoreboard();
-            jugador.setScoreboard(actual);
+    private Scoreboard safeScoreboard(Player player) {
+        Scoreboard current = player.getScoreboard();
+        if (current == null || current == Bukkit.getScoreboardManager().getMainScoreboard()) {
+            current = Bukkit.getScoreboardManager().getNewScoreboard();
+            player.setScoreboard(current);
         }
-        return actual;
+        return current;
     }
 
-    private String construirNombreEquipo(Player jugador) {
-        int prioridad = obtenerPrioridadGrupo(jugador);
-        String identificador = jugador.getUniqueId().toString().replace("-", "");
-        identificador = identificador.substring(0, 8);
-        return String.format("tab%05d%s", prioridad, identificador);
+    private String buildTeamName(Player player) {
+        int priority = groupPriority(player);
+        String identifier = player.getUniqueId().toString().replace("-", "");
+        identifier = identifier.substring(0, 8);
+        return String.format("tab%05d%s", priority, identifier);
     }
 
-    private int obtenerPrioridadGrupo(Player jugador) {
-        if (!ordenarPorGrupo) {
+    private int groupPriority(Player player) {
+        if (!sortByGroup) {
             return 99999;
         }
 
-        String grupo = obtenerGrupo(jugador).toLowerCase(Locale.ROOT);
-        for (int i = 0; i < ordenGrupos.size(); i++) {
-            if (ordenGrupos.get(i).equalsIgnoreCase(grupo)) {
+        String group = resolveGroup(player).toLowerCase(Locale.ROOT);
+        for (int i = 0; i < groupOrder.size(); i++) {
+            if (groupOrder.get(i).equalsIgnoreCase(group)) {
                 return i;
             }
         }
@@ -213,72 +210,72 @@ public class TablistManager {
         return 99999;
     }
 
-    private String obtenerGrupo(Player jugador) {
+    private String resolveGroup(Player player) {
         try {
-            return valorSeguro(gestorRangos.getName(jugador.getUniqueId()));
+            return safeValue(rank.getName(player.getUniqueId()));
         } catch (Exception exception) {
             return "default";
         }
     }
 
-    private String unirLineas(List<String> lineas, Player jugador) {
-        if (lineas.isEmpty()) {
+    private String joinLines(List<String> lines, Player player) {
+        if (lines.isEmpty()) {
             return "";
         }
 
-        StringBuilder texto = new StringBuilder();
-        for (int i = 0; i < lineas.size(); i++) {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < lines.size(); i++) {
             if (i > 0) {
-                texto.append('\n');
+                text.append('\n');
             }
-            texto.append(resolverPlaceholders(lineas.get(i), jugador));
+            text.append(resolvePlaceholders(lines.get(i), player));
         }
-        return texto.toString();
+        return text.toString();
     }
 
-    private String resolverPlaceholders(String texto, Player jugador) {
-        return resolverPlaceholders(texto, jugador, false);
+    private String resolvePlaceholders(String text, Player player) {
+        return resolvePlaceholders(text, player, false);
     }
 
-    private String resolverPlaceholders(String texto, Player jugador, boolean limpiarResetMeta) {
-        String prefijo = "";
-        String sufijo = "";
-        String rango = "default";
+    private String resolvePlaceholders(String text, Player player, boolean stripResetMeta) {
+        String prefix = "";
+        String suffix = "";
+        String rankName = "default";
 
         try {
-            rango = valorSeguro(gestorRangos.getName(jugador.getUniqueId()));
-            prefijo = valorSeguro(gestorRangos.getPrefix(jugador.getUniqueId()));
-            sufijo = valorSeguro(gestorRangos.getSuffix(jugador.getUniqueId()));
+            rankName = safeValue(rank.getName(player.getUniqueId()));
+            prefix = safeValue(rank.getPrefix(player.getUniqueId()));
+            suffix = safeValue(rank.getSuffix(player.getUniqueId()));
         } catch (Exception ex) {
-            Bukkit.getLogger().fine("[Celest] Failed to resolve rank placeholders for " + jugador.getName() + ": " + ex.getMessage());
+            Bukkit.getLogger().fine("[Celest] Failed to resolve rank placeholders for " + player.getName() + ": " + ex.getMessage());
         }
 
-        if (limpiarResetMeta) {
-            prefijo = normalizarMetaNametag(prefijo);
-            prefijo = mantenerColorParaNombre(prefijo);
-            sufijo = limpiarCodigoReset(sufijo);
+        if (stripResetMeta) {
+            prefix = normalizeNametagMeta(prefix);
+            prefix = keepColorForName(prefix);
+            suffix = stripResetCode(suffix);
         }
 
-        return colorearHex(texto
-                .replace("%player%", jugador.getName())
-                .replace("%displayname%", jugador.getDisplayName())
+        return colorizeHex(text
+                .replace("%player%", player.getName())
+                .replace("%displayname%", player.getDisplayName())
                 .replace("%online%", String.valueOf(Bukkit.getOnlinePlayers().size()))
                 .replace("%max_online%", String.valueOf(Bukkit.getMaxPlayers()))
-                .replace("%rank%", rango)
-                .replace("{lp_prefix}", prefijo)
-                .replace("{lp_suffix}", sufijo)
-                .replace("%prefix%", prefijo)
-                .replace("%suffix%", sufijo));
+                .replace("%rank%", rankName)
+                .replace("{lp_prefix}", prefix)
+                .replace("{lp_suffix}", suffix)
+                .replace("%prefix%", prefix)
+                .replace("%suffix%", suffix));
     }
 
-    private String limpiarCodigoReset(String text) {
+    private String stripResetCode(String text) {
         if (text == null || text.isEmpty()) {
             return "";
         }
         return text.replaceAll("(?i)(?:&|\\u00A7)r", "");
     }
 
-    private String normalizarMetaNametag(String text) {
+    private String normalizeNametagMeta(String text) {
         if (text == null || text.isEmpty()) {
             return "";
         }
@@ -286,15 +283,15 @@ public class TablistManager {
         String normalized = text
                 .replaceAll("(?i)<\\s*reset\\s*>", "")
                 .replaceAll("(?i)<\\s*r\\s*>", "");
-        return limpiarCodigoReset(normalized);
+        return stripResetCode(normalized);
     }
 
-    private String mantenerColorParaNombre(String prefix) {
+    private String keepColorForName(String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             return "";
         }
 
-        String translated = CC.translate(colorearHex(prefix));
+        String translated = CC.translate(colorizeHex(prefix));
         String lastColors = ChatColor.getLastColors(translated);
         if (lastColors == null || lastColors.isEmpty()) {
             return prefix;
@@ -303,19 +300,19 @@ public class TablistManager {
         return prefix + lastColors;
     }
 
-    private ChatColor obtenerColorNombreDesdePrefix(String prefix) {
+    private ChatColor nameColorFromPrefix(String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             return ChatColor.WHITE;
         }
 
-        String translated = CC.translate(colorearHex(prefix));
+        String translated = CC.translate(colorizeHex(prefix));
         String lastColors = ChatColor.getLastColors(translated);
         if (lastColors == null || lastColors.isEmpty()) {
             return ChatColor.WHITE;
         }
 
         for (int i = lastColors.length() - 1; i >= 1; i--) {
-            if (lastColors.charAt(i - 1) != '\u00A7') {
+            if (lastColors.charAt(i - 1) != '§') {
                 continue;
             }
 
@@ -334,58 +331,54 @@ public class TablistManager {
         return ChatColor.WHITE;
     }
 
-    private String valorSeguro(String texto) {
-        return texto == null ? "" : texto;
+    private String safeValue(String text) {
+        return text == null ? "" : text;
     }
 
-    private String obtenerTexto(String ruta, String defecto) {
-        return configuracion.getString(ruta, defecto, true);
+    private String getText(String path, String fallback) {
+        return config.getString(path, fallback, true);
     }
 
-    private List<String> obtenerLista(String ruta) {
-        List<String> lista = configuracion.getStringList(ruta);
-        if (lista.size() == 1 && "ERROR: STRING LIST NOT FOUND!".equals(lista.get(0))) {
-            return List.of();
+    private List<String> getList(String path) {
+        return config.getStringList(path);
+    }
+
+    private List<String> getListWithFallback(String primaryPath, String fallbackPath) {
+        List<String> list = getList(primaryPath);
+        if (!list.isEmpty()) {
+            return list;
         }
-        return lista;
+        return getList(fallbackPath);
     }
 
-    private List<String> obtenerListaConFallback(String rutaPrincipal, String rutaFallback) {
-        List<String> lista = obtenerLista(rutaPrincipal);
-        if (!lista.isEmpty()) {
-            return lista;
-        }
-        return obtenerLista(rutaFallback);
-    }
-
-    private String colorearHex(String texto) {
-        String traducido = CC.translate(texto == null ? "" : texto);
-        Matcher matcher = HEX_PATTERN.matcher(traducido);
-        StringBuilder resultado = new StringBuilder();
+    private String colorizeHex(String text) {
+        String translated = CC.translate(text == null ? "" : text);
+        Matcher matcher = HEX_PATTERN.matcher(translated);
+        StringBuilder result = new StringBuilder();
 
         while (matcher.find()) {
             String hex = matcher.group(1);
-            matcher.appendReplacement(resultado, Matcher.quoteReplacement(aLegacyHex(hex)));
+            matcher.appendReplacement(result, Matcher.quoteReplacement(toLegacyHex(hex)));
         }
 
-        matcher.appendTail(resultado);
-        return resultado.toString();
+        matcher.appendTail(result);
+        return result.toString();
     }
 
-    private String aLegacyHex(String hex) {
-        StringBuilder builder = new StringBuilder("\u00A7x");
-        for (char caracter : hex.toCharArray()) {
-            builder.append('\u00A7').append(caracter);
+    private String toLegacyHex(String hex) {
+        StringBuilder builder = new StringBuilder("§x");
+        for (char character : hex.toCharArray()) {
+            builder.append('§').append(character);
         }
         return builder.toString();
     }
 
-    private boolean debeVerTablist(Player jugador) {
-        Profile profile = ModuleService.getManagerModule().getProfileManager().getProfile(jugador.getUniqueId());
+    private boolean shouldSeeTablist(Player player) {
+        Profile profile = ModuleService.getManagerModule().getProfileManager().getProfile(player.getUniqueId());
         return profile == null || profile.isShowTablist();
     }
 
-    private Component deserializar(String texto) {
-        return SERIALIZADOR.deserialize(colorearHex(texto));
+    private Component deserialize(String text) {
+        return SERIALIZER.deserialize(colorizeHex(text));
     }
 }

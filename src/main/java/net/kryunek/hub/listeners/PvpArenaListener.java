@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.pvparena.PvpArenaKitManager;
@@ -26,7 +27,7 @@ public class PvpArenaListener implements Listener {
 
     public PvpArenaListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+        this.settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
         this.pvpArenaKitManager = ModuleService.getManagerModule().getPvpArenaKitManager();
     }
 

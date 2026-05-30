@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.google.common.collect.Maps;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.settings.SettingsMenu;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 public class GadgetsMenu extends PaginatedMenu {
 
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     @Override
     public boolean isUpdateAfterClick() {

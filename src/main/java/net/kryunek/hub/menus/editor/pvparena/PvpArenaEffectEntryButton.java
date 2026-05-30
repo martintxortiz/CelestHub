@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.pvparena;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.RequiredArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -22,7 +23,7 @@ import java.util.List;
 public class PvpArenaEffectEntryButton extends Button {
 
     private final PotionEffectType type;
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
+    private final FileConfig settings = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
 
     @Override
     public ItemStack getButtonItem(Player player) {

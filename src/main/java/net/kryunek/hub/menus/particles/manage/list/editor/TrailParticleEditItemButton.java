@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.particles.manage.list.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.particles.TrailParticle;
 import net.kryunek.hub.utils.CC;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class TrailParticleEditItemButton extends Button {
 
     private final String trailName;
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     public TrailParticleEditItemButton(String trailName) {
         this.trailName = trailName;

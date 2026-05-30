@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.player;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -19,7 +20,7 @@ public class MongoProfileStorage implements ProfileStorage {
     private final MongoCollection<Document> collection;
 
     public MongoProfileStorage() {
-        FileConfig config = ModuleService.getFileModule().getFile("config");
+        FileConfig config = ModuleService.getFileModule().getFile(ConfigFiles.CONFIG);
         String uri = config.getConfiguration().getString("PERSISTENCE.MONGO.URI", "mongodb://127.0.0.1:27017");
         String database = config.getConfiguration().getString("PERSISTENCE.MONGO.DATABASE", "celesthub");
         String coll = config.getConfiguration().getString("PERSISTENCE.MONGO.COLLECTION", "profiles");
@@ -34,6 +35,27 @@ public class MongoProfileStorage implements ProfileStorage {
         if (document == null) {
             return null;
         }
+        return fromDocument(document);
+    }
+
+    @Override
+    public Map<UUID, ProfileData> loadAll() {
+        Map<UUID, ProfileData> result = new HashMap<>();
+        for (Document document : collection.find()) {
+            String id = document.getString("_id");
+            if (id == null) {
+                continue;
+            }
+            try {
+                result.put(UUID.fromString(id), fromDocument(document));
+            } catch (IllegalArgumentException ex) {
+                Bukkit.getLogger().warning("[Celest] Ignoring Mongo profile with invalid UUID: " + id);
+            }
+        }
+        return result;
+    }
+
+    private ProfileData fromDocument(Document document) {
         ProfileData data = new ProfileData();
         data.setName(document.getString("name"));
         data.setVisibilityOn(document.getBoolean("visibility", true));
@@ -55,44 +77,6 @@ public class MongoProfileStorage implements ProfileStorage {
         data.setFirstJoinAt(firstJoin == null ? System.currentTimeMillis() : firstJoin);
         data.setTimePreference(document.getString("time_preference") == null ? "SERVER" : document.getString("time_preference"));
         return data;
-    }
-
-    @Override
-    public Map<UUID, ProfileData> loadAll() {
-        Map<UUID, ProfileData> result = new HashMap<>();
-        for (Document document : collection.find()) {
-            String id = document.getString("_id");
-            if (id == null) {
-                continue;
-            }
-            try {
-                UUID uuid = UUID.fromString(id);
-                ProfileData data = new ProfileData();
-                data.setName(document.getString("name"));
-                data.setVisibilityOn(document.getBoolean("visibility", true));
-                data.setShowScoreboard(document.getBoolean("scoreboard", true));
-                data.setShowTablist(document.getBoolean("tablist", true));
-                data.setBuildModeEnabled(document.getBoolean("buildmode", false));
-                data.setFlyOnJoin(document.getBoolean("flyjoin", false));
-                data.setJukeboxEnabled(document.getBoolean("jukebox", true));
-                data.setJukeboxVolume(document.getDouble("jukebox_volume") == null ? 1.0D : document.getDouble("jukebox_volume"));
-                data.setTrail(document.getString("trail") == null ? "None" : document.getString("trail"));
-                data.setOutfit(document.getString("outfit") == null ? "None" : document.getString("outfit"));
-                data.setSelectedGadgetType(document.getString("gadget") == null ? "NONE" : document.getString("gadget"));
-                data.setPvpArenaKitSerialized(document.getString("pvp_kit") == null ? "" : document.getString("pvp_kit"));
-                data.setPvpKills(document.getInteger("pvp_kills", 0));
-                data.setPvpDeaths(document.getInteger("pvp_deaths", 0));
-                data.setPvpKillstreak(document.getInteger("pvp_killstreak", 0));
-                data.setPvpMaxKillstreak(document.getInteger("pvp_max_killstreak", 0));
-                Long firstJoin = document.getLong("first_join");
-                data.setFirstJoinAt(firstJoin == null ? System.currentTimeMillis() : firstJoin);
-                data.setTimePreference(document.getString("time_preference") == null ? "SERVER" : document.getString("time_preference"));
-                result.put(uuid, data);
-            } catch (IllegalArgumentException ex) {
-                Bukkit.getLogger().warning("[Celest] Ignoring Mongo profile with invalid UUID: " + id);
-            }
-        }
-        return result;
     }
 
     @Override

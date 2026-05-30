@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.timer;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.session.SessionGuard;
@@ -42,13 +43,13 @@ public class TimerCreateSession {
         active.remove(player.getUniqueId());
 
         if (message.equalsIgnoreCase("cancel")) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("TIMER.SESSION.CANCELLED")));
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES).getString("TIMER.SESSION.CANCELLED")));
             return;
         }
 
         String[] args = message.split(" ");
         if (args.length < 2) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("TIMER.SESSION.USAGE")));
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES).getString("TIMER.SESSION.USAGE")));
             return;
         }
 
@@ -58,7 +59,7 @@ public class TimerCreateSession {
         try {
             seconds = Long.parseLong(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("TIMER.SESSION.INVALID_NUMBER")));
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES).getString("TIMER.SESSION.INVALID_NUMBER")));
             return;
         }
 
@@ -76,7 +77,7 @@ public class TimerCreateSession {
             active.remove(uuid);
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                         .getString("SESSION.EXPIRED", "&cEditor session expired after 60 seconds.", true)));
             }
         }, TIMEOUT_TICKS);

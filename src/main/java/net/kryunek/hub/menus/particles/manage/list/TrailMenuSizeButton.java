@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.particles.manage.list;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 
 public class TrailMenuSizeButton extends Button {
 
-    private final FileConfig particleConfig = ModuleService.getFileModule().getFile("particle");
+    private final FileConfig particleConfig = ModuleService.getFileModule().getFile(ConfigFiles.PARTICLE);
 
     @Override
     public ItemStack getButtonItem(Player player) {

@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.hotbar.HotbarManager;
@@ -54,7 +55,7 @@ public class WorldListeners implements Listener {
         this.hub = hub;
         var managers = ModuleService.getManagerModule();
         Bukkit.getPluginManager().registerEvents(this, hub);
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+        this.settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
         this.profileManager = managers.getProfileManager();
         this.hotbarManager = managers.getHotbarManager();
         this.pvpArenaKitManager = managers.getPvpArenaKitManager();

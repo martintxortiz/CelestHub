@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
+/**
+ * Convenience accessor for a player's {@link Profile}. {@link #require(Player)} sends the standard
+ * "profile not loaded" message when absent, centralising the null-profile guard that commands repeat.
+ */
 public final class ProfileAccess {
 
     private final ProfileManager profileManager;

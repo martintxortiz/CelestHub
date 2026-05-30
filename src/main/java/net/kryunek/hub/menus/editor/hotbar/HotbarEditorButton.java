@@ -1,11 +1,11 @@
 package net.kryunek.hub.menus.editor.hotbar;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.ItemBuilder;
 import net.kryunek.hub.utils.menu.Button;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +16,7 @@ import java.util.List;
 public class HotbarEditorButton extends Button {
 
     private final String key;
-    private final FileConfig hotbar = ModuleService.getFileModule().getFile("hotbar");
+    private final FileConfig hotbar = ModuleService.getFileModule().getFile(ConfigFiles.HOTBAR);
 
     public HotbarEditorButton(String key) {
         this.key = key;
@@ -38,7 +38,7 @@ public class HotbarEditorButton extends Button {
         lore.add("");
         lore.add(CC.translate("&eClick to edit item"));
 
-        return new ItemBuilder(Material.valueOf(material))
+        return new ItemBuilder(material)
                 .data(data)
                 .amount(amount)
                 .name("&b" + key)

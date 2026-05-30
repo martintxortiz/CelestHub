@@ -1,5 +1,6 @@
 package net.kryunek.hub.utils.bungee;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -114,8 +115,8 @@ public class BungeeUtils implements PluginMessageListener {
         }
     }
     public static boolean getServerStatus(String server) {
-        Integer ports = Integer.valueOf(ModuleService.getFileModule().getFile("config").getInt("SERVER." + server + ".PORT"));
-        String ipes = ModuleService.getFileModule().getFile("config").getString("SERVER." + server + ".IP");
+        Integer ports = Integer.valueOf(ModuleService.getFileModule().getFile(ConfigFiles.CONFIG).getInt("SERVER." + server + ".PORT"));
+        String ipes = ModuleService.getFileModule().getFile(ConfigFiles.CONFIG).getString("SERVER." + server + ".IP");
         try {
             SocketAddress servers = new InetSocketAddress(ipes, ports.intValue());
             Socket socket = new Socket();

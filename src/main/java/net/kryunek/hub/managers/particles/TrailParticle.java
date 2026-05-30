@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.particles;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class TrailParticle {
 
     public TrailParticle(String name) {
         this.name = name;
-        this.particleConfig = ModuleService.getFileModule().getFile("particle");
+        this.particleConfig = ModuleService.getFileModule().getFile(ConfigFiles.PARTICLE);
     }
 
     public void playEffect(Player player) {

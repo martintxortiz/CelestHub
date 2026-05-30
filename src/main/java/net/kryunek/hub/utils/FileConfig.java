@@ -90,26 +90,24 @@ public class FileConfig {
 
     public List<String> getReversedStringList(String path) {
         List<String> list = getStringList(path);
-        if (list != null) {
-            int size = list.size();
-            List<String> toReturn = new ArrayList<>();
-            for (int i = size - 1; i >= 0; i--) {
-                toReturn.add(list.get(i));
-            }
-            return toReturn;
-        }
-        return Collections.singletonList("ERROR: STRING LIST NOT FOUND!");
+        List<String> toReturn = new ArrayList<>(list);
+        Collections.reverse(toReturn);
+        return toReturn;
     }
 
+    /**
+     * Returns the colorized string list at {@code path}, or an <em>empty mutable list</em>
+     * when the path is missing. Never returns {@code null} and never returns a sentinel
+     * placeholder, so callers can iterate the result directly.
+     */
     public List<String> getStringList(String path) {
+        ArrayList<String> strings = new ArrayList<>();
         if (configuration.contains(path)) {
-            ArrayList<String> strings = new ArrayList<>();
             for (String string : configuration.getStringList(path)) {
                 strings.add(ChatColor.translateAlternateColorCodes('&', string));
             }
-            return strings;
         }
-        return Collections.singletonList("ERROR: STRING LIST NOT FOUND!");
+        return strings;
     }
 
     public List<String> getStringListOrDefault(String path, List<String> toReturn) {

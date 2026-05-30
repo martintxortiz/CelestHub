@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.module.impl;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.listeners.*;
@@ -22,7 +23,7 @@ public class ListenerModule extends Module {
         new EditorListener(hub);
         new ProfileListener(hub,
                 ModuleService.getManagerModule().getProfileManager(),
-                Messages.from(ModuleService.getFileModule().getFile("messages"), hub.getLogger()));
+                Messages.from(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES), hub.getLogger()));
         new ServerItemListener(hub);
         new HotbarCommandListener(hub);
         new GadgetsItemListener(hub);

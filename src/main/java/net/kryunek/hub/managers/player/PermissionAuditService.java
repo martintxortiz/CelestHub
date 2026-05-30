@@ -9,13 +9,23 @@ import net.kryunek.hub.utils.TaskUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+/**
+ * Periodically revokes cosmetics and abilities a player no longer has permission for — outfit,
+ * trail, gadget, build mode and fly-on-join — on an interval from the injected settings config.
+ */
 public class PermissionAuditService {
 
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig settings;
+    private final FileConfig messages;
     private BukkitTask task;
+
+    public PermissionAuditService(FileConfig settings, FileConfig messages) {
+        this.settings = settings;
+        this.messages = messages;
+    }
 
     public void start() {
         if (!settings.getConfiguration().contains("PERMISSION_AUDIT.ENABLED")) {
@@ -52,7 +62,7 @@ public class PermissionAuditService {
             if (profile.getOutfit() != null && !hasOutfitPermission(player, profile)) {
                 profile.setOutfit(null);
                 if (!profile.isBuildModeEnabled()) {
-                    player.getInventory().setArmorContents(null);
+                    player.getInventory().setArmorContents(new ItemStack[4]);
                 }
                 notifyPlayer(player, "PERMISSION_AUDIT.REMOVED_OUTFIT", "&eYour outfit was removed due to missing permission.");
                 changed = true;

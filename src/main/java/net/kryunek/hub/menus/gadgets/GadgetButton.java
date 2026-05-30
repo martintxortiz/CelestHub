@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.utils.CC;
@@ -17,7 +18,7 @@ import java.util.List;
 public class GadgetButton extends Button {
 
     private final String key;
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     public GadgetButton(String key) {
         this.key = key;
@@ -46,7 +47,7 @@ public class GadgetButton extends Button {
                 ? gadgetsMenu.getString("GADGETS_MENU.SELECTED_LORE", "&aSelected", true)
                 : gadgetsMenu.getString("GADGETS_MENU.CLICK_TO_SELECT_LORE", "&eClick to select", true)));
 
-        return new ItemBuilder(Material.valueOf(gadgetsMenu.getString(path + "MATERIAL")))
+        return new ItemBuilder(gadgetsMenu.getString(path + "MATERIAL"))
                 .name(gadgetsMenu.getString(path + "NAME"))
                 .lore(lore)
                 .data(gadgetsMenu.getInt(path + "DATA"))

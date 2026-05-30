@@ -2,10 +2,12 @@ package net.kryunek.hub.managers.module.impl;
 
 
 import lombok.Getter;
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.chat.ChatManager;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.HotbarManager;
 import net.kryunek.hub.managers.module.Module;
+import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.jukebox.JukeboxManager;
 import net.kryunek.hub.managers.lottery.LotteryManager;
 import net.kryunek.hub.managers.network.NetworkSyncManager;
@@ -16,7 +18,7 @@ import net.kryunek.hub.managers.pvparena.PvpArenaSelectionManager;
 import net.kryunek.hub.managers.player.PermissionAuditService;
 import net.kryunek.hub.managers.player.ProfileManager;
 import net.kryunek.hub.managers.queue.QueueManager;
-import net.kryunek.hub.managers.rank.IRankManager;
+import net.kryunek.hub.managers.rank.RankManager;
 import net.kryunek.hub.managers.spawn.SpawnManager;
 import net.kryunek.hub.managers.timer.TimerManager;
 import net.kryunek.hub.utils.bungee.BungeeUtils;
@@ -27,12 +29,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Composition root for the manager layer (priority 2). {@link #onEnable(Celest)} reads the
+ * already-enabled {@link FileModule} once and constructs every manager, injecting each its config
+ * and collaborators in dependency order (rank → queue, profile/hotbar → pvp kit), with network
+ * sync started last so its subscriber sees a fully built manager set.
+ */
 @Getter
 public class ManagerModule extends Module {
     private HotbarManager hotbarManager;
     private SpawnManager spawnManager;
     private ProfileManager profileManager;
-    private IRankManager rankManager;
+    private RankManager rankManager;
     private QueueManager queueManager;
     private LotteryManager lotteryManager;
     private TrailParticleManager trailParticleManager;
@@ -46,9 +54,9 @@ public class ManagerModule extends Module {
 
     private TimerManager timerManager;
 
-    public void load(boolean b) {
+    public void load(boolean reload) {
         this.hotbarManager.load();
-        if (b) {
+        if (reload) {
             this.hotbarManager.reload();
         }
     }
@@ -71,34 +79,45 @@ public class ManagerModule extends Module {
         }.runTaskTimer(hub, 20L, 20L);
         hub.getServer().getMessenger().registerOutgoingPluginChannel(hub, "BungeeCord");
         hub.getServer().getMessenger().registerIncomingPluginChannel(hub, "BungeeCord", new BungeeUtils());
-        this.rankManager = new IRankManager();
+        FileModule files = ModuleService.getFileModule();
+        this.rankManager = new RankManager(
+                files.getFile(ConfigFiles.CONFIG),
+                files.getFile(ConfigFiles.QUEUE),
+                files.getFile(ConfigFiles.TAB));
         this.rankManager.loadRank();
-        this.profileManager = new ProfileManager();
-        this.networkSyncManager = new NetworkSyncManager(hub, this);
-        this.queueManager = new QueueManager(rankManager);
-        this.lotteryManager = new LotteryManager();
-        this.spawnManager = new SpawnManager();
-        this.hotbarManager = new HotbarManager();
-        this.pvpArenaKitManager = new PvpArenaKitManager(profileManager, hotbarManager);
-        this.pvpArenaSelectionManager = new PvpArenaSelectionManager();
-        this.jukeboxManager = new JukeboxManager();
+        this.profileManager = new ProfileManager(
+                files.getFile(ConfigFiles.CONFIG),
+                files.getFile(ConfigFiles.JUKEBOX));
+        this.networkSyncManager = new NetworkSyncManager(hub, this, files.getFile(ConfigFiles.CONFIG));
+        this.queueManager = new QueueManager(rankManager, files.getFile(ConfigFiles.QUEUE));
+        this.lotteryManager = new LotteryManager(
+                files.getFile(ConfigFiles.LOTTERY),
+                files.getFile(ConfigFiles.MESSAGES));
+        this.spawnManager = new SpawnManager(files.getFile(ConfigFiles.SETTINGS));
+        this.hotbarManager = new HotbarManager(files.getFile(ConfigFiles.HOTBAR));
+        this.pvpArenaKitManager = new PvpArenaKitManager(
+                profileManager, hotbarManager,
+                files.getFile(ConfigFiles.SETTINGS),
+                files.getFile(ConfigFiles.SETTINGS_MENU));
+        this.pvpArenaSelectionManager = new PvpArenaSelectionManager(files.getFile(ConfigFiles.SETTINGS));
+        this.jukeboxManager = new JukeboxManager(
+                files.getFile(ConfigFiles.JUKEBOX),
+                files.getFile(ConfigFiles.SETTINGS));
         this.timerManager = new TimerManager();
-        this.chatManager = new ChatManager();
-        this.trailParticleManager = new TrailParticleManager();
+        this.chatManager = new ChatManager(files.getFile(ConfigFiles.SETTINGS));
+        this.trailParticleManager = new TrailParticleManager(files.getFile(ConfigFiles.PARTICLE));
         this.trailParticleManager.load();
-        this.outfitManager = new OutfitManager();
+        this.outfitManager = new OutfitManager(files.getFile(ConfigFiles.OUTFIT));
         this.outfitManager.load();
-        this.permissionAuditService = new PermissionAuditService();
+        this.permissionAuditService = new PermissionAuditService(
+                files.getFile(ConfigFiles.SETTINGS),
+                files.getFile(ConfigFiles.MESSAGES));
         this.permissionAuditService.start();
         this.networkSyncManager.start();
         this.load(false);
     }
     public Collection<? extends Player> getOnlinePlayers() {
-        Collection<Player> collection = new ArrayList<>();
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            collection.add(player);
-        }
-        return collection;
+        return new ArrayList<>(Bukkit.getServer().getOnlinePlayers());
     }
 
     public void shutdown() {

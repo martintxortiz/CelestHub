@@ -10,8 +10,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+/**
+ * Resolves and sends player-facing messages from a config-backed {@link MessageSource}, applying
+ * {@code &} colour codes and {@code %key%}/value placeholder substitution. A missing key falls back
+ * to the {@link MessageKey} default and is logged once, so a typo never sends a blank line.
+ */
 public final class Messages {
 
+    /** Supplies raw message strings by config path; typically {@code ConfigurationSection::getString}. */
     @FunctionalInterface
     public interface MessageSource {
         String getString(String path);

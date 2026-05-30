@@ -16,9 +16,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Loads the configurable hub hotbar items from the injected hotbar config and applies them to
+ * players, including the gadget and lottery-join slots.
+ */
 public class HotbarManager {
 
     @Getter
@@ -71,9 +76,9 @@ public class HotbarManager {
         }
     }
 
-    public HotbarManager() {
+    public HotbarManager(FileConfig hotbarConfig) {
         this.hotbars = Maps.newHashMap();
-        this.hotbarConfig = ModuleService.getFileModule().getFile("hotbar");
+        this.hotbarConfig = hotbarConfig;
         ensureDefaults();
     }
 
@@ -149,27 +154,26 @@ public class HotbarManager {
             }
         }
 
-        if (hotbarConfig.getConfiguration().contains("LOTTERY_JOIN")) {
-            hotbarConfig.save();
-            return;
+        if (!hotbarConfig.getConfiguration().contains("LOTTERY_JOIN")) {
+            Map<String, Object> joinItem = new LinkedHashMap<>();
+            joinItem.put("LOTTERY_JOIN.ENABLED", true);
+            joinItem.put("LOTTERY_JOIN.GLOW", false);
+            joinItem.put("LOTTERY_JOIN.NAME", "&d&lLOTTERY TICKET &7(Right Click)");
+            joinItem.put("LOTTERY_JOIN.LORE", java.util.List.of(
+                    "&7A lottery is active right now.",
+                    "&eRight click to join instantly."
+            ));
+            joinItem.put("LOTTERY_JOIN.MATERIAL", "PAPER");
+            joinItem.put("LOTTERY_JOIN.DATA", 0);
+            joinItem.put("LOTTERY_JOIN.SLOT", 7);
+            joinItem.put("LOTTERY_JOIN.AMOUNT", 1);
+            joinItem.put("LOTTERY_JOIN.COMMAND", "");
+            joinItem.put("LOTTERY_JOIN.CLICK_SOUND.ENABLED", false);
+            joinItem.put("LOTTERY_JOIN.CLICK_SOUND.SOUND", "UI_BUTTON_CLICK");
+            joinItem.put("LOTTERY_JOIN.CLICK_SOUND.VOLUME", 1.0);
+            joinItem.put("LOTTERY_JOIN.CLICK_SOUND.PITCH", 1.0);
+            ConfigSupport.applyMissingDefaults(hotbarConfig.getConfiguration(), joinItem);
         }
-
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.ENABLED", true);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.GLOW", false);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.NAME", "&d&lLOTTERY TICKET &7(Right Click)");
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.LORE", java.util.List.of(
-                "&7A lottery is active right now.",
-                "&eRight click to join instantly."
-        ));
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.MATERIAL", "PAPER");
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.DATA", 0);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.SLOT", 7);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.AMOUNT", 1);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.COMMAND", "");
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.CLICK_SOUND.ENABLED", false);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.CLICK_SOUND.SOUND", "UI_BUTTON_CLICK");
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.CLICK_SOUND.VOLUME", 1.0);
-        hotbarConfig.getConfiguration().set("LOTTERY_JOIN.CLICK_SOUND.PITCH", 1.0);
         hotbarConfig.save();
     }
 

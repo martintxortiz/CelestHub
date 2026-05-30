@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.outfit;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
@@ -21,7 +22,7 @@ public class OutfitRemoveButton extends Button {
 
     public OutfitRemoveButton() {
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
-        this.outfitConfig = ModuleService.getFileModule().getFile("outfit");
+        this.outfitConfig = ModuleService.getFileModule().getFile(ConfigFiles.OUTFIT);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class OutfitRemoveButton extends Button {
         }
 
         profile.setOutfit(null);
-        player.getInventory().setArmorContents(null);
+        player.getInventory().setArmorContents(new ItemStack[4]);
         playSuccess(player);
         close(player);
     }

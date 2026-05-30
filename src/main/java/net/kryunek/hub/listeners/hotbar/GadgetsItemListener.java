@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners.hotbar;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -18,7 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GadgetsItemListener implements Listener {
-    private final FileConfig settingsConfig = ModuleService.getFileModule().getFile("settings");
+    private final FileConfig settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
 
     public GadgetsItemListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);

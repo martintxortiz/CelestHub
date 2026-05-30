@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class ServerSelectorMenu extends Menu {
 
-    private final FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
 
     @Override
     public String getTitle(Player player) {

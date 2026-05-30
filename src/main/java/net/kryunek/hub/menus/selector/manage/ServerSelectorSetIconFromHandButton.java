@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class ServerSelectorSetIconFromHandButton extends Button {
 
     private final String key;
-    private final FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
 
     @Override
     public ItemStack getButtonItem(Player player) {

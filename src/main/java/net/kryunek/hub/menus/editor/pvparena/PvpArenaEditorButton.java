@@ -1,5 +1,7 @@
 package net.kryunek.hub.menus.editor.pvparena;
 
+import net.kryunek.hub.support.config.ConfigFiles;
+import net.kryunek.hub.support.config.ConfigSupport;
 import lombok.RequiredArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -19,13 +21,13 @@ import java.util.List;
 public class PvpArenaEditorButton extends Button {
 
     private final Action action;
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
-    private final FileConfig menus = ModuleService.getFileModule().getFile("editor_menus");
+    private final FileConfig settings = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
+    private final FileConfig menus = ModuleService.getFileModule().getFile(ConfigFiles.EDITOR_MENUS);
 
     @Override
     public ItemStack getButtonItem(Player player) {
         String basePath = "PVP_ARENA_EDITOR.BUTTONS." + action.name() + ".";
-        Material material = Material.valueOf(menus.getConfiguration().getString(basePath + "MATERIAL", "STONE"));
+        Material material = ConfigSupport.getMaterial(menus.getConfiguration(), basePath + "MATERIAL", Material.STONE, Bukkit.getLogger());
         String name = menus.getConfiguration().getString(basePath + "NAME", "&7Button");
         List<String> lore = new ArrayList<>(menus.getConfiguration().getStringList(basePath + "LORE"));
 

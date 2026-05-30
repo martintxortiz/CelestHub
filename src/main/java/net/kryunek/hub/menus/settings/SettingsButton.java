@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.settings;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.hook.ScoreboardHook;
 import net.kryunek.hub.hook.TablistHook;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -31,7 +32,7 @@ public class SettingsButton extends Button {
     private final List<String> lore;
     private final String command;
     private final String type;
-    private final FileConfig settings_menuConfig = ModuleService.getFileModule().getFile("settings_menu");
+    private final FileConfig settings_menuConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS_MENU);
     private final ProfileManager profileManager;
 
     @Override
@@ -139,7 +140,7 @@ public class SettingsButton extends Button {
                     player.sendMessage(CC.translate(settings_menuConfig.getString("settings.tablist-enabled")));
                 } else {
                     if (TablistHook.getTablistManager() != null) {
-                        TablistHook.getTablistManager().limpiarTablist(player);
+                        TablistHook.getTablistManager().clearTablist(player);
                     }
                     player.sendMessage(CC.translate(settings_menuConfig.getString("settings.tablist-disabled")));
                 }

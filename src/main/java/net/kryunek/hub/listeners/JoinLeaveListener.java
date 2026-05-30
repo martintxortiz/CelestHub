@@ -1,5 +1,7 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
+import net.kryunek.hub.support.config.ConfigSupport;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.managers.hotbar.HotbarManager;
@@ -16,6 +18,7 @@ import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.PlayerUtil;
 import net.kryunek.hub.utils.PvpArenaUtil;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -35,6 +38,7 @@ public class JoinLeaveListener implements Listener {
     private final OutfitManager outfitManager;
     private final PvpArenaKitManager pvpArenaKitManager;
     private final FileConfig settingsConfig;
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     public JoinLeaveListener(Celest hub) {
         this.hub = hub;
@@ -46,50 +50,74 @@ public class JoinLeaveListener implements Listener {
         this.jukeboxManager = managers.getJukeboxManager();
         this.outfitManager = managers.getOutfitManager();
         this.pvpArenaKitManager = managers.getPvpArenaKitManager();
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+        this.settingsConfig = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Profile profile = profileManager.getProfile(event.getPlayer().getUniqueId());
         Player player = event.getPlayer();
+        Profile profile = profileManager.getProfile(player.getUniqueId());
+        event.joinMessage(null);
+
+        // ProfileListener loads the profile at pre-login and kicks if it is missing, so reaching
+        // join with a null profile means something went wrong after login. Fail safe instead of
+        // dereferencing null: force a clean reconnect rather than leaving the player half-set-up.
+        if (profile == null) {
+            hub.getLogger().severe("No profile loaded for " + player.getName() + " on join; kicking to force reconnect.");
+            player.kick(LEGACY.deserialize(CC.translate("&cYour profile failed to load. Please reconnect.")));
+            return;
+        }
+
+        applyJoinState(player, profile);
+        applyVisibility(player, profile);
+        applyJoinMessage(event, player);
+        applyJoinTitle(player);
+        applyJoinSound(player);
+        scheduleGameModeAndOutfit(player, profile);
+        scheduleArenaVisibility(player);
+    }
+
+    private void applyJoinState(Player player, Profile profile) {
         player.setHealth(20);
         player.setFoodLevel(20);
         player.setGameMode(profile.isBuildModeEnabled() ? GameMode.CREATIVE : GameMode.SURVIVAL);
         player.setWalkSpeed((float) settingsConfig.getDouble("WALK_SPEED"));
-        spawnManager.toSpawn(event.getPlayer(), false);
+        spawnManager.toSpawn(player, false);
         if (profile.isBuildModeEnabled()) {
             PlayerUtil.clear(player, true, true);
         } else {
-            hotbarManager.setHotbar(event.getPlayer());
+            hotbarManager.setHotbar(player);
         }
-        event.setJoinMessage(null);
         SettingsButton.applyTimePreference(player, profile.getTimePreference());
         if (jukeboxManager != null) {
             jukeboxManager.handleJoin(player);
         }
+    }
 
-        for (Player players : Bukkit.getServer().getOnlinePlayers()) {
-            Profile profiles = profileManager.getProfile(players.getUniqueId());
+    private void applyVisibility(Player player, Profile profile) {
+        // The visibility toggle item depends only on this player's own preference, so set it once.
+        if (!profile.isBuildModeEnabled()) {
+            Hotbar toggleItem = hotbarManager.getHotbar(profile.isVisibilityOn() ? "HIDE_PLAYER" : "SHOW_PLAYER");
+            player.getInventory().setItem(toggleItem.getSlot(), toggleItem.getItem());
+        }
+
+        for (Player other : Bukkit.getServer().getOnlinePlayers()) {
             if (profile.isVisibilityOn()) {
-                if (!profile.isBuildModeEnabled()) {
-                    Hotbar tetas = hotbarManager.getHotbar("HIDE_PLAYER");
-                    player.getInventory().setItem(tetas.getSlot(), tetas.getItem());
-                }
-                player.showPlayer(players);
+                player.showPlayer(Celest.get(), other);
             } else {
-                if (!profile.isBuildModeEnabled()) {
-                    Hotbar hotbar = hotbarManager.getHotbar("SHOW_PLAYER");
-                    player.getInventory().setItem(hotbar.getSlot(), hotbar.getItem());
-                }
-                player.hidePlayer(players);
+                player.hidePlayer(Celest.get(), other);
             }
-            if (profiles.isVisibilityOn()) {
-                players.showPlayer(player);
+
+            Profile otherProfile = profileManager.getProfile(other.getUniqueId());
+            if (otherProfile == null || otherProfile.isVisibilityOn()) {
+                other.showPlayer(Celest.get(), player);
             } else {
-                players.hidePlayer(player);
+                other.hidePlayer(Celest.get(), player);
             }
         }
+    }
+
+    private void applyJoinMessage(PlayerJoinEvent event, Player player) {
         if (settingsConfig.getBoolean("JOIN_CLEARCHAT.ENABLED")) {
             for (int i = 0; i < settingsConfig.getInt("JOIN_CLEARCHAT.LINES"); i++) {
                 player.sendMessage("");
@@ -97,38 +125,50 @@ public class JoinLeaveListener implements Listener {
             }
         }
         if (settingsConfig.getBoolean("JOIN_MESSAGE.ENABLED")) {
-                event.setJoinMessage(CC.translate(settingsConfig.getString("JOIN_MESSAGE.MESSAGE")).replace("%player%", event.getPlayer().getDisplayName()));
-
+            event.joinMessage(LEGACY.deserialize(CC.translate(settingsConfig.getString("JOIN_MESSAGE.MESSAGE"))
+                    .replace("%player%", player.getDisplayName())));
         }
-        if (settingsConfig.getBoolean("JOIN_TITLE.ENABLED")) {
-            boolean useTicks = settingsConfig.getBoolean("JOIN_TITLE.SETTIMINGTOTICKS");
-            int fadeIn = settingsConfig.getInt("JOIN_TITLE.FADEINTIME");
-            int stay = settingsConfig.getInt("JOIN_TITLE.STAYTIME");
-            int fadeOut = settingsConfig.getInt("JOIN_TITLE.FADEOUTTIME");
+    }
 
-            if (!useTicks) {
-                fadeIn *= 20;
-                stay *= 20;
-                fadeOut *= 20;
-            }
-
-            String title = settingsConfig.getString("JOIN_TITLE.TITLE");
-            String subtitle = settingsConfig.getString("JOIN_TITLE.SUBTITLE");
-
-            player.sendTitle(
-                    title == null ? "" : title.replace("%player%", player.getName()),
-                    subtitle == null ? "" : subtitle.replace("%player%", player.getName()),
-                    fadeIn,
-                    stay,
-                    fadeOut
-            );
+    private void applyJoinTitle(Player player) {
+        if (!settingsConfig.getBoolean("JOIN_TITLE.ENABLED")) {
+            return;
         }
-        if (settingsConfig.getBoolean("JOIN_SOUND.ENABLED")) {
-            player.playSound(player.getLocation(), Sound.valueOf(settingsConfig.getString("JOIN_SOUND.SOUND")),
-                    (float) settingsConfig.getDouble("JOIN_SOUND.VOLUME"),
-                    (float) settingsConfig.getDouble("JOIN_SOUND.PITCH"));
+        boolean useTicks = settingsConfig.getBoolean("JOIN_TITLE.SETTIMINGTOTICKS");
+        int fadeIn = settingsConfig.getInt("JOIN_TITLE.FADEINTIME");
+        int stay = settingsConfig.getInt("JOIN_TITLE.STAYTIME");
+        int fadeOut = settingsConfig.getInt("JOIN_TITLE.FADEOUTTIME");
+
+        if (!useTicks) {
+            fadeIn *= 20;
+            stay *= 20;
+            fadeOut *= 20;
         }
 
+        String title = settingsConfig.getString("JOIN_TITLE.TITLE");
+        String subtitle = settingsConfig.getString("JOIN_TITLE.SUBTITLE");
+
+        player.sendTitle(
+                title == null ? "" : title.replace("%player%", player.getName()),
+                subtitle == null ? "" : subtitle.replace("%player%", player.getName()),
+                fadeIn,
+                stay,
+                fadeOut
+        );
+    }
+
+    private void applyJoinSound(Player player) {
+        if (!settingsConfig.getBoolean("JOIN_SOUND.ENABLED")) {
+            return;
+        }
+        Sound sound = ConfigSupport.getSound(settingsConfig.getConfiguration(), "JOIN_SOUND.SOUND",
+                Sound.ENTITY_PLAYER_LEVELUP, Bukkit.getLogger());
+        player.playSound(player.getLocation(), sound,
+                (float) settingsConfig.getDouble("JOIN_SOUND.VOLUME"),
+                (float) settingsConfig.getDouble("JOIN_SOUND.PITCH"));
+    }
+
+    private void scheduleGameModeAndOutfit(Player player, Profile profile) {
         Bukkit.getScheduler().runTaskLater(hub, () -> {
             if (!player.isOnline()) {
                 return;
@@ -151,7 +191,9 @@ public class JoinLeaveListener implements Listener {
             }
             outfitManager.applySelectedOutfit(player, profile);
         }, 1L);
+    }
 
+    private void scheduleArenaVisibility(Player player) {
         Bukkit.getScheduler().runTaskLater(hub, () -> {
             if (!player.isOnline()) {
                 return;
@@ -168,13 +210,12 @@ public class JoinLeaveListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Profile profile = profileManager.getProfile(event.getPlayer().getUniqueId());
-        event.setQuitMessage(null);
+        event.quitMessage(null);
         event.getPlayer().setWalkSpeed(0.2f);
         GadgetService.deactivatePersistentEffects(event.getPlayer());
         if (jukeboxManager != null) {
             jukeboxManager.stop(event.getPlayer());
         }
         PlayerUtil.clear(profile == null ? event.getPlayer() : profile.getPlayer(), true, true);
-
     }
 }

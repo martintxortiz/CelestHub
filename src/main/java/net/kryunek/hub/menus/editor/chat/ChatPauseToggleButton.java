@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.chat;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.chat.ChatManager;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 
 public class ChatPauseToggleButton extends Button {
 
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     @Override
     public ItemStack getButtonItem(Player player) {

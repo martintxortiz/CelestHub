@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.gadgets.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.gadgets.GadgetEditSession;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -18,8 +19,8 @@ import java.util.Arrays;
 public class GadgetEditCooldownButton extends Button {
 
     private final String key;
-    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile("gadgets");
-    private final FileConfig settings = ModuleService.getFileModule().getFile("gadgets");
+    private final FileConfig gadgetsMenu = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
+    private final FileConfig settings = ModuleService.getFileModule().getFile(ConfigFiles.GADGETS);
 
     @Override
     public ItemStack getButtonItem(Player player) {

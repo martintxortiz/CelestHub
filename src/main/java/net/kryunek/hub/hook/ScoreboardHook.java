@@ -1,5 +1,6 @@
 package net.kryunek.hub.hook;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
@@ -16,9 +17,9 @@ public class ScoreboardHook {
     private Scoreboard scoreboard;
 
     public void init(Celest hub) {
-        if (ModuleService.getFileModule().getFile("scoreboard").getBoolean("ENABLED")) {
+        if (ModuleService.getFileModule().getFile(ConfigFiles.SCOREBOARD).getBoolean("ENABLED")) {
             scoreboard = new Scoreboard(hub, new ScoreboardProvider());
-            scoreboard.setTicks(ModuleService.getFileModule().getFile("scoreboard").getInt("UPDATE-TASK"));
+            scoreboard.setTicks(ModuleService.getFileModule().getFile(ConfigFiles.SCOREBOARD).getInt("UPDATE-TASK"));
             scoreboard.setAssembleStyle(ScoreboardStyle.MODERN);
 
         }

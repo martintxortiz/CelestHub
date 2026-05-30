@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.lottery.list.editor;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.lottery.Lottery;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -36,7 +37,7 @@ public class LotteryToggleButton extends Button {
         Lottery lottery = ModuleService.getManagerModule().getLotteryManager().getLottery(lotteryName);
         if (lottery == null) {
             playFail(player);
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                     .getString("LOTTERY.NOT_FOUND", "&cLottery not found.", true)));
             return;
         }
@@ -47,7 +48,7 @@ public class LotteryToggleButton extends Button {
                 playFail(player);
                 return;
             }
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                     .getString("LOTTERY.ENDED", "&eLottery ended: &f%lottery%", true)
                     .replace("%lottery%", lotteryName)));
             playSuccess(player);
@@ -57,12 +58,12 @@ public class LotteryToggleButton extends Button {
         boolean started = ModuleService.getManagerModule().getLotteryManager().startLottery(lotteryName, player);
         if (!started) {
             playFail(player);
-            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+            player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                     .getString("LOTTERY.START_FAILED", "&cCould not start that lottery.", true)));
             return;
         }
 
-        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages")
+        player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES)
                 .getString("LOTTERY.STARTED", "&aLottery started: &f%lottery%", true)
                 .replace("%lottery%", lotteryName)));
         playSuccess(player);

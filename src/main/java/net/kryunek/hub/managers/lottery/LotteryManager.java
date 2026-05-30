@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.lottery;
 
+import net.kryunek.hub.support.config.ConfigSupport;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.hotbar.Hotbar;
 import net.kryunek.hub.utils.CC;
@@ -29,6 +30,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Runs timed lotteries — creation, joining, winner selection and reward payout — persisting to the
+ * injected lottery config and mirroring state across hubs via {@code NetworkSyncManager}.
+ */
 public class LotteryManager {
 
     private final Map<String, Lottery> lotteries = new LinkedHashMap<>();
@@ -38,9 +43,9 @@ public class LotteryManager {
     private BukkitTask tickerTask;
     private BukkitTask reminderTask;
 
-    public LotteryManager() {
-        this.lotteryConfig = ModuleService.getFileModule().getFile("lottery");
-        this.messages = ModuleService.getFileModule().getFile("messages");
+    public LotteryManager(FileConfig lotteryConfig, FileConfig messages) {
+        this.lotteryConfig = lotteryConfig;
+        this.messages = messages;
         ensureDefaults();
         loadLotteries();
         startTickerTask();
@@ -48,40 +53,19 @@ public class LotteryManager {
     }
 
     private void ensureDefaults() {
-        boolean changed = false;
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.ENABLED")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.ENABLED", true);
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.MATERIAL")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.MATERIAL", "PAPER");
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.NAME")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.NAME", "&d&lLOTTERY TICKET &7(Right Click)");
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.LORE")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.LORE", List.of(
-                    "&7A lottery is active right now.",
-                    "&eRight click to join instantly."
-            ));
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.SLOT")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.SLOT", 7);
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.JOIN_ITEM.AMOUNT")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.JOIN_ITEM.AMOUNT", 1);
-            changed = true;
-        }
-        if (!lotteryConfig.getConfiguration().contains("LOTTERY.DEFAULT_WINNERS")) {
-            lotteryConfig.getConfiguration().set("LOTTERY.DEFAULT_WINNERS", 1);
-            changed = true;
-        }
+        Map<String, Object> defaults = new LinkedHashMap<>();
+        defaults.put("LOTTERY.JOIN_ITEM.ENABLED", true);
+        defaults.put("LOTTERY.JOIN_ITEM.MATERIAL", "PAPER");
+        defaults.put("LOTTERY.JOIN_ITEM.NAME", "&d&lLOTTERY TICKET &7(Right Click)");
+        defaults.put("LOTTERY.JOIN_ITEM.LORE", List.of(
+                "&7A lottery is active right now.",
+                "&eRight click to join instantly."
+        ));
+        defaults.put("LOTTERY.JOIN_ITEM.SLOT", 7);
+        defaults.put("LOTTERY.JOIN_ITEM.AMOUNT", 1);
+        defaults.put("LOTTERY.DEFAULT_WINNERS", 1);
 
-        if (changed) {
+        if (ConfigSupport.applyMissingDefaults(lotteryConfig.getConfiguration(), defaults)) {
             lotteryConfig.save();
         }
     }

@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.lottery.LotteryCreateSession;
 import net.kryunek.hub.managers.lottery.LotteryManager;
@@ -15,7 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -30,7 +32,7 @@ public class LotteryListener implements Listener {
     public LotteryListener(Celest hub) {
         this.hub = hub;
         this.lotteryManager = ModuleService.getManagerModule().getLotteryManager();
-        this.messages = ModuleService.getFileModule().getFile("messages");
+        this.messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
         Bukkit.getPluginManager().registerEvents(this, hub);
     }
 
@@ -84,18 +86,18 @@ public class LotteryListener implements Listener {
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
         if (LotteryCreateSession.isActive(player)) {
             event.setCancelled(true);
-            handleCreateSession(player, event.getMessage().trim());
+            handleCreateSession(player, PlainTextComponentSerializer.plainText().serialize(event.message()).trim());
             return;
         }
 
         if (LotteryReminderEditSession.isActive(player)) {
             event.setCancelled(true);
-            handleReminderSession(player, event.getMessage().trim());
+            handleReminderSession(player, PlainTextComponentSerializer.plainText().serialize(event.message()).trim());
             return;
         }
 
@@ -104,7 +106,7 @@ public class LotteryListener implements Listener {
         }
 
         event.setCancelled(true);
-        handleRewardSession(player, event.getMessage().trim());
+        handleRewardSession(player, PlainTextComponentSerializer.plainText().serialize(event.message()).trim());
     }
 
     private void cleanupPlayer(Player player) {

@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.editor.chat;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
@@ -15,8 +16,8 @@ import java.util.Arrays;
 
 public class ChatClearNowButton extends Button {
 
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
-    private final FileConfig messages = ModuleService.getFileModule().getFile("messages");
+    private final FileConfig settings = ModuleService.getFileModule().getFile(ConfigFiles.SETTINGS);
+    private final FileConfig messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
 
     @Override
     public ItemStack getButtonItem(Player player) {

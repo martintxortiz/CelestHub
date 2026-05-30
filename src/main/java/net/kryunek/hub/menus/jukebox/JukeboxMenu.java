@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.jukebox;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import com.google.common.collect.Maps;
 import net.kryunek.hub.managers.jukebox.JukeboxManager;
 import net.kryunek.hub.managers.module.ModuleService;
@@ -221,7 +222,7 @@ public class JukeboxMenu extends PaginatedMenu {
 
         @Override
         public void clicked(Player player, int slot, ClickType clickType, int hotbarButton) {
-            double step = ModuleService.getFileModule().getFile("jukebox").getConfiguration().getDouble("JUKEBOX.CONTROLS.VOLUME_STEP", 0.1D);
+            double step = ModuleService.getFileModule().getFile(ConfigFiles.JUKEBOX).getConfiguration().getDouble("JUKEBOX.CONTROLS.VOLUME_STEP", 0.1D);
             if (clickType.isRightClick()) {
                 jukeboxManager.setVolume(player, jukeboxManager.getVolume(player) - step);
                 playNeutral(player);

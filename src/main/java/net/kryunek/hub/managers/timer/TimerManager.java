@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/** Countdown timers that auto-unpause their target queue on expiry, mirrored across hubs via network sync. */
 public class TimerManager {
 
     private final List<Timer> timers;

@@ -1,5 +1,6 @@
 package net.kryunek.hub.support.command;
 
+/** Permission-node constants for Celest commands, centralised to avoid scattered string literals. */
 public final class Permissions {
 
     public static final String CHAT = "celest.command.chat";

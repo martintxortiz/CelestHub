@@ -1,5 +1,6 @@
 package net.kryunek.hub.support.message;
 
+/** Typed catalogue of reusable message keys, each pairing a config path with a built-in fallback. */
 public enum MessageKey {
     COMMAND_NO_PERMISSION("COMMAND.NO_PERMISSION", "&cNo permission."),
     COMMAND_IN_GAME_ONLY("COMMAND.IN_GAME_ONLY", "&cThis command can only be executed in game."),

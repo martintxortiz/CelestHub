@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.particles;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.particles.TrailParticle;
 import net.kryunek.hub.managers.particles.TrailParticleManager;
@@ -53,7 +54,7 @@ public class TrailParticleRemoveButton extends Button {
     public TrailParticleRemoveButton() {
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
         this.trailManager = ModuleService.getManagerModule().getTrailParticleManager();
-        this.particleConfig = ModuleService.getFileModule().getFile("particle");
+        this.particleConfig = ModuleService.getFileModule().getFile(ConfigFiles.PARTICLE);
 
     }
 }

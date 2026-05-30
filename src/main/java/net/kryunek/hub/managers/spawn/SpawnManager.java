@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.spawn;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.Getter;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.BukkitUtil;
@@ -8,6 +9,7 @@ import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+/** Tracks and persists the hub spawn location (in the injected settings config) and teleports players to it. */
 @Getter
 public class SpawnManager {
     private Location location;
@@ -23,7 +25,7 @@ public class SpawnManager {
         if (this.location == null) {
             player.teleport(player.getWorld().getSpawnLocation());
             if (notifyIfMissing) {
-                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile("messages").getString("SPAWN.NOT_SET")));
+                player.sendMessage(CC.translate(ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES).getString("SPAWN.NOT_SET")));
             }
             return;
         }
@@ -31,8 +33,8 @@ public class SpawnManager {
         player.teleport(this.location);
     }
 
-    public SpawnManager() {
-        this.settingsConfig = ModuleService.getFileModule().getFile("settings");
+    public SpawnManager(FileConfig settingsConfig) {
+        this.settingsConfig = settingsConfig;
         this.location = BukkitUtil.deserializeLocation(settingsConfig.getString("SPAWN_LOCATION"));
     }
 }

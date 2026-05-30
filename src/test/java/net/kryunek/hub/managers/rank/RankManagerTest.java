@@ -1,7 +1,5 @@
 package net.kryunek.hub.managers.rank;
 
-import net.kryunek.hub.managers.module.ModuleService;
-import net.kryunek.hub.managers.module.impl.FileModule;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -20,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-class IRankManagerTest {
+class RankManagerTest {
 
     @TempDir
     private Path tempDir;
@@ -74,14 +72,7 @@ class IRankManagerTest {
     }
 
     private void withManager(FileConfig config, FileConfig queue, FileConfig tab,
-                             Consumer<IRankManager> body) {
-        try (MockedStatic<ModuleService> moduleService = mockStatic(ModuleService.class)) {
-            FileModule fileModule = mock(FileModule.class);
-            when(fileModule.getFile("config")).thenReturn(config);
-            when(fileModule.getFile("queue")).thenReturn(queue);
-            when(fileModule.getFile("tab")).thenReturn(tab);
-            moduleService.when(ModuleService::getFileModule).thenReturn(fileModule);
-            body.accept(new IRankManager());
-        }
+                             Consumer<RankManager> body) {
+        body.accept(new RankManager(config, queue, tab));
     }
 }

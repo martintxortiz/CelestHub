@@ -1,7 +1,6 @@
 package net.kryunek.hub.managers.network;
 
 import net.kryunek.hub.Celest;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.module.impl.ManagerModule;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.Bukkit;
@@ -15,9 +14,20 @@ import java.util.Base64;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * Optional Redis pub/sub bridge that mirrors queue, lottery, timer and chat state across hub
+ * instances, with exponential-backoff auto-reconnect. No-op unless enabled in the injected config.
+ */
 public class NetworkSyncManager {
 
     private static final String CHANNEL = "celesthub:sync";
+    private static final String TOPIC_QUEUE = "QUEUE_STATE";
+    private static final String TOPIC_LOTTERY = "LOTTERY_STATE";
+    private static final String TOPIC_TIMER = "TIMER_STATE";
+    private static final String TOPIC_CHAT = "CHAT_STATE";
+    private static final long RECONNECT_BACKOFF_START_MS = 1_000L;
+    private static final long RECONNECT_BACKOFF_MAX_MS = 30_000L;
+
     private final Celest hub;
     private final ManagerModule managers;
     private final FileConfig config;
@@ -28,10 +38,10 @@ public class NetworkSyncManager {
     private volatile JedisPubSub subscription;
     private Thread subscriberThread;
 
-    public NetworkSyncManager(Celest hub, ManagerModule managers) {
+    public NetworkSyncManager(Celest hub, ManagerModule managers, FileConfig config) {
         this.hub = hub;
         this.managers = managers;
-        this.config = ModuleService.getFileModule().getFile("config");
+        this.config = config;
         this.serverId = UUID.randomUUID().toString();
     }
 
@@ -48,7 +58,20 @@ public class NetworkSyncManager {
 
         this.publisher = new JedisPooled(URI.create(redisUri));
 
-        this.subscriberThread = new Thread(() -> {
+        this.subscriberThread = new Thread(() -> runSubscriber(redisUri), "Celest-RedisSync");
+        this.subscriberThread.setDaemon(true);
+        this.subscriberThread.start();
+        Bukkit.getLogger().info("[Celest] Network sync enabled on Redis channel " + CHANNEL);
+    }
+
+    /**
+     * Subscribes to the sync channel and blocks until disconnected. On any failure it reconnects
+     * with exponential backoff (capped) for as long as the manager is enabled, so a transient Redis
+     * outage no longer leaves this node permanently deaf to network updates.
+     */
+    private void runSubscriber(String redisUri) {
+        long backoffMs = RECONNECT_BACKOFF_START_MS;
+        while (enabled && !Thread.currentThread().isInterrupted()) {
             try (Jedis subscriberClient = new Jedis(URI.create(redisUri))) {
                 this.subscriber = subscriberClient;
                 this.subscription = new JedisPubSub() {
@@ -57,19 +80,29 @@ public class NetworkSyncManager {
                         handleMessage(message);
                     }
                 };
+                backoffMs = RECONNECT_BACKOFF_START_MS;
                 subscriberClient.subscribe(this.subscription, CHANNEL);
             } catch (Exception ex) {
                 if (enabled) {
-                    Bukkit.getLogger().warning("[Celest] Redis subscriber stopped: " + ex.getMessage());
+                    Bukkit.getLogger().warning("[Celest] Redis subscriber stopped: " + ex.getMessage()
+                            + " — reconnecting in " + (backoffMs / 1000L) + "s");
                 }
             } finally {
                 this.subscription = null;
                 this.subscriber = null;
             }
-        }, "Celest-RedisSync");
-        this.subscriberThread.setDaemon(true);
-        this.subscriberThread.start();
-        Bukkit.getLogger().info("[Celest] Network sync enabled on Redis channel " + CHANNEL);
+
+            if (!enabled) {
+                break;
+            }
+            try {
+                Thread.sleep(backoffMs);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            backoffMs = Math.min(backoffMs * 2, RECONNECT_BACKOFF_MAX_MS);
+        }
     }
 
     public void shutdown() {
@@ -101,19 +134,19 @@ public class NetworkSyncManager {
     }
 
     public void publishQueueState(String yaml) {
-        publish("QUEUE_STATE", yaml);
+        publish(TOPIC_QUEUE, yaml);
     }
 
     public void publishLotteryState(String yaml) {
-        publish("LOTTERY_STATE", yaml);
+        publish(TOPIC_LOTTERY, yaml);
     }
 
     public void publishTimerState(String snapshot) {
-        publish("TIMER_STATE", snapshot);
+        publish(TOPIC_TIMER, snapshot);
     }
 
     public void publishChatState(String snapshot) {
-        publish("CHAT_STATE", snapshot);
+        publish(TOPIC_CHAT, snapshot);
     }
 
     private void publish(String topic, String payload) {
@@ -148,13 +181,13 @@ public class NetworkSyncManager {
             return;
         }
         Bukkit.getScheduler().runTask(hub, () -> {
-            if ("QUEUE_STATE".equalsIgnoreCase(topic) && managers.getQueueManager() != null) {
+            if (TOPIC_QUEUE.equalsIgnoreCase(topic) && managers.getQueueManager() != null) {
                 managers.getQueueManager().applyRemoteSnapshot(payload);
-            } else if ("LOTTERY_STATE".equalsIgnoreCase(topic) && managers.getLotteryManager() != null) {
+            } else if (TOPIC_LOTTERY.equalsIgnoreCase(topic) && managers.getLotteryManager() != null) {
                 managers.getLotteryManager().applyRemoteSnapshot(payload);
-            } else if ("TIMER_STATE".equalsIgnoreCase(topic) && managers.getTimerManager() != null) {
+            } else if (TOPIC_TIMER.equalsIgnoreCase(topic) && managers.getTimerManager() != null) {
                 managers.getTimerManager().applyRemoteSnapshot(payload);
-            } else if ("CHAT_STATE".equalsIgnoreCase(topic) && managers.getChatManager() != null) {
+            } else if (TOPIC_CHAT.equalsIgnoreCase(topic) && managers.getChatManager() != null) {
                 managers.getChatManager().applyRemoteSnapshot(payload);
             }
         });

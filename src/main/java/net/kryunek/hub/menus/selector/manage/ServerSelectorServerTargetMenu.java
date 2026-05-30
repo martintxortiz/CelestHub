@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.queue.Queue;
 import net.kryunek.hub.utils.CC;
@@ -19,7 +20,7 @@ public class ServerSelectorServerTargetMenu extends Menu {
 
     private final String selectorKey;
     private final boolean returnToItemEditor;
-    private final FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
 
     public ServerSelectorServerTargetMenu(String selectorKey) {
         this(selectorKey, false);

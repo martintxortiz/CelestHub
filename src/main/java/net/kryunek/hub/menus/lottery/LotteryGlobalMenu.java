@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.lottery;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.editor.CelestEditorMenu;
 import net.kryunek.hub.utils.CC;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class LotteryGlobalMenu extends Menu {
 
-    private final FileConfig adminMenus = ModuleService.getFileModule().getFile("admin_menus");
+    private final FileConfig adminMenus = ModuleService.getFileModule().getFile(ConfigFiles.ADMIN_MENUS);
 
     @Override
     public String getTitle(Player player) {

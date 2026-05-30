@@ -6,17 +6,19 @@ import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.utils.FileConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
+/** CRUD and application of leather-armour cosmetic outfits stored in the injected outfit config. */
 public class OutfitManager {
 
     private final Map<String, Outfit> outfits;
     private final FileConfig outfitConfig;
 
-    public OutfitManager() {
+    public OutfitManager(FileConfig outfitConfig) {
         this.outfits = Maps.newHashMap();
-        this.outfitConfig = ModuleService.getFileModule().getFile("outfit");
+        this.outfitConfig = outfitConfig;
     }
 
     public Map<String, Outfit> getOutfits() {
@@ -82,7 +84,7 @@ public class OutfitManager {
                 profile.setOutfit(null);
                 Player player = profile.getPlayer();
                 if (player != null && !profile.isBuildModeEnabled()) {
-                    player.getInventory().setArmorContents(null);
+                    player.getInventory().setArmorContents(new ItemStack[4]);
                 }
             }
         }
@@ -125,7 +127,7 @@ public class OutfitManager {
         }
 
         if (profile.getOutfit() == null) {
-            player.getInventory().setArmorContents(null);
+            player.getInventory().setArmorContents(new ItemStack[4]);
             return;
         }
 

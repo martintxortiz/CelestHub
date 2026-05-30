@@ -1,5 +1,6 @@
 package net.kryunek.hub.listeners;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.queue.Queue;
@@ -15,7 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class QueueListener implements Listener {
 
@@ -23,11 +25,11 @@ public class QueueListener implements Listener {
 
     public QueueListener(Celest hub) {
         Bukkit.getPluginManager().registerEvents(this, hub);
-        this.messages = ModuleService.getFileModule().getFile("messages");
+        this.messages = ModuleService.getFileModule().getFile(ConfigFiles.MESSAGES);
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         if (QueueEditSession.isActive(player)) {
             handleEditChat(event, player);
@@ -39,7 +41,7 @@ public class QueueListener implements Listener {
         }
 
         event.setCancelled(true);
-        String message = event.getMessage();
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
 
         if (message.equalsIgnoreCase("cancel")) {
             QueueCreateSession.stop(player);
@@ -60,11 +62,11 @@ public class QueueListener implements Listener {
         Bukkit.getScheduler().runTask(Celest.get(), () -> new QueuePaginatedMenu().openMenu(player));
     }
 
-    private void handleEditChat(AsyncPlayerChatEvent event, Player player) {
+    private void handleEditChat(AsyncChatEvent event, Player player) {
         event.setCancelled(true);
 
         QueueEditSession session = QueueEditSession.get(player);
-        String message = event.getMessage().trim();
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
 
         if (message.equalsIgnoreCase("cancel")) {
             QueueEditSession.stop(player);

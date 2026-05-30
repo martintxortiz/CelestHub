@@ -1,8 +1,6 @@
 package net.kryunek.hub.managers.rank;
 
 import lombok.Getter;
-import lombok.Setter;
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.rank.impl.Default;
 import net.kryunek.hub.managers.rank.impl.LuckPerms;
 import net.kryunek.hub.utils.FileConfig;
@@ -15,8 +13,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-@Getter @Setter
-public class IRankManager {
+/**
+ * Resolves the active rank provider (LuckPerms when present, otherwise the built-in default) and
+ * exposes available ranks plus queue/tab priorities, reading from the injected config/queue/tab files.
+ */
+@Getter
+public class RankManager {
 
     private final FileConfig config;
     private final FileConfig queueConfig;
@@ -25,11 +27,10 @@ public class IRankManager {
     private String configuredSystemMode;
     private IRank rank;
 
-    public IRankManager() {
-        var files = ModuleService.getFileModule();
-        this.config = files.getFile("config");
-        this.queueConfig = files.getFile("queue");
-        this.tabConfig = files.getFile("tab");
+    public RankManager(FileConfig config, FileConfig queueConfig, FileConfig tabConfig) {
+        this.config = config;
+        this.queueConfig = queueConfig;
+        this.tabConfig = tabConfig;
     }
 
     public void loadRank() {
@@ -38,25 +39,26 @@ public class IRankManager {
         this.configuredSystemMode = mode == null ? "AUTO" : mode.toUpperCase(Locale.ROOT);
 
         if ("DEFAULT".equalsIgnoreCase(configuredSystemMode)) {
-            this.setRank(new Default());
-            this.setRankSystem("Default");
+            useDefaultSystem();
             return;
         }
 
-        if ("LUCKPERMS".equalsIgnoreCase(configuredSystemMode) && Bukkit.getPluginManager().getPlugin("LuckPerms") == null) {
-            this.setRank(new Default());
-            this.setRankSystem("Default");
+        if ("LUCKPERMS".equalsIgnoreCase(configuredSystemMode) && !isLuckPermsActive()) {
+            useDefaultSystem();
             return;
         }
 
-        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
-            this.setRank(new LuckPerms());
-            this.setRankSystem("LuckPerms");
+        if (isLuckPermsActive()) {
+            this.rank = new LuckPerms();
+            this.rankSystem = "LuckPerms";
+        } else {
+            useDefaultSystem();
         }
-        else {
-            this.setRank(new Default());
-            this.setRankSystem("Default");
-        }
+    }
+
+    private void useDefaultSystem() {
+        this.rank = new Default();
+        this.rankSystem = "Default";
     }
 
     public void setConfiguredSystemMode(String mode) {
@@ -78,10 +80,7 @@ public class IRankManager {
             ranks.addAll(queuePriority.getKeys(false));
         }
 
-        List<String> tabGroups = tabConfig.getStringList("group-sorting.groups");
-        if (!(tabGroups.size() == 1 && "ERROR: STRING LIST NOT FOUND!".equals(tabGroups.get(0)))) {
-            ranks.addAll(tabGroups);
-        }
+        ranks.addAll(tabConfig.getStringList("group-sorting.groups"));
 
         boolean allowLuckPermsSource = !"DEFAULT".equalsIgnoreCase(configuredSystemMode);
         if (allowLuckPermsSource && isLuckPermsActive()) {
@@ -90,7 +89,7 @@ public class IRankManager {
                 if (api != null) {
                     api.getGroupManager().getLoadedGroups().forEach(group -> ranks.add(group.getName()));
                 }
-            } catch (Throwable ex) {
+            } catch (Exception ex) {
                 Bukkit.getLogger().fine("[Celest] Failed to read LuckPerms groups: " + ex.getMessage());
             }
         }
@@ -137,11 +136,7 @@ public class IRankManager {
     }
 
     private List<String> getTabGroupsMutable() {
-        List<String> groups = new ArrayList<>(tabConfig.getStringList("group-sorting.groups"));
-        if (groups.size() == 1 && "ERROR: STRING LIST NOT FOUND!".equals(groups.get(0))) {
-            groups.clear();
-        }
-        return groups;
+        return new ArrayList<>(tabConfig.getStringList("group-sorting.groups"));
     }
 
     private void ensureDefaults() {

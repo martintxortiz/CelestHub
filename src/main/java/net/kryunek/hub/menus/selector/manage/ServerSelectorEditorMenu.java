@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.selector.manage;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.Celest;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.menus.editor.CelestEditorMenu;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 public class ServerSelectorEditorMenu extends Menu {
 
-    private final FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+    private final FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
     private static final Map<UUID, String> MOVE_MODE = new HashMap<>();
 
     @Override
@@ -86,7 +87,7 @@ public class ServerSelectorEditorMenu extends Menu {
             return;
         }
 
-        FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+        FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
         ConfigurationSection items = serverConfig.getConfiguration().getConfigurationSection("SERVER_SELECTOR.ITEMS");
         if (items == null || !items.contains(movingKey)) {
             MOVE_MODE.remove(player.getUniqueId());
@@ -115,7 +116,7 @@ public class ServerSelectorEditorMenu extends Menu {
     }
 
     public static String createAtSlot(Player player, int targetSlot) {
-        FileConfig serverConfig = ModuleService.getFileModule().getFile("server_selector");
+        FileConfig serverConfig = ModuleService.getFileModule().getFile(ConfigFiles.SERVER_SELECTOR);
         ConfigurationSection items = serverConfig.getConfiguration().getConfigurationSection("SERVER_SELECTOR.ITEMS");
         if (items == null) {
             items = serverConfig.getConfiguration().createSection("SERVER_SELECTOR.ITEMS");

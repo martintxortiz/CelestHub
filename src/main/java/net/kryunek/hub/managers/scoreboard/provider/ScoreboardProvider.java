@@ -1,5 +1,6 @@
 package net.kryunek.hub.managers.scoreboard.provider;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.managers.player.Profile;
 import net.kryunek.hub.managers.player.ProfileManager;
@@ -113,6 +114,6 @@ public class ScoreboardProvider implements ScoreboardAdapter {
         this.profileManager = ModuleService.getManagerModule().getProfileManager();
         this.queueManager = ModuleService.getManagerModule().getQueueManager();
         this.timerManager = ModuleService.getManagerModule().getTimerManager();
-        this.scoreboardConfig = ModuleService.getFileModule().getFile("scoreboard");
+        this.scoreboardConfig = ModuleService.getFileModule().getFile(ConfigFiles.SCOREBOARD);
     }
 }

@@ -1,5 +1,6 @@
 package net.kryunek.hub.menus.hubselector;
 
+import net.kryunek.hub.support.config.ConfigFiles;
 import lombok.AllArgsConstructor;
 import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
@@ -7,7 +8,6 @@ import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.ItemBuilder;
 import net.kryunek.hub.utils.bungee.BungeeUtils;
 import net.kryunek.hub.utils.menu.Button;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +20,7 @@ public class HubSelectorButton extends Button {
 
     private final String server;
     private final boolean currentServer;
-    private final FileConfig hubSelectorConfig = ModuleService.getFileModule().getFile("hub_selector");
+    private final FileConfig hubSelectorConfig = ModuleService.getFileModule().getFile(ConfigFiles.HUB_SELECTOR);
 
     @Override
     public ItemStack getButtonItem(Player player) {
@@ -50,7 +50,7 @@ public class HubSelectorButton extends Button {
                     .replace("%status%", status));
         }
 
-        return new ItemBuilder(Material.valueOf(materialName))
+        return new ItemBuilder(materialName)
                 .name(displayName
                         .replace("%server%", server)
                         .replace("%players%", String.valueOf(players))

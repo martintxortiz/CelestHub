@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
+/**
+ * Common command guard rails: permission and in-game checks that send the standard denial message
+ * (via {@link Messages}) and return a boolean the caller branches on.
+ */
 public final class CommandSupport {
 
     private final Messages messages;

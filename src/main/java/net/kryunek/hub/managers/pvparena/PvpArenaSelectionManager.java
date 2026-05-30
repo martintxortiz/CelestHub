@@ -1,6 +1,5 @@
 package net.kryunek.hub.managers.pvparena;
 
-import net.kryunek.hub.managers.module.ModuleService;
 import net.kryunek.hub.utils.CC;
 import net.kryunek.hub.utils.FileConfig;
 import net.kryunek.hub.utils.ItemBuilder;
@@ -12,12 +11,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/** Wand-driven POS1/POS2 selection mode for defining the PvP arena region in the injected settings config. */
 public class PvpArenaSelectionManager {
 
     private static final String WAND_NAME = CC.translate("&ePvP Arena Selector");
 
-    private final FileConfig settings = ModuleService.getFileModule().getFile("settings");
+    private final FileConfig settings;
     private final Set<UUID> selectionMode = new HashSet<>();
+
+    public PvpArenaSelectionManager(FileConfig settings) {
+        this.settings = settings;
+    }
 
     public boolean isSelectionMode(Player player) {
         return selectionMode.contains(player.getUniqueId());
