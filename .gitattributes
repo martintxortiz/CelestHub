@@ -1,0 +1,29 @@
+# Line-ending normalization for a cross-platform Java/Maven project.
+# Text files are stored as LF in the repository and checked out as LF on every
+# OS, so a contributor's local core.autocrlf setting can no longer introduce
+# spurious whole-file diffs.
+* text=auto eol=lf
+
+# Explicit text types (covered by `text=auto` above, pinned for clarity).
+*.java       text eol=lf
+*.xml        text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.json       text eol=lf
+*.properties text eol=lf
+*.md         text eol=lf
+*.txt        text eol=lf
+
+# Windows batch scripts must keep CRLF to execute correctly.
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+
+# Binary assets — never normalize or diff as text.
+*.jar        binary
+*.class      binary
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.ico        binary
+*.zip        binary

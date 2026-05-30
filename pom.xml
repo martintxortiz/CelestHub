@@ -95,11 +95,127 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
             </plugin>
+            <!-- Code coverage: instruments tests and enforces a floor on the pure-logic core. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <configuration>
+                    <!--
+                        ConfigFiles is a declaration-only constant holder. Its `public static final
+                        String` fields are compile-time constants that javac inlines at every use
+                        site, so the class is never loaded at runtime and JaCoCo reports it as 0%.
+                        Coverage is meaningless for it, so exclude it from analysis to keep the
+                        support-package gate measuring real, executable logic.
+                    -->
+                    <excludes>
+                        <exclude>**/support/config/ConfigFiles.class</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check-core-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!--
+                                The Bukkit-coupled UI/event layer (menus, listeners, commands, hooks)
+                                cannot be unit-tested without a running server, so the coverage gate is
+                                scoped to the pure-logic core that CAN and SHOULD stay covered.
+                            -->
+                            <rules>
+                                <rule>
+                                    <element>PACKAGE</element>
+                                    <includes>
+                                        <include>net.kryunek.hub.support.*</include>
+                                    </includes>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <!--
+                                                Real coverage of the support core is 0.84-1.00; the only
+                                                uncovered lines are registry-backed Bukkit calls (e.g.
+                                                Sound.valueOf) that can't be class-loaded off-server. The
+                                                floor sits just under the true minimum so it ratchets the
+                                                covered core in place. Raise it as coverage climbs.
+                                            -->
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                Static analysis gate. Runs on `verify`, writes target/spotbugsXml.xml, and FAILS the
+                build on any Medium+ confidence defect (excluding the Bukkit-idiomatic noise filtered
+                in spotbugs-exclude.xml). This catches NPE/resource-leak/bad-cast classes of bug that
+                the test suite can't, which matters since the server itself can't be used to verify.
+            -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.6.4</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <!--
+                        Gate only on the scariest findings (rank 1-12): genuine correctness/
+                        concurrency/null-deref bugs - the class of defect that crashes a server we
+                        can't test. Lower-severity STYLE/BAD_PRACTICE noise in the legacy UI layer
+                        is still reported in target/spotbugsXml.xml but does not fail the build.
+                        Ratchet this number up as the lower-rank findings get cleaned up.
+                    -->
+                    <maxRank>12</maxRank>
+                    <includeTests>false</includeTests>
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
+            <!-- Only plugin.yml is filtered (so ${project.version} etc. can be substituted). -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
+            </resource>
+            <!-- Everything else (config YAML, etc.) is copied verbatim so literal ${...} placeholders are preserved. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>plugin.yml</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
